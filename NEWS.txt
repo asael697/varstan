@@ -1,0 +1,22 @@
+varstan news:
+
+Date: 26/9/2019
+version: 0.0.1.000
+###########################################################################################################
+
+Features:
+ - The objets VarBekk and Varbekk model implemented for define the current model for the time series
+ - The object varstan object implemented for estimating a one of the current available models
+ - Precomplied stan code and ready for use
+ - summary and point_estimate functions overloaded for varstan objects.
+
+Improvements:
+ - No current improvements 
+
+Changes:
+ - No current changes
+
+Fixes:
+ - No current fixes
+
+###########################################################################################################

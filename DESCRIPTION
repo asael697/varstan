@@ -1,0 +1,43 @@
+Package: varstan
+Title: An r package for fitting structured time series models with STAN
+Version: 0.5.0.000
+Authors@R: 
+  person(given = "Asael",
+           family = "Alonzo Matamoros",
+           role = c("aut", "cre"),
+           email = "asael.alonzo@gmail.com",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: The goal of this package is analyze time series with structured models such as arima, m-garch, Varma, m-Bekk, SVD, HMM and state space models. So far a arima, garch and varma models are aviable for use. See the Use_Prior vignette to personalize you own prior
+License: What license it uses
+Encoding: UTF-8
+LazyData: true
+Biarch: true
+Depends: 
+    R (>= 3.4.0)
+Imports: 
+    methods,
+    Rcpp (>= 0.12.0),
+    rstan (>= 2.18.1),
+    rstantools (>= 2.0.0)
+LinkingTo: 
+    BH (>= 1.66.0),
+    Rcpp (>= 0.12.0),
+    RcppEigen (>= 0.3.3.3.0),
+    rstan (>= 2.18.1),
+    StanHeaders (>= 2.18.0)
+SystemRequirements: GNU make
+RoxygenNote: 6.1.1
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+Collate: 
+    'Astrovan.R'
+    'arima.R'
+    'Misc.R'
+    'garch.R'
+    'prior.R'
+    'stanmodels.R'
+    'varma.R'
+    'varstan-package.R'
+    'varstan.R'
