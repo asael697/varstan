@@ -104,8 +104,6 @@ report.varma = function(dat){
     get_prior(dat,type = "dfv")
   }
 }
-=======
->>>>>>> s3 methods corrected
 #' Adds a Bekk(s,k,h) object to an arima model
 #'
 #' Adds a Bekk(s,k,h) object to an arima model
