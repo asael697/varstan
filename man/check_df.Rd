@@ -7,5 +7,5 @@
 check_df(x)
 }
 \description{
-@export
+Check if the value is in the domain of a degree freedom parameter
 }

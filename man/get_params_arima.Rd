@@ -2,10 +2,10 @@
 % Please edit documentation in R/arima.R
 \name{get_params_arima}
 \alias{get_params_arima}
-\title{Excluded parameters in a  varbekk model}
+\title{Excluded parameters in a arima model}
 \usage{
 get_params_arima(dat, ...)
 }
 \description{
-Excluded parameters in a  varbekk model
+Excluded parameters in a arima model
 }

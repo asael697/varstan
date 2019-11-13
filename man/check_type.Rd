@@ -7,5 +7,5 @@
 check_type(x)
 }
 \description{
-@export
+Check if the value is a type of parameter
 }

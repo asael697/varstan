@@ -2,12 +2,10 @@
 % Please edit documentation in R/Misc.R
 \name{check_dist}
 \alias{check_dist}
-\title{Check if the value is in the domain of a scale parameter
- @export}
+\title{Check if the value is in the domain of a scale parameter}
 \usage{
 check_dist(x, par)
 }
 \description{
 Check if the value is in the domain of a scale parameter
- @export
 }

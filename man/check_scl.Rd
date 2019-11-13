@@ -7,5 +7,5 @@
 check_scl(x)
 }
 \description{
-@export
+Check if the value is in the domain of a scale parameter
 }

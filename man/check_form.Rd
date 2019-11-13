@@ -7,5 +7,5 @@
 check_form(x)
 }
 \description{
-@export
+Check if the value is in the domain of a form parameter
 }

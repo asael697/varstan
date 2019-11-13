@@ -89,6 +89,7 @@ complete = function(x,d,x0){
 }
 #' Checks if is a model object
 #' @param obj: a  model object
+#'
 #' @export
 #'
 is.model = function(obj){
@@ -100,8 +101,7 @@ is.model = function(obj){
   return (y)
 }
 #'  summary function
-#'  A report of the desired model
-#'  @export
+#'  A report of the desired modelt
 #'
 my_sum = function(x,robust = FALSE,conf){
   if(robust){
@@ -128,7 +128,6 @@ my_sum = function(x,robust = FALSE,conf){
 
 #'  summary function
 #'  A report of the desired model
-#'  @export
 #'
 my_sum1 = function(x,robust = FALSE,conf){
   if(robust){
@@ -236,14 +235,12 @@ arma_check = function(x){
   return(y)
 }
 #'  Check if the value is in the domain of a location parameter
-#'  @export
 #'
 check_loc <- function(x) {
   return(x)
 }
 #'  Check if the value is in the domain of a scale parameter
 #'
-#'  @export
 #'
 check_scl <- function(x) {
   if(x > 0 ){
@@ -255,7 +252,6 @@ check_scl <- function(x) {
 }
 #'  Check if the value is in the domain of a form parameter
 #'
-#'  @export
 #'
 check_form <- function(x) {
   if(x > 0 ){
@@ -267,7 +263,6 @@ check_form <- function(x) {
 }
 #'  Check if the value is in the domain of a degree freedom parameter
 #'
-#'  @export
 #'
 check_df <- function(x) {
   if(x >= 1 ){
@@ -278,7 +273,6 @@ check_df <- function(x) {
   }
 }
 #'  Check if the value is in the domain of a scale parameter
-#'  @export
 #'
 check_dist <- function(x,par) {
   y = FALSE
@@ -308,8 +302,6 @@ check_dist <- function(x,par) {
 }
 #'  Check if the value is a type of parameter
 #'
-#'  @export
-#'
 check_type <- function(x) {
   y = FALSE
     if(identical(x,"ma"))     y = TRUE
@@ -330,7 +322,6 @@ check_type <- function(x) {
 #'
 #'  @export
 #'
-#'  @method print
 #'
 print = function(obj,...){
   UseMethod("print")

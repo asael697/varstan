@@ -3,13 +3,11 @@
 \name{my_sum}
 \alias{my_sum}
 \title{summary function
- A report of the desired model
- @export}
+ A report of the desired modelt}
 \usage{
 my_sum(x, robust = FALSE, conf)
 }
 \description{
 summary function
- A report of the desired model
- @export
+ A report of the desired modelt
 }

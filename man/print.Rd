@@ -9,6 +9,3 @@ print(obj, ...)
 \description{
 @export
 }
-\details{
-@method print
-}

@@ -92,7 +92,8 @@ mgarch = function(s=1,k=1,h=0){
   ml$sd = "mgarch"
   return(ml)
 }
-#' Excluded parameters in a  varbekk model
+#'
+#' Excluded parameters in a arima model
 #'
 #' @export
 #'

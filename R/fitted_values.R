@@ -5,7 +5,6 @@
 fit_values<- function(obj, ...) {
   UseMethod("fit_values")
 }
-
 #' Get the fitted values of the fitted model
 #'
 #' The function returns a matrix with the fitted values

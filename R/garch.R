@@ -49,6 +49,7 @@ garch = function(ts,s = 1,k = 1, h = 0){
 }
 #' Checks if is a garch object
 #' @param obj: a  garch object
+#'
 #' @export
 #'
 is.garch = function(obj){
@@ -57,9 +58,9 @@ is.garch = function(obj){
   return (y)
 }
 #' Excluded parameters in a  Garch model
+#'
 #' @export
 #'
-#' Excluded parameters in a  Garch model
 #'
 get_params_garch = function(dat,...){
   include = c("mu0","sigma0")

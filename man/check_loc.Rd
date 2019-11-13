@@ -2,12 +2,10 @@
 % Please edit documentation in R/Misc.R
 \name{check_loc}
 \alias{check_loc}
-\title{Check if the value is in the domain of a location parameter
- @export}
+\title{Check if the value is in the domain of a location parameter}
 \usage{
 check_loc(x)
 }
 \description{
 Check if the value is in the domain of a location parameter
- @export
 }
