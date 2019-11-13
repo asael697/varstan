@@ -27,14 +27,11 @@
 varstan = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta = 0.90,...){
   if(is.model(model)){
     m = list()
-<<<<<<< HEAD
     sft = fit(model,chains,iter,warmup,adapt.delta)
-=======
     if(is.arima(model)) sft = fit_arima(model,chains,iter,warmup,adapt.delta)
     if(is.garch(model)) sft = fit_garch(model,chains,iter,warmup,adapt.delta)
     if(is.varma(model)) sft = fit_varma(model,chains,iter,warmup,adapt.delta)
 
->>>>>>> s3 methods corrected
     sp = list(Algorithm = "HMC NUTS",chains = chains,iter = iter,warmup = warmup,adapt.delta =adapt.delta)
     m = list(stanfit = sft,model = model,stan_parmas = sp)
     attr(m,"class") = "varstan"
@@ -55,7 +52,6 @@ is.varstan = function(obj){
   if(class(obj) == "varstan") y = TRUE
   return (y)
 }
-<<<<<<< HEAD
 #' Summary of  a varstan object
 #'
 #' Summary of the model estimates in a varstan object
@@ -119,8 +115,6 @@ else{
 }
 return(resume)
 }
-=======
->>>>>>> s3 methods corrected
 #' Print a varstan object
 #' @export
 #'
@@ -132,7 +126,6 @@ print.varstan = function(obj){
     print("The current object is not a varstan object")
   }
 }
-<<<<<<< HEAD
 #' Get the fitted values of the fitted model
 #'
 #' The function returns a matrix with the fitted values
@@ -188,11 +181,6 @@ get_residuals.vastan = function(obj,robust = FALSE,...){
 #' Get the degree freedom values of a varma model
 #'
 #' get the degree freedom values of a varma(p,q) model  in STAN
-=======
-#' Get the degree freedom values of a Generalized t-student varma model
-#'
-#' get the degree freedom values of a Generalized t-student varma(p,q) model
->>>>>>> s3 methods corrected
 #'
 #' The function returns a data.frame object with the degree freedom values
 #'
@@ -207,15 +195,9 @@ get_residuals.vastan = function(obj,robust = FALSE,...){
 #'
 #' @return  a data frame with all the important fitted parameters
 #'
-<<<<<<< HEAD
-get_df.varstan = function(obj,robust = FALSE,...){
-  if(is.varstan(obj) ){
-   if(obj$model$genT == TRUE) resd = get_df(model = obj$model,fit = obj$stanfit,robust)
-=======
 get_df = function(obj,robust = FALSE,...){
   if(is.varstan(obj) ){
    if(obj$model$genT == TRUE) resd = get_df_varma(model = obj$model,fit = obj$stanfit,robust)
->>>>>>> s3 methods corrected
    else print("The current model is not a Generalized t-student varma model")
   }
   else{
