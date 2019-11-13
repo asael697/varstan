@@ -1,0 +1,150 @@
+---
+title: "Introduction to varstan"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Intro-to-varstan}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Varstan is a a package for bayesian estimation of structured time series models,using a Hamiltonian monte carlo, implemented in the so popular package "rstan". The aim of varstan is to have an interface of the most popular time series modeles such as: arima, garch, sarima, stochastic Volatility models (SVM), Hiden Markov models(HMM), seasonal fouier regresión, additive non-linear models (*via prophet package*), univariate kalman Filters, varma and bekk models.
+
+On the beta version 0.5.0.000, the avaliable models are:
+ 
+  + arima
+  + garch
+  + varma
+  + Generalized t-student varma
+
+The dynamic of varstan is to build your own model using one of the avaliable model constructor, personalize your own priors (*check the Use Priors vignette*), and fit your model using the varstan function. On the next example we show you how to create and fit a simple bayesian arima model.
+
+
+```{r setup}
+library(bayesplot)
+library(varstan)
+library(rstan)
+library(forecast)
+library(ggplot2)
+library(gridExtra)
+```
+
+First step is make a simulation of a simple arma model with 200 observations as follows:
+
+$$Y_t = \mu_0 + 0.338Y_{t-1} - 0.2279\epsilon_{t-1} - 0.2488\epsilon_{t-2}, \text{ } \epsilon_t \sim N(0,\sigma^2_0)  $$
+
+```{r}
+y = arima.sim(n = 700, list(ar =0.35, ma = c(0.2279, 0.2488)),sd = sqrt(0.1796))
+
+autoplot(y)+labs(x = "time",title = "Simulated ARMA Process")+theme_classic()
+```
+
+Proceding to built the arima model using the varstan constructor:
+```{r}
+model1 = arima(y,p = 1,d = 0,q = 2)
+```
+
+Automaticly varstan build a bayesian arima model, with default normal priors, you can check the model using the report function:
+
+```{r}
+setGeneric("report",package = "varstan")
+report.arima(model1)
+```
+
+Changing the prior of one of the defined parameter, just use the set_prior function, in this example we are gonna change the second ma component for a beta distribution
+
+$$\theta_2 \sim beta(2.5,2.5)$$
+
+```{r}
+model1 = set_prior(model1,type = "ma",par1 = 2.5,par2 = 2.5,lag = 2,dist = "beta")
+get_prior(model1,type = "ma")
+```
+
+To see more details of the avaliable priors and the model structure see the vignettes *Use_prior* and *arima_models*, respectively. For estimating the defined model, use the varstan function, it will estimate the posterior sample using a Hamiltonian montecarlo.
+
+In this example a hmc is run with 1 chain of 4000 iterations 
+
+```{r}
+sfit = varstan(model1,chains = 1,iter = 7000)
+```
+
+
+```{r}
+summary.arima(fit = sfit$stanfit,model = sfit$model,robust = FALSE,conf = 0.975 )
+```
+
+
+
+### Parameter Diagnostic
+
+We can see the whole posterior distribution and make some diagnostics
+
+```{r}
+post = as.data.frame(extract(sfit$stanfit,"phi", permuted = TRUE) )
+  color_scheme_set("viridis")
+  p1 = mcmc_trace(post,  pars = "phi",
+        facet_args = list(nrow = 2, labeller = label_parsed)) + 
+        facet_text(size = 15)+theme_classic()
+  p2 = mcmc_hist(post, pars = "phi",facet_args = list(nrow = 2))+
+    facet_text(size = 15)+theme_classic()
+  p3 = mcmc_acf(post, pars = "phi", lags = 10,)+theme_minimal()
+  grid.arrange(p1,p2,p3,nrow = 2,layout_matrix = matrix(c(1,3,2,3),ncol=2,byrow=TRUE))
+
+```
+
+
+
+# The classical arima estimation is:
+
+```{r}
+mc = stats::arima(y,order = c(1,0,2))
+mc
+```
+
+
+The residual values of the varstan object is
+
+```{r}
+fit = get_rstan(sfit)
+post = as.data.frame(extract(fit,"residual", permuted = TRUE) )
+residuals = apply(post,2,median)
+```
+
+
+The residuals of the classical estimation are:
+
+```{r}
+summary(mc$residuals)
+```
+
+The posterior median residual statistics of the bayesian model are:
+```{r}
+summary(residuals)
+```
+
+
+Plotting the fitted and credible intervals
+
+```{r}
+post = as.data.frame(extract(fit,"fit", permuted = TRUE) )
+fitted = as.data.frame(t(apply(post,2,quantile,probs = c(0.01,0.5,0.99))))
+names(fitted) = c("y1","yfit","y99")
+fitted$time = 1:dim(fitted)[1]
+fitted$y = as.numeric(y) 
+row.names(fitted) = NULL
+
+ggplot(fitted,aes(x = time,y = y))+geom_line()+
+  geom_ribbon(aes(ymin = y1, ymax = y99),alpha = 0.6,fill = "blue",na.rm = TRUE)+
+  theme_classic()
+
+```
+
+
+
+

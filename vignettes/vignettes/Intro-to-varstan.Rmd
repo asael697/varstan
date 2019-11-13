@@ -1,0 +1,55 @@
+---
+title: "Introduction to varstan"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Intro-to-varstan}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette is used to show varstan's dynamic for estimating a time series model, in this case we are gonna use the data *Astrovan*, a simulated var(1)bekk(1,1) model, available in the varstan package.
+
+The fist part is to call the varstan library 
+```{r setup}
+library(varstan)
+```
+
+For this example, a var(1)-bekk(1,1) model is used for the data, the model is defined with the model constructure: **varbekk**,Where p,s and k  are the lags of the var, arch and garch components.
+```{r}
+dat1 = varbekk(ts = Astrovan,p = 1,s = 1,k = 1)
+```
+
+Varstan already use default normal priors to check them just print the model object:
+```{r}
+print(dat1)
+```
+
+The set_prior function is available for changing the prior hyperparameters as follow:
+
+```{r}
+dat1 = set_prior(dat1,parameter = "var",location = 0,scale = 5)
+print(dat1)
+```
+
+The varstan function is used to estimating the current model, it returns a varstan object that has 2 important parts:
+
+ + the returned stanfit object
+ + the user defined model.
+ 
+```{r,eval = FALSE}
+fit1 = varstan(dat1,t.student = FALSE,chains = 1,iter = 1000,adapt.delta = 0.9)
+```
+
+The summary of the estimated parameters is:
+
+```{r,eval = FALSE}
+print(fit1)
+```
+
