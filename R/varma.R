@@ -70,7 +70,6 @@ is.varma = function(obj){
   if(class(obj) == "varma") y = TRUE
   return (y)
 }
-<<<<<<< HEAD
 #' Print a report of the constructed model
 #'
 #' @param dat: an varma object
