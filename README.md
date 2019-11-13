@@ -1,16 +1,16 @@
 
 ### Introduction
 
-Varstan is a package for analyze time series with common structured
-models such as arima, garch, var, bekk, SVM, HMM, ETS and others. On
-this beta version the models varbekk and varbekkM(1) are currently
-available.
+Varstan is a a package for bayesian estimation of structured time series models,using a Hamiltonian monte carlo, implemented with the so popular package "rstan". The aim of varstan is to have an interface of the most popular time series modeles such as: arima, garch, sarima, stochastic Volatility models (SVM), Hiden Markov models(HMM), seasonal fouier regresión, additive non-linear models (*via prophet package*), univariate kalman Filters, varma and bekk models.
 
-The dynamic is, first to create the model structure using a
-constructure, then define the prior parameters, next call the varstan
-function to estimate the chosen model in a bayesian scheme using STAN.
-Finally the summary, point\_estimate, model\_diagnostic, forecast
-functions are used to evaluate the obtained results.
+On the beta version 0.5.0.000, the avaliable models are:
+ 
+  + arima
+  + garch
+  + varma
+  + Generalized t-student varma
+
+The dynamic of varstan is to build your own model using one of the avaliable model constructor, personalize your own priors (*check the Use Priors vignette*), and fit your model using the varstan function. On the next example we show you how to create and fit a simple bayesian arima model.
 
 ### Troubleshooting Rstan / Rtools install for Windows:
 
