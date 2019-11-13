@@ -53,8 +53,12 @@ model1 = arima(y,p = 1,d = 0,q = 2)
 Automaticly varstan build a bayesian arima model, with default normal priors, you can check the model using the report function:
 
 ```{r}
+<<<<<<< HEAD
 setGeneric("report",package = "varstan")
 report.arima(model1)
+=======
+report(model1)
+>>>>>>> s3 methods corrected
 ```
 
 Changing the prior of one of the defined parameter, just use the set_prior function, in this example we are gonna change the second ma component for a beta distribution
@@ -71,12 +75,20 @@ To see more details of the avaliable priors and the model structure see the vign
 In this example a hmc is run with 1 chain of 4000 iterations 
 
 ```{r}
+<<<<<<< HEAD
 sfit = varstan(model1,chains = 1,iter = 7000)
+=======
+sfit = varstan(model1,chains = 1,iter = 3000)
+>>>>>>> s3 methods corrected
 ```
 
 
 ```{r}
+<<<<<<< HEAD
 summary.arima(fit = sfit$stanfit,model = sfit$model,robust = FALSE,conf = 0.975 )
+=======
+summary(sfit,robust = TRUE)
+>>>>>>> s3 methods corrected
 ```
 
 
@@ -86,6 +98,7 @@ summary.arima(fit = sfit$stanfit,model = sfit$model,robust = FALSE,conf = 0.975 
 We can see the whole posterior distribution and make some diagnostics
 
 ```{r}
+<<<<<<< HEAD
 post = as.data.frame(extract(sfit$stanfit,"phi", permuted = TRUE) )
   color_scheme_set("viridis")
   p1 = mcmc_trace(post,  pars = "phi",
@@ -96,6 +109,10 @@ post = as.data.frame(extract(sfit$stanfit,"phi", permuted = TRUE) )
   p3 = mcmc_acf(post, pars = "phi", lags = 10,)+theme_minimal()
   grid.arrange(p1,p2,p3,nrow = 2,layout_matrix = matrix(c(1,3,2,3),ncol=2,byrow=TRUE))
 
+=======
+x = residuals(sfit)
+plot(ts(x))
+>>>>>>> s3 methods corrected
 ```
 
 

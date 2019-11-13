@@ -70,6 +70,7 @@ is.varma = function(obj){
   if(class(obj) == "varma") y = TRUE
   return (y)
 }
+<<<<<<< HEAD
 #' Print a report of the constructed model
 #'
 #' @param dat: an varma object
@@ -104,6 +105,8 @@ report.varma = function(dat){
     get_prior(dat,type = "dfv")
   }
 }
+=======
+>>>>>>> s3 methods corrected
 #' Adds a Bekk(s,k,h) object to an arima model
 #'
 #' Adds a Bekk(s,k,h) object to an arima model
@@ -131,9 +134,14 @@ mbekk = function(s=1,k=1,h=0){
   return(ml)
 }
 #' Excluded parameters in a  varbekk model
+<<<<<<< HEAD
 #' @export
 #'
 get_params.varma = function(dat,...){
+=======
+#'
+get_params_varma = function(dat,...){
+>>>>>>> s3 methods corrected
   include = c("mu0","sigma0")
   if(dat$p > 0) include = c(include,"phi")
   if(dat$q > 0) include = c(include,"theta")
@@ -148,6 +156,7 @@ get_params.varma = function(dat,...){
   pars = list(include = c(include,"loglik"),exclude = exclude)
   return(pars)
 }
+<<<<<<< HEAD
 #' Fit a  varma model
 #'
 #' Fit a var(p)-ma(q) model  in STAN
@@ -336,6 +345,8 @@ get_residuals.varma = function(fit,robust = FALSE,...){
   else sum1 = t(matrix(apply(post,2,mean),nrow = model$d,byrow = TRUE))
   return(sum1)
 }
+=======
+>>>>>>> s3 methods corrected
 #' Get the degree freedom values of a varma model
 #'
 #' get the degree freedom values of a varma(p,q) model  in STAN
@@ -350,11 +361,17 @@ get_residuals.varma = function(fit,robust = FALSE,...){
 #'
 #' @author  Asael Alonzo Matamoros
 #'
+<<<<<<< HEAD
 #' @export
 #'
 #' @return  a data frame with all the important fitted parameters
 #'
 get_df.varma = function(fit,model,robust = FALSE,...){
+=======
+#' @return  a data frame with all the important fitted parameters
+#'
+get_df_varma = function(fit,model,robust = FALSE,...){
+>>>>>>> s3 methods corrected
   if(model$genT == TRUE){
     post = as.data.frame(rstan::extract(fit,"lambda", permuted = TRUE) )
     if(robust) sum1 = t(matrix(apply(post,2,median),nrow = d1,byrow = TRUE))
@@ -378,12 +395,19 @@ get_df.varma = function(fit,model,robust = FALSE,...){
 #'
 #' @author  Asael Alonzo Matamoros
 #'
+<<<<<<< HEAD
 #' @export
 #'
 #' @return  a data frame with all the important fitted parameters
 #'
 get_lag.varma = function(type,fit,model,robust = FALSE,...){
   if(type %in% get_params.varma(model)$include ){
+=======
+#' @return  a data frame with all the important fitted parameters
+#'
+get_lag_varma = function(type,fit,model,robust = FALSE,...){
+  if(type %in% get_params_varma(model)$include ){
+>>>>>>> s3 methods corrected
     post = as.data.frame(rstan::extract(fit,type, permuted = TRUE) )
     if(robust) pe = apply(post,2,median)
     else pe = apply(post,2,mean)

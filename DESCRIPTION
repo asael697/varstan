@@ -41,3 +41,12 @@ Collate:
     'varma.R'
     'varstan-package.R'
     'varstan.R'
+<<<<<<< HEAD
+=======
+    'Fit.R'
+    'Residuals.R'
+    'fitted_values.R'
+    'point_estimate.R'
+    'report.R'
+    'summary.R'
+>>>>>>> s3 methods corrected

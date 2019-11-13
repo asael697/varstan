@@ -56,6 +56,7 @@ is.garch = function(obj){
   if(class(obj) == "garch") y = TRUE
   return (y)
 }
+<<<<<<< HEAD
 #' Print a report of the constructed model
 #' @param dat: a garch object
 #'
@@ -80,6 +81,11 @@ report.garch = function(dat){
 #' @export
 #'
 get_params.garch = function(dat,...){
+=======
+#' Excluded parameters in a  Garch model
+#'
+get_params_garch = function(dat,...){
+>>>>>>> s3 methods corrected
   include = c("mu0","sigma0")
     if(dat$s > 0) include = c(include,"alpha")
     if(dat$k > 0) include = c(include,"beta")
@@ -89,6 +95,7 @@ get_params.garch = function(dat,...){
   pars = list(include = c(include,"loglik"),exclude = exclude)
   return(pars)
 }
+<<<<<<< HEAD
 #' Fit a mgarch model
 #'
 #' Fit a garch(s,k,h) model  in STAN
@@ -233,3 +240,5 @@ get_residuals.garch = function(fit,robust = FALSE,...){
   else sum = apply(post,2,median)
   return(sum)
 }
+=======
+>>>>>>> s3 methods corrected

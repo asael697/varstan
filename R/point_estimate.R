@@ -1,0 +1,130 @@
+#' Point estimate of  a varstan object
+#'
+#' point estimates of the model  in a varstan object
+#'
+#' @usage  point_estimate(obj)
+#'
+#' @param obj: a varstan object
+#' @param robust: A boolean value, if its true it returns the posterior median
+#'
+#' @author  Asael Alonzo Matamoros
+#'
+#' @export
+#'
+#' @return  a list with the components
+#' \itemize{
+#'  \item A matrix with the posterior value of the var coefficients
+#'  \item A matrix with the posterior value of the scale parameter
+#'  \item A vector with the posterior value of the degree freedom
+#'  \item A time series with the posterior value of the correction parameter
+#'  for the variance
+#' }
+#'
+point_estimate = function(obj,robust = FALSE,...){
+  if(is.varstan(obj)){
+    if(is.arima(obj$model)) resume = point_estimate_arima(model = obj$model,fit = obj$stanfit,roubst = robust)
+    if(is.garch(obj$model)) resume = point_estimate_garch(model = obj$model,fit = obj$stanfit,roubst = robust)
+    if(is.varma(obj$model)) resume = point_estimate_varma(model = obj$model,fit = obj$stanfit,roubst = robust)
+  }
+  else{
+    resume = NULL
+    print("The current object is not a varstan object")
+  }
+  return(resume)
+}
+#' point estimate of an garch model
+#'
+#' get the point estimate of an garch(s,k,h) model  in STAN
+#'
+#' The function returns a data.frame object with the fitted parameters
+#'
+#' @usage  point_estimate.garch(model,fit)
+#'
+#' @param fit: a stanfit object
+#' @param model: a varbekk model
+#' @param robust: a boolean for obtain the robust estimation
+#'
+#' @author  Asael Alonzo Matamoros
+#'
+#' @return  a data frame with all the important fitted parameters
+#'
+point_estimate_garch = function(model,fit,robust = FALSE,...){
+  par1 = get_params_garch(model)$include
+  post = data.frame(rstan::extract(fit,par1, permuted = TRUE))
+  if(robust) pe = apply(post,2,median)
+  else pe = apply(post,2,mean)
+  return( as.list(pe) )
+}
+#' point estimate of an arima model
+#'
+#' get the point estimate of an arima(p,d,q) model  in STAN
+#'
+#' The function returns a data.frame object with the fitted parameters
+#'
+#' @usage  point_estimate.arima(model,fit)
+#'
+#' @param fit: a stanfit object
+#' @param model: a varbekk model
+#' @param robust: a boolean for obtain the robust estimation
+#'
+#' @author  Asael Alonzo Matamoros
+#'
+#' @return  a data frame with all the important fitted parameters
+#'
+point_estimate_arima = function(model,fit,robust = FALSE,...){
+  par1 = get_params_arima(model)$include
+  post = data.frame(rstan::extract(fit,par1, permuted = TRUE))
+  if(robust) pe = apply(post,2,median)
+  else pe = apply(post,2,mean)
+  return( as.list(pe) )
+}
+#' point estimate of an varma model
+#'
+#' Get the point estimate of an varma(p,q) model  in STAN
+#'
+#' The function returns a data.frame object with the fitted parameters
+#'
+#' @usage  point_estimate.varma(model,fit)
+#'
+#' @param fit: a stanfit object
+#' @param model: a varbekk model
+#' @param robust: a boolean for obtain the robust estimation
+#' @param par: the wanted parameters, by default the option all is used
+#'
+#' @author  Asael Alonzo Matamoros
+#'
+#' @return  a data frame with all the important fitted parameters
+#'
+point_estimate_varma = function(model,fit,robust = FALSE,...){
+  l1 = list()
+  # mu0 Parameter
+  l1$mu0 = get_lag_varma("mu0",fit,model,robust = FALSE)
+  # sigmua0 Parameter
+  l1$sigma0 =vector_to_matrix(get_lag_varma("sigma0",fit,model,robust = FALSE),d = model$d,p = 1)
+  # VAR Parameter
+  if(model$p > 0 ){
+    l1$phi = vector_to_matrix(get_lag_varma("phi",fit,model,robust = FALSE),d = model$d,p = model$p)
+  }
+  # MA Parameter
+  if(model$q > 0 ){
+    l1$theta = vector_to_matrix(get_lag_varma("theta",fit,model,robust = FALSE),d = model$d,p = model$q)
+  }
+  # alpha Parameter
+  if(model$s > 0 ){
+    l1$alpha = vector_to_matrix(get_lag_varma("alpha",fit,model,robust = FALSE),d = model$d,p = model$s)
+  }
+  # beta Parameter
+  if(model$k > 0 ){
+    l1$beta = vector_to_matrix(get_lag_varma("beta",fit,model,robust = FALSE),d = model$d,p = model$k)
+  }
+  # mgarch Parameter
+  if(model$h > 0 ){
+    l1$mgarch = vector_to_matrix(get_lag_varma("mgarch",fit,model,robust = FALSE),d = model$d,p = model$h)
+  }
+  if(model$genT){
+    if(robust) pe = apply(post$v,2,median)
+    else pe = apply(post$v,2,mean)
+    l1$v = pe
+  }
+  return(l1)
+}

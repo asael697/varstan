@@ -66,6 +66,7 @@ is.arima = function(obj){
   if(class(obj) == "arima") y = TRUE
   return (y)
 }
+<<<<<<< HEAD
 #' Print a report of the constructed model
 #'
 #' @param dat: an arima object
@@ -95,6 +96,8 @@ report.arima = function(dat){
     get_prior(dat,type = "mgarch")
   }
 }
+=======
+>>>>>>> s3 methods corrected
 #' Adds a garch(s,k,h) object to an arima model
 #'
 #' Adds a garch(s,k,h) object to an arima model
@@ -122,10 +125,14 @@ mgarch = function(s=1,k=1,h=0){
   return(ml)
 }
 #' Excluded parameters in a  varbekk model
+<<<<<<< HEAD
 #'
 #' @export
 #'
 get_params.arima = function(dat,...){
+=======
+get_params_arima = function(dat,...){
+>>>>>>> s3 methods corrected
     include = c("mu0","sigma0")
     if(dat$p > 0) include = c(include,"phi")
     if(dat$q > 0) include = c(include,"theta")
@@ -138,6 +145,7 @@ get_params.arima = function(dat,...){
     pars = list(include = c(include,"loglik"),exclude = exclude)
   return(pars)
 }
+<<<<<<< HEAD
 #' Fit an arima model
 #'
 #' Fit a arima(p,d,q) model  in STAN
@@ -284,3 +292,5 @@ get_residuals.arima = function(fit,robust = FALSE,...){
   else sum = apply(post,2,median)
   return(sum)
 }
+=======
+>>>>>>> s3 methods corrected

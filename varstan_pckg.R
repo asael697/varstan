@@ -31,8 +31,12 @@ Sys.setenv(PATH = paste("C:\\Rtools\\mingw_64\\bin", Sys.getenv("PATH"), sep=";"
 Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
 
 pkgbuild::compile_dll() # see note below
+<<<<<<< HEAD
 roxygen2::roxygenize(clean = TRUE)
 
+=======
+roxygen2::roxygenize()
+>>>>>>> s3 methods corrected
 
 devtools::missing_s3()
 
