@@ -335,7 +335,6 @@ check_type <- function(x) {
 print = function(obj,...){
   UseMethod("print")
 }
-<<<<<<< HEAD
 #'  Set the generic function for report a varstan class
 #'
 #'  @export
