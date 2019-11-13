@@ -27,7 +27,6 @@
 varstan = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta = 0.90,...){
   if(is.model(model)){
     m = list()
-    sft = fit(model,chains,iter,warmup,adapt.delta)
     if(is.arima(model)) sft = fit_arima(model,chains,iter,warmup,adapt.delta)
     if(is.garch(model)) sft = fit_garch(model,chains,iter,warmup,adapt.delta)
     if(is.varma(model)) sft = fit_varma(model,chains,iter,warmup,adapt.delta)
