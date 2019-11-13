@@ -70,7 +70,7 @@ To see more details of the avaliable priors and the model structure see the vign
 In this example a hmc is run with 1 chain of 4000 iterations 
 
 ```{r}
-sfit = varstan(model1,chains = 1,iter = 7000)
+sfit = varstan(model1,chains = 1,iter = 2000)
 ```
 
 
