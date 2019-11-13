@@ -52,69 +52,6 @@ is.varstan = function(obj){
   if(class(obj) == "varstan") y = TRUE
   return (y)
 }
-#' Summary of  a varstan object
-#'
-#' Summary of the model estimates in a varstan object
-#'
-#'
-#' @usage  summary(obj)
-#'
-#' @param obj: a varstan object
-#' @param robust: a boolean for obtain the robust estimation
-#' @param conf: a value between 0 and 1 with the desired probability in the
-#' credible intervals
-#'
-#' @author  Asael Alonzo Matamoros
-#'
-#' @export
-#'
-#' @return  a list with the components
-#' \itemize{
-#'  \item summary with all the important fitted parameters
-#' }
-#'
-summary.varstan = function(obj,robust = FALSE,conf = 0.975,...){
- if(is.varstan(obj)){
-   resume = summary(model=obj$model,fit = obj$stanfit,robust,conf)
- }
-  else{
-    resume = NULL
-   print("The current object is not a varstan object")
-  }
-  return(resume)
-}
-#' Point estimate of  a varstan object
-#'
-#' point estimates of the model  in a varstan object
-#'
-#' @usage  point_estimate(obj)
-#'
-#' @param obj: a varstan object
-#' @param robust: A boolean value, if its true it returns the posterior median
-#'
-#' @author  Asael Alonzo Matamoros
-#'
-#' @export
-#'
-#' @return  a list with the components
-#' \itemize{
-#'  \item A matrix with the posterior value of the var coefficients
-#'  \item A matrix with the posterior value of the scale parameter
-#'  \item A vector with the posterior value of the degree freedom
-#'  \item A time series with the posterior value of the correction parameter
-#'  for the variance
-#' }
-#'
-point_estimate.varstan = function(obj,robust = FALSE,...){
-if(is.varstan(obj)){
-  resume = point_estimate(model = obj$model,fit = obj$stanfit,roubst = robust)
-}
-else{
-  resume = NULL
-  print("The current object is not a varstan object")
-}
-return(resume)
-}
 #' Print a varstan object
 #' @export
 #'
@@ -126,58 +63,7 @@ print.varstan = function(obj){
     print("The current object is not a varstan object")
   }
 }
-#' Get the fitted values of the fitted model
-#'
-#' The function returns a matrix with the fitted values
-#'
-#' @usage  point_estimate.varma(fit)
-#'
-#' @param obj: a varstan object
-#' @param robust: a boolean for obtain the robust estimation
-#' @param conf: a value between 0 and 1 with the desired confidence (not for
-#' varma models)
-#'
-#' @author  Asael Alonzo Matamoros
-#'
-#' @export
-#'
-#' @return  a data frame with all the important fitted parameters
-#'
-get_fit.vastan = function(obj,robust = FALSE,conf = 0.975,...){
-  if(is.varstan(obj) ){
-    fit = get_fit(model = obj$model,fit = obj$stanfit,robust,conf)
-  }
-  else{
-    chains = NULL
-    print("The current object is not a varstan object")
-  }
-  return(chains)
-}
-#' Get the residual values of the fitted model
-#'
-#' The function returns a matrix with the residual values
-#'
-#' @usage  get_residuals(obj)
-#'
-#' @param obj: a varstan object
-#' @param robust: a boolean for obtain the robust estimation
-#'
-#' @author  Asael Alonzo Matamoros
-#'
-#' @export
-#'
-#' @return  a data frame with all the important fitted parameters
-#'
-get_residuals.vastan = function(obj,robust = FALSE,...){
-  if(is.varstan(obj) ){
-    resd = get_residuals(fit = obj$stanfit,robust)
-  }
-  else{
-    resd = NULL
-    print("The current object is not a varstan object")
-  }
-  return(resd)
-}
+
 #' Get the degree freedom values of a varma model
 #'
 #' get the degree freedom values of a varma(p,q) model  in STAN

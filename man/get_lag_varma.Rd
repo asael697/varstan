@@ -17,6 +17,8 @@ get_lag.varma(type,model,fit,robust)
 }
 \value{
 a data frame with all the important fitted parameters
+
+a data frame with all the important fitted parameters
 }
 \description{
 get the degree freedom values of a varma(p,q) model  in STAN
