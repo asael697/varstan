@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-Varstan is a a package for bayesian estimation of structured time series models,using a Hamiltonian monte carlo, implemented in the so popular package "rstan". The aim of varstan is to have an interface of the most popular time series modeles such as: arima, garch, sarima, stochastic Volatility models (SVM), Hiden Markov models(HMM), seasonal fouier regresión, additive non-linear models (*via prophet package*), univariate kalman Filters, varma and bekk models.
+Varstan is a a package for bayesian estimation of structured time series models,using a Hamiltonian monte carlo, implemented with the so popular package "rstan". The aim of varstan is to have an interface of the most popular time series modeles such as: arima, garch, sarima, stochastic Volatility models (SVM), Hiden Markov models(HMM), seasonal fouier regresión, additive non-linear models (*via prophet package*), univariate kalman Filters, varma and bekk models.
 
 On the beta version 0.5.0.000, the avaliable models are:
  
