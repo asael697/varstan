@@ -53,12 +53,7 @@ model1 = arima(y,p = 1,d = 0,q = 2)
 Automaticly varstan build a bayesian arima model, with default normal priors, you can check the model using the report function:
 
 ```{r}
-<<<<<<< HEAD
-setGeneric("report",package = "varstan")
-report.arima(model1)
-=======
 report(model1)
->>>>>>> s3 methods corrected
 ```
 
 Changing the prior of one of the defined parameter, just use the set_prior function, in this example we are gonna change the second ma component for a beta distribution
@@ -75,22 +70,13 @@ To see more details of the avaliable priors and the model structure see the vign
 In this example a hmc is run with 1 chain of 4000 iterations 
 
 ```{r}
-<<<<<<< HEAD
 sfit = varstan(model1,chains = 1,iter = 7000)
-=======
-sfit = varstan(model1,chains = 1,iter = 3000)
->>>>>>> s3 methods corrected
 ```
 
 
 ```{r}
-<<<<<<< HEAD
-summary.arima(fit = sfit$stanfit,model = sfit$model,robust = FALSE,conf = 0.975 )
-=======
-summary(sfit,robust = TRUE)
->>>>>>> s3 methods corrected
+summary(sfit,robust= TRUE)
 ```
-
 
 
 ### Parameter Diagnostic
@@ -98,7 +84,6 @@ summary(sfit,robust = TRUE)
 We can see the whole posterior distribution and make some diagnostics
 
 ```{r}
-<<<<<<< HEAD
 post = as.data.frame(extract(sfit$stanfit,"phi", permuted = TRUE) )
   color_scheme_set("viridis")
   p1 = mcmc_trace(post,  pars = "phi",
@@ -109,10 +94,6 @@ post = as.data.frame(extract(sfit$stanfit,"phi", permuted = TRUE) )
   p3 = mcmc_acf(post, pars = "phi", lags = 10,)+theme_minimal()
   grid.arrange(p1,p2,p3,nrow = 2,layout_matrix = matrix(c(1,3,2,3),ncol=2,byrow=TRUE))
 
-=======
-x = residuals(sfit)
-plot(ts(x))
->>>>>>> s3 methods corrected
 ```
 
 
@@ -128,9 +109,7 @@ mc
 The residual values of the varstan object is
 
 ```{r}
-fit = get_rstan(sfit)
-post = as.data.frame(extract(fit,"residual", permuted = TRUE) )
-residuals = apply(post,2,median)
+resid = residuals(sfit)
 ```
 
 
@@ -142,26 +121,6 @@ summary(mc$residuals)
 
 The posterior median residual statistics of the bayesian model are:
 ```{r}
-summary(residuals)
+summary(resid)
 ```
-
-
-Plotting the fitted and credible intervals
-
-```{r}
-post = as.data.frame(extract(fit,"fit", permuted = TRUE) )
-fitted = as.data.frame(t(apply(post,2,quantile,probs = c(0.01,0.5,0.99))))
-names(fitted) = c("y1","yfit","y99")
-fitted$time = 1:dim(fitted)[1]
-fitted$y = as.numeric(y) 
-row.names(fitted) = NULL
-
-ggplot(fitted,aes(x = time,y = y))+geom_line()+
-  geom_ribbon(aes(ymin = y1, ymax = y99),alpha = 0.6,fill = "blue",na.rm = TRUE)+
-  theme_classic()
-
-```
-
-
-
 
