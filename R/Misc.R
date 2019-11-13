@@ -424,5 +424,3 @@ get_df = function(fit,model,robust,...){
 get_residuals = function(model,fit,robust,...){
   UseMethod("get_residuals")
 }
-=======
->>>>>>> s3 methods corrected
