@@ -42,7 +42,6 @@ export(extract_stan)
 export(fit_values)
 export(garch)
 export(get_df)
->>>>>>> s3 methods corrected
 export(get_prior)
 export(get_rstan)
 export(is.arima)
