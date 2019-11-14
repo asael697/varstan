@@ -56,7 +56,7 @@ is.varstan = function(obj){
 #'
 print.varstan = function(obj){
   if(is.varstan(obj)){
-    print(summary.varstan(obj))
+    print(summary_varstan(obj))
   }
   else{
     print("The current object is not a varstan object")

@@ -3,7 +3,6 @@
 S3method(fit_values,varstan)
 S3method(print,varstan)
 S3method(residuals,varstan)
-S3method(summary,varstan)
 export(arima)
 export(extract_stan)
 export(fit_values)

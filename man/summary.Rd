@@ -2,10 +2,27 @@
 % Please edit documentation in R/summary.R
 \name{summary}
 \alias{summary}
-\title{Declare the method}
+\title{Summary of  a varstan object}
 \usage{
-summary(obj, robust, conf, ...)
+summary(obj)
+}
+\arguments{
+\item{obj:}{a varstan object}
+
+\item{robust:}{a boolean for obtain the robust estimation}
+
+\item{conf:}{a value between 0 and 1 with the desired probability in the
+credible intervals}
+}
+\value{
+a list with the components
+\itemize{
+ \item summary with all the important fitted parameters
+}
 }
 \description{
-Declare the method
+Summary of the model estimates in a varstan object
+}
+\author{
+Asael Alonzo Matamoros
 }

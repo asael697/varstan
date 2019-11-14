@@ -2,14 +2,6 @@
 # Summary functions in varstan
 ##################################################################################
 
-#' Declare the method
-#'
-#' @export
-#'
-summary <- function(obj,robust,conf, ...) {
-  UseMethod("summary")
-}
-
 #' Summary of  a varstan object
 #'
 #' Summary of the model estimates in a varstan object
@@ -31,7 +23,7 @@ summary <- function(obj,robust,conf, ...) {
 #'
 #' @export
 #'
-summary.varstan = function(obj,robust = FALSE,conf = 0.975,...){
+summary_varstan = function(obj,robust = FALSE,conf = 0.975,...){
   if(is.varstan(obj)){
 
     if(is.arima(obj$model)) resume = summary_arima(model=obj$model,fit = obj$stanfit,robust,conf)
