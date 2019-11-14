@@ -116,7 +116,7 @@ transformed parameters {
     Lsigma[i] = cholesky_decompose(sigma[i]);
     vsigma[i] = vech(d,m,sigma[i]);
     // mgarch estimation
-     if(h > 0) for(j in 1:h) mu[i] += vsigma[i-j]*mgarch[i];
+     if(h > 0) for(j in 1:h) if(i > j) mu[i] += vsigma[i-j]*mgarch[i];
   }
 }
 model{
