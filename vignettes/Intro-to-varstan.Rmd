@@ -75,7 +75,7 @@ sfit = varstan(model1,chains = 1,iter = 2000)
 
 
 ```{r}
-summary(sfit,robust= TRUE)
+summary_varstan(sfit,robust= TRUE)
 ```
 
 
