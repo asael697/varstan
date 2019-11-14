@@ -122,8 +122,9 @@ point_estimate_varma = function(model,fit,robust = FALSE,...){
     l1$mgarch = vector_to_matrix(get_lag_varma("mgarch",fit,model,robust = FALSE),d = model$d,p = model$h)
   }
   if(model$genT){
-    if(robust) pe = apply(post$v,2,median)
-    else pe = apply(post$v,2,mean)
+    post = data.frame(rstan::extract(fit,"v", permuted = TRUE))
+    if(robust) pe = apply(post,2,median)
+    else pe = apply(post,2,mean)
     l1$v = pe
   }
   return(l1)
