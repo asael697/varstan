@@ -101,7 +101,7 @@ fit_varma = function(model,
                      adapt.delta = 0.90,...){
   if(is.varma(model)){
 
-    pars = get_params_varma()$exclude
+    pars = get_params_varma(model)$exclude
 
     if(model$genT == FALSE){
 
