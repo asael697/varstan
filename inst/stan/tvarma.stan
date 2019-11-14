@@ -23,6 +23,9 @@ real Jpv(real v){
     y = (v/(v+3))*y;
     return sqrt(y);
   }
+row_vector multi(row_vector x,matrix y){
+   return x*y;
+ }
 }
 data {
   int<lower=0> n;         // number of data items
@@ -57,7 +60,7 @@ parameters{
   vector<lower=0>[d] vsigma0;       // *arch constant scale
   matrix[d,d] alpha[s];             // arch coefficients
   matrix[d,d] beta[k];              // garch coefficients
-  matrix[m,d] mgarch[h];            // MGARCH coefficients
+  matrix[m,d] mgarch;               // MGARCH coefficients
   vector<lower=1>[d] v;             // Degree fredom
   matrix<lower=0>[n,d] lambda1;     // *freedom degrees Sigma
 }
@@ -122,7 +125,7 @@ transformed parameters {
     Lsigma[i]=cholesky_decompose(quad_form_diag(sigma[i],vecpow(0.5,lambda1[i],d)));
     vsigma[i] = vech(d,m,sigma[i]);
     // mgarch estimation
-     if(h > 0) for(j in 1:h) if(i > j) mu[i] += vsigma[i-j]*mgarch[i];
+     if(h > 0) mu[i] = mu[i] + multi(vsigma[i],mgarch);
   }
 }
 model{

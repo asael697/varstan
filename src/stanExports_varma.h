@@ -434,8 +434,7 @@ public:
             current_statement_begin__ = 59;
             validate_non_negative_index("mgarch", "m", m);
             validate_non_negative_index("mgarch", "d", d);
-            validate_non_negative_index("mgarch", "h", h);
-            num_params_r__ += ((m * d) * h);
+            num_params_r__ += (m * d);
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
             // Next line prevents compiler griping about no return
@@ -627,26 +626,19 @@ public:
         pos__ = 0U;
         validate_non_negative_index("mgarch", "m", m);
         validate_non_negative_index("mgarch", "d", d);
-        validate_non_negative_index("mgarch", "h", h);
-        context__.validate_dims("parameter initialization", "mgarch", "matrix_d", context__.to_vec(h,m,d));
-        std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > mgarch(h, Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>(m, d));
+        context__.validate_dims("parameter initialization", "mgarch", "matrix_d", context__.to_vec(m,d));
+        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> mgarch(m, d);
         size_t mgarch_j_2_max__ = d;
         size_t mgarch_j_1_max__ = m;
-        size_t mgarch_k_0_max__ = h;
         for (size_t j_2__ = 0; j_2__ < mgarch_j_2_max__; ++j_2__) {
             for (size_t j_1__ = 0; j_1__ < mgarch_j_1_max__; ++j_1__) {
-                for (size_t k_0__ = 0; k_0__ < mgarch_k_0_max__; ++k_0__) {
-                    mgarch[k_0__](j_1__, j_2__) = vals_r__[pos__++];
-                }
+                mgarch(j_1__, j_2__) = vals_r__[pos__++];
             }
         }
-        size_t mgarch_i_0_max__ = h;
-        for (size_t i_0__ = 0; i_0__ < mgarch_i_0_max__; ++i_0__) {
-            try {
-                writer__.matrix_unconstrain(mgarch[i_0__]);
-            } catch (const std::exception& e) {
-                stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable mgarch: ") + e.what()), current_statement_begin__, prog_reader__());
-            }
+        try {
+            writer__.matrix_unconstrain(mgarch);
+        } catch (const std::exception& e) {
+            stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable mgarch: ") + e.what()), current_statement_begin__, prog_reader__());
         }
         params_r__ = writer__.data_r();
         params_i__ = writer__.data_i();
@@ -735,15 +727,12 @@ public:
                     beta.push_back(in__.matrix_constrain(d, d));
             }
             current_statement_begin__ = 59;
-            std::vector<Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, Eigen::Dynamic> > mgarch;
-            size_t mgarch_d_0_max__ = h;
-            mgarch.reserve(mgarch_d_0_max__);
-            for (size_t d_0__ = 0; d_0__ < mgarch_d_0_max__; ++d_0__) {
-                if (jacobian__)
-                    mgarch.push_back(in__.matrix_constrain(m, d, lp__));
-                else
-                    mgarch.push_back(in__.matrix_constrain(m, d));
-            }
+            Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, Eigen::Dynamic> mgarch;
+            (void) mgarch;  // dummy to suppress unused var warning
+            if (jacobian__)
+                mgarch = in__.matrix_constrain(m, d, lp__);
+            else
+                mgarch = in__.matrix_constrain(m, d);
             // transformed parameters
             current_statement_begin__ = 66;
             validate_non_negative_index("phi", "d", d);
@@ -925,13 +914,10 @@ public:
                 current_statement_begin__ = 119;
                 if (as_bool(logical_gt(h, 0))) {
                     current_statement_begin__ = 119;
-                    for (int j = 1; j <= h; ++j) {
-                        current_statement_begin__ = 119;
-                        stan::model::assign(mu, 
-                                    stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                    add(stan::model::rvalue(mu, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "mu"), multiply(get_base1(vsigma, (i - j), "vsigma", 1), get_base1(mgarch, i, "mgarch", 1))), 
-                                    "assigning variable mu");
-                    }
+                    stan::model::assign(mu, 
+                                stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
+                                add(stan::model::rvalue(mu, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "mu"), multiply(get_base1(vsigma, i, "vsigma", 1), mgarch)), 
+                                "assigning variable mu");
                 }
             }
             // validate transformed parameters
@@ -1246,7 +1232,6 @@ public:
         dims__.push_back(d);
         dimss__.push_back(dims__);
         dims__.resize(0);
-        dims__.push_back(h);
         dims__.push_back(m);
         dims__.push_back(d);
         dimss__.push_back(dims__);
@@ -1400,20 +1385,12 @@ public:
                 }
             }
         }
-        std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > mgarch;
-        size_t mgarch_d_0_max__ = h;
-        mgarch.reserve(mgarch_d_0_max__);
-        for (size_t d_0__ = 0; d_0__ < mgarch_d_0_max__; ++d_0__) {
-            mgarch.push_back(in__.matrix_constrain(m, d));
-        }
+        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> mgarch = in__.matrix_constrain(m, d);
         size_t mgarch_j_2_max__ = d;
         size_t mgarch_j_1_max__ = m;
-        size_t mgarch_k_0_max__ = h;
         for (size_t j_2__ = 0; j_2__ < mgarch_j_2_max__; ++j_2__) {
             for (size_t j_1__ = 0; j_1__ < mgarch_j_1_max__; ++j_1__) {
-                for (size_t k_0__ = 0; k_0__ < mgarch_k_0_max__; ++k_0__) {
-                    vars__.push_back(mgarch[k_0__](j_1__, j_2__));
-                }
+                vars__.push_back(mgarch(j_1__, j_2__));
             }
         }
         double lp__ = 0.0;
@@ -1604,13 +1581,10 @@ public:
                 current_statement_begin__ = 119;
                 if (as_bool(logical_gt(h, 0))) {
                     current_statement_begin__ = 119;
-                    for (int j = 1; j <= h; ++j) {
-                        current_statement_begin__ = 119;
-                        stan::model::assign(mu, 
-                                    stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                    add(stan::model::rvalue(mu, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "mu"), multiply(get_base1(vsigma, (i - j), "vsigma", 1), get_base1(mgarch, i, "mgarch", 1))), 
-                                    "assigning variable mu");
-                    }
+                    stan::model::assign(mu, 
+                                stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
+                                add(stan::model::rvalue(mu, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "mu"), multiply(get_base1(vsigma, i, "vsigma", 1), mgarch)), 
+                                "assigning variable mu");
                 }
             }
             if (!include_gqs__ && !include_tparams__) return;
@@ -1868,14 +1842,11 @@ public:
         }
         size_t mgarch_j_2_max__ = d;
         size_t mgarch_j_1_max__ = m;
-        size_t mgarch_k_0_max__ = h;
         for (size_t j_2__ = 0; j_2__ < mgarch_j_2_max__; ++j_2__) {
             for (size_t j_1__ = 0; j_1__ < mgarch_j_1_max__; ++j_1__) {
-                for (size_t k_0__ = 0; k_0__ < mgarch_k_0_max__; ++k_0__) {
-                    param_name_stream__.str(std::string());
-                    param_name_stream__ << "mgarch" << '.' << k_0__ + 1 << '.' << j_1__ + 1 << '.' << j_2__ + 1;
-                    param_names__.push_back(param_name_stream__.str());
-                }
+                param_name_stream__.str(std::string());
+                param_name_stream__ << "mgarch" << '.' << j_1__ + 1 << '.' << j_2__ + 1;
+                param_names__.push_back(param_name_stream__.str());
             }
         }
         if (!include_gqs__ && !include_tparams__) return;
@@ -2075,14 +2046,11 @@ public:
         }
         size_t mgarch_j_2_max__ = d;
         size_t mgarch_j_1_max__ = m;
-        size_t mgarch_k_0_max__ = h;
         for (size_t j_2__ = 0; j_2__ < mgarch_j_2_max__; ++j_2__) {
             for (size_t j_1__ = 0; j_1__ < mgarch_j_1_max__; ++j_1__) {
-                for (size_t k_0__ = 0; k_0__ < mgarch_k_0_max__; ++k_0__) {
-                    param_name_stream__.str(std::string());
-                    param_name_stream__ << "mgarch" << '.' << k_0__ + 1 << '.' << j_1__ + 1 << '.' << j_2__ + 1;
-                    param_names__.push_back(param_name_stream__.str());
-                }
+                param_name_stream__.str(std::string());
+                param_name_stream__ << "mgarch" << '.' << j_1__ + 1 << '.' << j_2__ + 1;
+                param_names__.push_back(param_name_stream__.str());
             }
         }
         if (!include_gqs__ && !include_tparams__) return;
