@@ -116,11 +116,11 @@ transformed parameters {
     if(q > 0) for(j in 1:q) if(i > j) mu[i] += epsilon[i-j]*theta[j];
     epsilon[i] = y[i] - mu[i];
     //      Bekk Iteration
-    if(i > k){
+    if(s >= k){
        // arch estimation
-      if(s > 0) for(j in 1:s) sigma[i] += quad_form(epsilon[i-j]'*epsilon[i-j],alpha[j]);
+      if(s > 0) for(j in 1:s)if(i>j) sigma[i] += quad_form(epsilon[i-j]'*epsilon[i-j],alpha[j]);
        // garch estimation
-      if(k > 0) for(j in 1:k) sigma[i] += quad_form(sigma[i-j],beta[j]);
+      if(k > 0) for(j in 1:k)if(i>j) sigma[i] += quad_form(sigma[i-j],beta[j]);
     }
     Lsigma[i]=cholesky_decompose(quad_form_diag(sigma[i],vecpow(0.5,lambda1[i],d)));
     vsigma[i] = vech(d,m,sigma[i]);

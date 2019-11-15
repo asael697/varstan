@@ -148,11 +148,11 @@ transformed parameters{
     if(q > 0) for(j in 1:q) if(i > j) mu[i] += epsilon[i-j]*theta[j];
     epsilon[i] = y_dif[i] - mu[i];
     // Garch Iteration
-    if(i > k){
+    if(s >= k){
        // arch estimation
-      if(s > 0) for(j in 1:s) sigma[i] += alpha[j]*pow(epsilon[i-j],2);
+      if(s > 0) for(j in 1:s) if(i > j) sigma[i] += alpha[j]*pow(epsilon[i-j],2);
        // garch estimation
-      if(k > 0) for(j in 1:k) sigma[i] += beta[j]*pow(sigma[i-j], 2);
+      if(k > 0) for(j in 1:k)if(i > j)  sigma[i] += beta[j]*pow(sigma[i-j], 2);
     }
     sigma[i] = sqrt(sigma[i]);
      // mgarch estimation
