@@ -877,16 +877,19 @@ public:
                             subtract(get_base1(y, i, "y", 1), get_base1(mu, i, "mu", 1)), 
                             "assigning variable epsilon");
                 current_statement_begin__ = 110;
-                if (as_bool(logical_gt(i, k))) {
+                if (as_bool(logical_gte(s, k))) {
                     current_statement_begin__ = 112;
                     if (as_bool(logical_gt(s, 0))) {
                         current_statement_begin__ = 112;
                         for (int j = 1; j <= s; ++j) {
                             current_statement_begin__ = 112;
-                            stan::model::assign(sigma, 
-                                        stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                        add(stan::model::rvalue(sigma, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "sigma"), quad_form(multiply(transpose(get_base1(epsilon, (i - j), "epsilon", 1)), get_base1(epsilon, (i - j), "epsilon", 1)), get_base1(alpha, j, "alpha", 1))), 
-                                        "assigning variable sigma");
+                            if (as_bool(logical_gt(i, s))) {
+                                current_statement_begin__ = 112;
+                                stan::model::assign(sigma, 
+                                            stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
+                                            add(stan::model::rvalue(sigma, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "sigma"), quad_form(multiply(transpose(get_base1(epsilon, (i - j), "epsilon", 1)), get_base1(epsilon, (i - j), "epsilon", 1)), get_base1(alpha, j, "alpha", 1))), 
+                                            "assigning variable sigma");
+                            }
                         }
                     }
                     current_statement_begin__ = 114;
@@ -894,10 +897,13 @@ public:
                         current_statement_begin__ = 114;
                         for (int j = 1; j <= k; ++j) {
                             current_statement_begin__ = 114;
-                            stan::model::assign(sigma, 
-                                        stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                        add(stan::model::rvalue(sigma, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "sigma"), quad_form(get_base1(sigma, (i - j), "sigma", 1), get_base1(beta, j, "beta", 1))), 
-                                        "assigning variable sigma");
+                            if (as_bool(logical_gt(i, k))) {
+                                current_statement_begin__ = 114;
+                                stan::model::assign(sigma, 
+                                            stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
+                                            add(stan::model::rvalue(sigma, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "sigma"), quad_form(get_base1(sigma, (i - j), "sigma", 1), get_base1(beta, j, "beta", 1))), 
+                                            "assigning variable sigma");
+                            }
                         }
                     }
                 }
@@ -1544,16 +1550,19 @@ public:
                             subtract(get_base1(y, i, "y", 1), get_base1(mu, i, "mu", 1)), 
                             "assigning variable epsilon");
                 current_statement_begin__ = 110;
-                if (as_bool(logical_gt(i, k))) {
+                if (as_bool(logical_gte(s, k))) {
                     current_statement_begin__ = 112;
                     if (as_bool(logical_gt(s, 0))) {
                         current_statement_begin__ = 112;
                         for (int j = 1; j <= s; ++j) {
                             current_statement_begin__ = 112;
-                            stan::model::assign(sigma, 
-                                        stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                        add(stan::model::rvalue(sigma, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "sigma"), quad_form(multiply(transpose(get_base1(epsilon, (i - j), "epsilon", 1)), get_base1(epsilon, (i - j), "epsilon", 1)), get_base1(alpha, j, "alpha", 1))), 
-                                        "assigning variable sigma");
+                            if (as_bool(logical_gt(i, s))) {
+                                current_statement_begin__ = 112;
+                                stan::model::assign(sigma, 
+                                            stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
+                                            add(stan::model::rvalue(sigma, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "sigma"), quad_form(multiply(transpose(get_base1(epsilon, (i - j), "epsilon", 1)), get_base1(epsilon, (i - j), "epsilon", 1)), get_base1(alpha, j, "alpha", 1))), 
+                                            "assigning variable sigma");
+                            }
                         }
                     }
                     current_statement_begin__ = 114;
@@ -1561,10 +1570,13 @@ public:
                         current_statement_begin__ = 114;
                         for (int j = 1; j <= k; ++j) {
                             current_statement_begin__ = 114;
-                            stan::model::assign(sigma, 
-                                        stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                        add(stan::model::rvalue(sigma, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "sigma"), quad_form(get_base1(sigma, (i - j), "sigma", 1), get_base1(beta, j, "beta", 1))), 
-                                        "assigning variable sigma");
+                            if (as_bool(logical_gt(i, k))) {
+                                current_statement_begin__ = 114;
+                                stan::model::assign(sigma, 
+                                            stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
+                                            add(stan::model::rvalue(sigma, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "sigma"), quad_form(get_base1(sigma, (i - j), "sigma", 1), get_base1(beta, j, "beta", 1))), 
+                                            "assigning variable sigma");
+                            }
                         }
                     }
                 }
