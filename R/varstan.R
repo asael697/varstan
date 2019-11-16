@@ -117,7 +117,7 @@ get_df = function(obj,robust = FALSE,...){
 #'
 extract_stan = function(obj,pars,permuted = TRUE, inc_warmup = FALSE,include = TRUE){
   if(is.varstan(obj) ){
-    chains = rstan::extract(obj$stanfit,permuted,inc_warmup,include)
+    chains = rstan::extract(obj$stanfit,pars,permuted,inc_warmup,include)
   }
   else{
     chains = NULL

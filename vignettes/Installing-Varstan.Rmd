@@ -118,7 +118,8 @@ Sys.setenv(PATH = paste("C:/Rtools/bin", Sys.getenv("PATH"), sep=";"))
 Sys.setenv(PATH = paste("C:\\Rtools\\mingw_64\\bin", Sys.getenv("PATH"), sep=";"))
 Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
 
-install_github("asael697/varstan", upgrade='never',INSTALL_opts = "--no-multiarch", dependencies = c("Depends", "Imports"))
+install_github("asael697/varstan", upgrade='never',INSTALL_opts = "--no-multiarch", 
+               dependencies = c("Depends", "Imports"))
 ```
 
 

@@ -134,7 +134,7 @@ get_params_varma = function(dat,...){
 get_df_varma = function(fit,model,robust = FALSE,...){
   if(model$genT == TRUE){
     post = as.data.frame(rstan::extract(fit,"lambda", permuted = TRUE) )
-    if(robust) sum1 = t(matrix(apply(post,2,median),nrow = d1,byrow = TRUE))
+    if(robust) sum1 = t(matrix(apply(post,2,median),nrow = model$d,byrow = TRUE))
     else sum1 = t(matrix(apply(post,2,mean),nrow = model$d,byrow = TRUE))
     return(sum1)
 }

@@ -1,5 +1,5 @@
 ---
-title: "arima-models"
+title: "Arima models"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{arima-models}
@@ -14,6 +14,107 @@ knitr::opts_chunk$set(
 )
 ```
 
+
 ```{r setup}
 library(varstan)
 ```
+
+In this section  an implementation of the classical arima model of box and Jenkins is presented. This is an integrated autoregressive average mean model. An stochastic time series model $Y = \{Y_{i}\}_{i}^{n}$ follows an arima model ($Y_i \sim arima(p,d,q)$) if it follows the next structure:
+
+$$Y_{i} = \mu_0 +\sum_{k=1}^{p}Y_{i-k}\phi_k - \sum_{k=1}^{q}\epsilon_{i-k}\theta_k$$
+$$\epsilon_i \sim N(0,\sigma_0^2) $$
+
+An arima model can be implemented using the arima object constructor in varstan as follows:
+
+```{r}
+set.seed(294)
+y = arima.sim(n = 700, list(ar =0.35, ma = 0.29),sd = sqrt(0.1796))
+
+model1 = arima(y,p = 1,d = 1,q = 2)
+
+```
+
+Where y is the time series to be analyzed, p are the lags for the ar components, q the lags for the ma components, and d are the number of necessary differences. By default, it builts the mdel with default normal priors, using the report function you can visualize the current model status
+
+```{r}
+report(model1)
+```
+
+## Changing the default priors
+
+For arma components you can choose between 3 different types of priors:
+
+ + Normal
+ + beta
+ + Uniform
+
+The normal priors are used a default, be aware of using small variance prioris cuase the arma models tend to be non-stationary (explosive) when the ar components are greater than one. If a beta prior is used then a beta prior in [-1,1] is proposed. 
+
+$$\phi_i \sim beta(\alpha,\beta), \text{ } \theta \in [-1,1]  $$
+
+This priors are specially recomended when an ar(1) process is used,in  different from uniform priors ($\phi_i \sim U(-1,1)$), the beta distribution generates proper posterior distributions.
+
+```{r}
+model1 = set_prior(model1,"ar",lag = 1,par1 = 3.5,par2 = 3.5,dist = "beta")
+get_prior(model1,type = "ar")
+```
+
+Changing the ma parameters
+
+```{r}
+model1 = set_prior(model1,type = "ma",dist = "uniform",lag = 1)
+model1 = set_prior(model1,type = "ma",lag = 2,par1 = 0.5,par2 =10,dist = "normal" )
+get_prior(model1,type = "ma")
+```
+
+Aditionally you can set all your prior distributions of lagged parameters (ma, ar) at the same time, if you set $lags = 0$ then all lag parameters are changed
+
+```{r}
+model1 = set_prior(model1,type = "ma",par1 = 0,par2 = 0.5,dist = "normal",lag = 0)
+get_prior(model1,type = "ma")
+```
+
+
+### $\mu_0$ parameter
+
+For the loaction parameter a normal, cauchy or t-student distributions are avaliable. A prior believe for the time series is that it is centered at zero($\mu_0 =0$) in case of model desviation, change the location of the $\mu_0$ prior.
+
+```{r}
+model1 =set_prior(model1,"mu0",par1 = 2,par2 = 10,df = 7,dist ="student" )
+get_prior(model1,type = "mu0")
+```
+
+### $\sigma_0$ parameter
+
+The scale parameter by default uses a  half t distribution, in the suposition of big scales non heteroscedastic time series, you can change the default prior to one of the follow distributions
+
+ + half normal
+ + half t
+ + half cauchy
+ + gamma
+ + $\chi^2$
+ 
+```{r}
+model1 = set_prior(model1,"sigma0",df = 20,dist = "chi_square")
+get_prior(model1,type = "sigma0")
+```
+
+### Volatility presence
+
+In a supose of heterocedasticity you can add a mgarch structure to your model
+
+
+```{r}
+model1 = arima(y,p = 1,d = 0,q = 1,sd = mgarch(s = 1,k = 1,h=1))
+```
+
+$$Y_{i} = \mu_0 +\sum_{k=1}^{p}Y_{i-k}\phi_k - \sum_{k=1}^{q}\epsilon_{i-k}\theta_k +\sum_{k=1}^h \delta_{k} \sigma_{i-k}$$
+$$\sigma_i^2 = \sigma_0^2 +\sum_{j=1}^{s}\alpha_j \epsilon^2_{i-j} +\sum_{j=1}^{k}\beta_j \sigma^2_{i-j}$$
+$$\epsilon_i \sim N(0,\sigma_i^2) $$
+
+You can visualize the model structure using the report function
+```{r}
+report(model1)
+```
+
+You can change the mgarch priors just like in the garch model.

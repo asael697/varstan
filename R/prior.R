@@ -139,7 +139,7 @@ get_prior_mu0 = function(dat){
 #' @author  Asael Alonzo Matamoros
 #'
 set_prior_sigma0 = function(dat,par1,par2,dist = "normal",df){
-  if(check_dist(dist,par ="sigma")){
+  if(check_dist(dist,par ="sigma0")){
     if(identical(dist,"normal") )    dat$prior_sigma0 = c(check_loc(par1),check_scl(par2),1,1)
     if(identical(dist,"student"))    dat$prior_sigma0 = c(check_loc(par1),check_scl(par2),check_df(df),4)
     if(identical(dist,"cauchy"))     dat$prior_sigma0 = c(check_loc(par1),check_scl(par2),1,5)

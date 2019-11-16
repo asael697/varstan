@@ -286,7 +286,7 @@ check_dist <- function(x,par) {
     if(identical(x,"student")) y = TRUE
     if(identical(x,"cauchy"))  y = TRUE
   }
-  if(par == "sigma"){
+  if(par == "sigma0"){
     if(identical(x,"normal"))      y = TRUE
     if(identical(x,"student"))     y = TRUE
     if(identical(x,"cauchy"))      y = TRUE
