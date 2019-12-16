@@ -51,12 +51,13 @@ is.varstan = function(obj){
   if(class(obj) == "varstan") y = TRUE
   return (y)
 }
-#' Print a varstan object
+#' @method print varstan
+#' @export print
 #' @export
 #'
 print.varstan = function(obj){
   if(is.varstan(obj)){
-    print(summary_varstan(obj))
+    print(summary(obj))
   }
   else{
     print("The current object is not a varstan object")

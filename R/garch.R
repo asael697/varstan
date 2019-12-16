@@ -5,9 +5,9 @@
 #' The function returns  a list with the data for running stan() function of
 #'  rstan package
 #'
-#' @usage arima(ts,s,k)
+#' @usage garch(ts,s,k)
 #'
-#' @param ts an multivariate time series
+#' @param ts an univariateivariate time series
 #' @param s an integer with the order of the arch(s) part
 #' @param k an integer with the order of the garch(k) part
 #' @param h an integer with the order of the mean part
@@ -30,7 +30,7 @@
 #'  \item prior_ma: a matrix with the hyper-parameters for the ma  coefficients
 #' }
 #'
-garch = function(ts,s = 1,k = 1, h = 0){
+garch = function(ts,s = 1,k = 1, h = 0,mean = arma(s=0,k=0),genT = FALSE,aysm = FALSE){
   n = length(as.numeric(ts))
   y = as.numeric(ts)
   m1 = list(n = n,
@@ -43,7 +43,21 @@ garch = function(ts,s = 1,k = 1, h = 0){
   m1$prior_arch    = matrix(rep(c(3,3,1,2),s),ncol = 4,byrow = TRUE)
   m1$prior_garch   = matrix(rep(c(3,3,1,2),k),ncol = 4,byrow = TRUE)
   m1$prior_mgarch  = matrix(rep(c(3,3,1,2),h),ncol = 4,byrow = TRUE)
-
+  # arma representation
+  if( !is.null(mean) ){
+    m1$p = mean$arma_order[1]
+    m1$q = mean$arma_order[2]
+    m1$prior_ar =  mean$prior_ar
+    m1$prior_ma =  mean$prior_ma
+    m1$mean = "arma"
+  }
+  else   m1$mean = "none"
+  # Generalized t distribution
+  if(genT == TRUE){
+    m1$genT = TRUE
+    m1$prior_dfv = c(2,0.1,1,9)
+  }
+  else m1$genT = FALSE
   attr(m1,"class") = "garch"
   return(m1)
 }
@@ -57,9 +71,31 @@ is.garch = function(obj){
   if(class(obj) == "garch") y = TRUE
   return (y)
 }
-#' Excluded parameters in a  Garch model
+#' Adds an arma(p,q) object to a garch model
+#'
+#' Adds an arma(p,q) object to a garch model
+#'
+#' The function returns  a list with the data for running stan() function of
+#'  rstan package
+#'
+#' @usage arma(p,q)
+#'
+#' @param p an integer with the order of the ar(p) part
+#' @param q an integer with the order of the ma(q) part
+#'
+#' @author  Asael Alonzo Matamoros
 #'
 #' @export
+#'
+arma = function(p=1,q=1){
+  ml = list()
+  ml$arma_order = c(no_negative_check(p),no_negative_check(q))
+  ml$prior_ar   = matrix(rep(c(0,10,1,1),p),ncol = 4,byrow = TRUE)
+  ml$prior_ma   = matrix(rep(c(0,10,1,1),q),ncol = 4,byrow = TRUE)
+  ml$mean = "arma"
+  return(ml)
+}
+#' Excluded parameters in a  Garch model
 #'
 #'
 get_params_garch = function(dat,...){
@@ -67,8 +103,23 @@ get_params_garch = function(dat,...){
     if(dat$s > 0) include = c(include,"alpha")
     if(dat$k > 0) include = c(include,"beta")
     if(dat$h > 0) include = c(include,"mgarch")
+    if(dat$p > 0) include = c(include,"phi")
+    if(dat$q > 0) include = c(include,"theta")
+    if(dat$genT == TRUE) include = c(include,"v")
 
-  exclude = c("mu","epsilon","sigma")
-  pars = list(include = c(include,"loglik"),exclude = exclude)
+    exclude = c("phi0","theta0")
+    pars = list(include = c(include,"loglik"),exclude = exclude)
   return(pars)
+}
+#' @method print garch
+#' @export print
+#' @export
+#'
+print.garch = function(obj){
+  if(is.garch(obj)){
+    print(report(obj))
+  }
+  else{
+    print("The current object is not a garch model")
+  }
 }

@@ -58,14 +58,30 @@ fit_arima = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta =
 #'
 fit_garch = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta = 0.90,...){
   if(is.garch(model)){
-    stanfit = rstan::sampling(stanmodels$garch,
-                              data = model,
-                              chains = chains,
-                              iter = iter,
-                              warmup = warmup,
-                              control = list(adapt_delta = adapt.delta),
-                              par = get_params_garch(model)$exclude,
-                              include = FALSE)
+    pars = get_params_garch(model)$exclude
+
+    if(model$genT == FALSE){
+
+      stanfit = rstan::sampling(stanmodels$garch,
+                                data = model,
+                                chains = chains,
+                                iter = iter,
+                                warmup = warmup,
+                                control = list(adapt_delta = adapt.delta),
+                                par = pars,
+                                include = FALSE)
+    }
+    else{
+
+      stanfit = rstan::sampling(stanmodels$tgarch,
+                                data = model,
+                                chains = chains,
+                                iter = iter,
+                                warmup = warmup,
+                                control = list(adapt_delta = adapt.delta),
+                                par = pars,
+                                include = FALSE)
+    }
   }
   else{
     stanfit = NULL

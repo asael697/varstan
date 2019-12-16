@@ -55,7 +55,7 @@ varma = function(ts,p = 1,q  = 1,sd = mbekk(s=0,k=0,h=0),genT = FALSE){
   else   m1$sd = "none"
   if(genT == TRUE){
     m1$genT = TRUE
-    m1$prior_dfv = c(2,0.1,1,6)
+    m1$prior_dfv = c(2,0.1,1,9)
   }
   else m1$genT = FALSE
   attr(m1,"class") = "varma"
@@ -110,7 +110,7 @@ get_params_varma = function(dat,...){
     if(dat$genT == TRUE) include = c(include,"v")
   }
   exclude = c("phi0","theta0","Msigma0","vsigma0",
-              "mu","epsilon","sigma1","sigma","Lsigma","vsigma","lambda1")
+              "sigma1","Lsigma","vsigma","lambda1")
   pars = list(include = c(include,"loglik"),exclude = exclude)
   return(pars)
 }
@@ -142,7 +142,7 @@ get_df_varma = function(fit,model,robust = FALSE,...){
 }
 #' Get the lag parameters of a varma model
 #'
-#' get the degree freedom values of a varma(p,q) model  in STAN
+#' get the degree freedom values of a tvarma(p,q) model  in STAN
 #'
 #' The function returns a data.frame object with the degree freedom values
 #'
@@ -167,4 +167,16 @@ get_lag_varma = function(type,fit,model,robust = FALSE,...){
     return(pe)
   }
   else cat(Type,"is not a fitted parameter")
+}
+#' @method print varma
+#' @export print
+#' @export
+#'
+print.varma = function(obj){
+  if(is.varma(obj)){
+    print(report(obj))
+  }
+  else{
+    print("The current object is not a varma model")
+  }
 }

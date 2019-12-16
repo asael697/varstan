@@ -143,8 +143,9 @@ set_prior_sigma0 = function(dat,par1,par2,dist = "normal",df){
     if(identical(dist,"normal") )    dat$prior_sigma0 = c(check_loc(par1),check_scl(par2),1,1)
     if(identical(dist,"student"))    dat$prior_sigma0 = c(check_loc(par1),check_scl(par2),check_df(df),4)
     if(identical(dist,"cauchy"))     dat$prior_sigma0 = c(check_loc(par1),check_scl(par2),1,5)
-    if(identical(dist,"gamma"))      dat$prior_sigma0 = c(check_form(par1),check_form(par2),1,6)
-    if(identical(dist,"chi_square")) dat$prior_sigma0 = c(0,0,check_df(df),7)
+    if(identical(dist,"inv_gamma"))      dat$prior_sigma0 = c(check_form(par1),check_form(par2),1,6)
+    if(identical(dist,"inv_chi_square")) dat$prior_sigma0 = c(0,0,check_df(df),7)
+    if(identical(dist,"gamma"))      dat$prior_sigma0 = c(check_form(par1),check_form(par2),1,9)
   }
   else{
     cat(family,"is not a family defined for sigma0, a default half t-student prior is used")
@@ -167,8 +168,9 @@ get_prior_sigma0 = function(dat){
     if(dat$prior_sigma0[4]==1)cat("sigma0 ~ half_normal","(loc =", dat$prior_sigma0[1],", scl =", dat$prior_sigma0[2],")\n")
     if(dat$prior_sigma0[4]==4)cat("sigma0 ~ half_t","(loc =",dat$prior_sigma0[1],",scl =", dat$prior_sigma0[2],",df =",dat$prior_sigma0[3],")\n")
     if(dat$prior_sigma0[4]==5)cat("sigma0 ~ half_cauchy","(loc =", dat$prior_sigma0[1],", scl =" ,dat$prior_sigma0[2],")\n")
-    if(dat$prior_sigma0[4]==6)cat("sigma0 ~ gamma","(form1 =", dat$prior_sigma0[1],", form2 =" ,dat$prior_sigma0[2],")\n")
-    if(dat$prior_sigma0[4]==7)cat("sigma0 ~ chi_square","(df =", dat$prior_sigma0[3],")\n")
+    if(dat$prior_sigma0[4]==6)cat("sigma0 ~ inv_gamma","(form1 =", dat$prior_sigma0[1],", form2 =" ,dat$prior_sigma0[2],")\n")
+    if(dat$prior_sigma0[4]==7)cat("sigma0 ~ inv_chi_square","(df =", dat$prior_sigma0[3],")\n")
+    if(dat$prior_sigma0[4]==9)cat("sigma0 ~ gamma","(form1 =", dat$prior_sigma0[1],", form2 =" ,dat$prior_sigma0[2],")\n")
   }
   else cat(class(dat), "is not an arima model \n")
 }
@@ -195,12 +197,13 @@ get_prior_sigma0 = function(dat){
 set_prior_dfv = function(dat,par1,par2,dist = "normal",df){
   if(check_dist(dist,par ="dfv")){
     if(identical(dist,"normal") )    dat$prior_dfv = c(check_loc(par1),check_scl(par2),1,1)
-    if(identical(dist,"gamma"))      dat$prior_dfv = c(check_form(par1),check_form(par2),1,6)
+    if(identical(dist,"inv_gamma"))  dat$prior_dfv = c(check_form(par1),check_form(par2),1,6)
     if(identical(dist,"Jeffrey"))    dat$prior_dfv = c(0,1,1,8)
+    if(identical(dist,"gamma"))      dat$prior_dfv = c(check_form(par1),check_form(par2),1,9)
   }
   else{
     cat(family,"is not a family defined for dfv, a default gamma prior is used")
-    dat$prior_dfv = c(2,0.1,1,6)
+    dat$prior_dfv = c(2,0.1,1,9)
   }
   return(dat)
 }
@@ -218,8 +221,9 @@ set_prior_dfv = function(dat,par1,par2,dist = "normal",df){
 get_prior_dfv = function(dat){
   if(is.model(dat)){
     if(dat$prior_dfv[4]==1)cat("dfv ~ half_normal","(loc =", dat$prior_dfv[1],", scl =", dat$prior_dfv[2],")\n")
-    if(dat$prior_dfv[4]==6)cat("dfv ~ gamma","(form1 =", dat$prior_dfv[1],", form2 =" ,dat$prior_dfv[2],")\n")
+    if(dat$prior_dfv[4]==6)cat("dfv ~ inv_gamma","(form1 =", dat$prior_dfv[1],", form2 =" ,dat$prior_dfv[2],")\n")
     if(dat$prior_dfv[4]==8)cat("dfv ~ Jeffrey_prior(v)\n")
+    if(dat$prior_dfv[4]==9)cat("dfv ~ gamma","(form1 =", dat$prior_dfv[1],", form2 =" ,dat$prior_dfv[2],")\n")
   }
   else cat(class(dat), "is not an varma model \n")
 }

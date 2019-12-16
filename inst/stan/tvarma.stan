@@ -130,7 +130,6 @@ transformed parameters {
 }
 model{
   //      Priors  definition
-
   //  prior for \mu0
   if(prior_mu0[4] == 1) target += normal_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
   else if(prior_mu0[4] == 4) target += student_t_lpdf(mu0|prior_mu0[3],prior_mu0[1],prior_mu0[2]);
@@ -142,6 +141,7 @@ model{
   else if(prior_sigma0[4] == 5) target += cauchy_lpdf(vsigma0|prior_sigma0[1],prior_sigma0[2]);
   else if(prior_sigma0[4] == 6) target += inv_gamma_lpdf(vsigma0|prior_sigma0[1],prior_sigma0[2]);
   else if(prior_sigma0[4] == 7) target += inv_chi_square_lpdf(vsigma0|prior_sigma0[3]);
+  else if(prior_sigma0[4] == 9) target += gamma_lpdf(vsigma0|prior_sigma0[1],prior_sigma0[2]);
   //   sigma0 constant correlation Matrix
   target += lkj_corr_cholesky_lpdf(Msigma0|2.0);
 
@@ -185,8 +185,9 @@ model{
   // Prior dfv
   for(i in 1:d){
   if(prior_dfv[4] == 1) target += normal_lpdf(v[i]|prior_dfv[1],prior_dfv[2]);
-  else if(prior_dfv[4] == 6) target += gamma_lpdf(v[i]|prior_dfv[1],prior_dfv[2]);
+  else if(prior_dfv[4] == 9) target += gamma_lpdf(v[i]|prior_dfv[1],prior_dfv[2]);
   else if(prior_dfv[4] == 8) target += log(Jpv(v[i]));
+  else if(prior_dfv[4] == 6) target += inv_gamma_lpdf(v[i]|prior_dfv[1],prior_dfv[2]);
    }
   //      Likelihood
   for(i in 1:n){

@@ -95,8 +95,6 @@ mgarch = function(s=1,k=1,h=0){
 #'
 #' Excluded parameters in a arima model
 #'
-#' @export
-#'
 get_params_arima = function(dat,...){
     include = c("mu0","sigma0")
     if(dat$p > 0) include = c(include,"phi")
@@ -106,7 +104,23 @@ get_params_arima = function(dat,...){
       if(dat$k > 0) include = c(include,"beta")
       if(dat$h > 0) include = c(include,"mgarch")
     }
-    exclude = c("phi0","theta0","mu","epsilon","sigma")
+    exclude = c("phi0","theta0")
     pars = list(include = c(include,"loglik"),exclude = exclude)
   return(pars)
+}
+#' @export
+print <- function(obj, ...) {
+  UseMethod("print")
+}
+#' @method print arima
+#' @export print
+#' @export
+#'
+print.arima = function(obj){
+  if(is.arima(obj)){
+    print(report(obj))
+  }
+  else{
+    print("The current object is not an arima model")
+  }
 }

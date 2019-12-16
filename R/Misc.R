@@ -20,11 +20,11 @@
 #'
 #' @return  a  list of matrices with the extracted lags
 #'
-vector_to_matrix = function(vect,d = 2,p = 1){
+vector_to_matrix = function(vect,d = 2,m = d,p = 1){
   l1 = list()
   n1 = length(vect)
-  x = matrix(1:n1,ncol = d^2,byrow = TRUE)
-  for(i in 1:p) l1[[i]] = matrix(vect[x[i,]],nrow = d)
+  x = matrix(1:n1,ncol = d*m,byrow = TRUE)
+  for(i in 1:p) l1[[i]] = matrix(vect[x[i,]],nrow = m,ncol = d)
   return(l1)
 }
 #'
@@ -290,13 +290,15 @@ check_dist <- function(x,par) {
     if(identical(x,"normal"))      y = TRUE
     if(identical(x,"student"))     y = TRUE
     if(identical(x,"cauchy"))      y = TRUE
+    if(identical(x,"inv_gamma"))       y = TRUE
+    if(identical(x,"inv_chi_square"))  y = TRUE
     if(identical(x,"gamma"))       y = TRUE
-    if(identical(x,"chi_square"))  y = TRUE
   }
   if(par == "dfv"){
     if(identical(x,"normal"))      y = TRUE
-    if(identical(x,"gamma"))       y = TRUE
+    if(identical(x,"inv_gamma"))   y = TRUE
     if(identical(x,"Jeffrey"))     y = TRUE
+    if(identical(x,"inv_gamma"))   y = TRUE
   }
   return(y)
 }

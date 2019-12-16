@@ -40,6 +40,19 @@ report = function(dat){
     get_prior(dat,type = "garch")
     cat("\n mgarch parameters: \n")
     get_prior(dat,type = "mgarch")
+    if(dat$mean == "arma"){
+      cat("mu ~ garch(",dat$p,",",dat$q,") \n")
+      cat("\n meancomponents:")
+      cat("\n ar parameters: \n")
+      get_prior(dat,type = "ar")
+      cat("\n ma parameters: \n")
+      get_prior(dat,type = "ma")
+    }
+    if(dat$genT == TRUE){
+      cat("\n Generalized t-student \n")
+      cat("\n lambda ~ G(v/2,v/2) \n")
+      get_prior(dat,type = "dfv")
+    }
   }
   if(is.varma(dat)){
     cat("\n")
