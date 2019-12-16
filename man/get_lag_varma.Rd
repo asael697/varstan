@@ -21,7 +21,7 @@ a data frame with all the important fitted parameters
 a data frame with all the important fitted parameters
 }
 \description{
-get the degree freedom values of a varma(p,q) model  in STAN
+get the degree freedom values of a tvarma(p,q) model  in STAN
 }
 \details{
 The function returns a data.frame object with the degree freedom values

@@ -4,10 +4,10 @@
 \alias{garch}
 \title{Constructor garch(s,k,h) object}
 \usage{
-arima(ts,s,k)
+garch(ts,s,k)
 }
 \arguments{
-\item{ts}{an multivariate time series}
+\item{ts}{an univariateivariate time series}
 
 \item{s}{an integer with the order of the arch(s) part}
 
