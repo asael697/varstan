@@ -75,7 +75,7 @@ sfit = varstan(model1,chains = 1,iter = 2000)
 summary_varstan, gives a summary of all the fitted parameters, the robust option, prints the median, mad, and quantiles. If the robust option is false, the mean, se and estimated credible intervals are print. The $Rhat$ and efective sample size for preliminary diagnostic if the simulated chains converge to the real value.More detail for parameter diagnostics could be found [here](https://mc-stan.org/bayesplot/articles/visual-mcmc-diagnostics.html).
 
 ```{r}
-summary_varstan(sfit,robust= TRUE,conf = 0.95)
+summary(sfit,robust= TRUE,conf = 0.95)
 ```
 
 

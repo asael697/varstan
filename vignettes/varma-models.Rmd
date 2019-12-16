@@ -151,7 +151,7 @@ head(post)
 A simple diagnostic plot for the arch[1,1] $\alpha(1,1)$  parameter is possible, using the bayesplot package that visualize posterior distributions and other diagnosis.
 
 
-```{r}
+```{r fig.width=7.3}
  color_scheme_set("viridis")
 
   p1 = mcmc_trace(post,  pars = "alpha.1.1.1",
