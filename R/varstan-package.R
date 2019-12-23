@@ -1,6 +1,6 @@
 #' The 'varstan' package.
 #'
-#' @description A DESCRIPTION OF THE PACKAGE
+#' @description The goal of this package is analyze time series with structured models such as arima, m-garch, Varma, m-Bekk, SVD, HMM and state space models. So far a arima, garch and varma models are aviable for use.
 #'
 #' @docType package
 #' @name varstan-package

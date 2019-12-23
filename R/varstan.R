@@ -46,24 +46,13 @@ varstan = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta = 0
 #'
 #' @param obj: a varstan object
 #'
+#' @export
+#'
 is.varstan = function(obj){
   y = FALSE
   if(class(obj) == "varstan") y = TRUE
   return (y)
 }
-#' @method print varstan
-#' @export print
-#' @export
-#'
-print.varstan = function(obj){
-  if(is.varstan(obj)){
-    print(summary(obj))
-  }
-  else{
-    print("The current object is not a varstan object")
-  }
-}
-
 #' Get the degree freedom values of a varma model
 #'
 #' get the degree freedom values of a varma(p,q) model  in STAN
@@ -147,4 +136,30 @@ get_rstan = function(obj){
     print("The current object is not a varstan object")
   }
   return(stanfit)
+}
+#' Extracts all the order coeffients in a list
+#'
+#' @param obj: A varstan object
+#' @export
+#'
+get_order = function(obj){
+  if (is.varstan(obj)){
+    if(is.arima(obj$model)) return(get_order_arima(obj$model))
+    if(is.garch(obj$model)) return(get_order_garch(obj$model))
+    if(is.varma(obj$model)) return(get_order_varma(obj$model))
+  }
+  else print("The object is not a varstan model")
+}
+#' Max order  coeffients in a varma model
+#'
+#' @param obj: A varstan object
+#' @export
+#'
+max_order = function(obj){
+  if (is.varstan(obj)){
+    if(is.arima(obj$model)) return(max_order_arima(obj$model))
+    if(is.garch(obj$model)) return(max_order_garch(obj$model))
+    if(is.varma(obj$model)) return(max_order_varma(obj$model))
+  }
+  else print("The object is not a varstan model")
 }

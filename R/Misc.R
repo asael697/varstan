@@ -27,6 +27,88 @@ vector_to_matrix = function(vect,d = 2,m = d,p = 1){
   for(i in 1:p) l1[[i]] = matrix(vect[x[i,]],nrow = m,ncol = d)
   return(l1)
 }
+#' point estimate of univariate parameters
+#'
+#' get the point estimate of univariate parameters in a STAN model
+#'
+#' The function returns a vector with the fitted parameters
+#'
+#' @usage  point_estimate.arima(model,fit)
+#'
+#' @param fit: a stanfit object
+#' @param model: a varbekk model
+#' @param par: the desired parameter
+#' @param robust: a boolean for obtain the robust estimation
+#'
+#' @author  Asael Alonzo Matamoros
+#'
+#' @return  a vector with all the elected parameters
+#'
+extract_estimate = function(model,fit,par,robust = FALSE,...){
+  post = data.frame(rstan::extract(fit,par, permuted = TRUE))
+  if(robust) pe = apply(post,2,median)
+  else pe = apply(post,2,mean)
+  return( as.numeric(pe) )
+}
+#' Extract estimate time series parameters from a stanfit object
+#'
+#'  @param obj: varstan object
+#'  @param par: a string with the desired parameter
+#'  @param robust: a boolean value ofr robust estimate
+#'  @param lag: the max lags desired
+#'
+#'  @author Asael Alonzo Matamoros
+#'
+#'  @return
+#'
+extract_ts = function(obj,par,lag=1,robust=FALSE){
+  if (is.varstan(obj)){
+    post = data.frame(extract_stan(obj,pars = par, permuted = TRUE))
+    n = ncol(post)
+    n1 =n-lag+1
+    post = post[,n1:n]
+    if(robust) pe = apply(as.data.frame(post),2,median)
+    else pe = apply(post,2,mean)
+    return(pe)
+  }
+  else print("The current object is not a varstan object")
+}
+#' Extract estimate of multivariate time series parameters from a stanfit object
+#'
+#'  @param obj: varstan object
+#'  @param par: a string with the desired parameter
+#'  @param d: the dimension of the time series
+#'  @param robust: a boolean value ofr robust estimate
+#'  @param lag: the max lags desired
+#'
+#'  @author Asael Alonzo Matamoros
+#'
+#'  @return
+#'
+extract_mts = function(obj,par,d=1,lag=1,robust=FALSE){
+
+  if (! is.varstan(obj))
+    stop("The current object is not a varstan object")
+
+  post = data.frame(extract_stan(obj = obj,pars = par, permuted = TRUE))
+  pe = matrix(,nrow = d,ncol = lag)
+  n = obj$model$n
+  n1 = n-lag
+
+  for(i in 1:d){
+
+    post = data.frame(post[,-c(1:n1)])
+    post1 = as.data.frame(post[,c(1:lag)])
+
+    if(robust)
+      pe[i,] = apply(post1,2,median)
+    else
+      pe[i,] = apply(post1,2,mean)
+
+    post =post[,-c(1:lag)]
+  }
+  return(pe)
+}
 #'
 #' Replicate Elements of Vector
 #'
@@ -90,7 +172,6 @@ complete = function(x,d,x0){
 #' Checks if is a model object
 #' @param obj: a  model object
 #'
-#' @export
 #'
 is.model = function(obj){
   y = FALSE
@@ -290,13 +371,13 @@ check_dist <- function(x,par) {
     if(identical(x,"normal"))      y = TRUE
     if(identical(x,"student"))     y = TRUE
     if(identical(x,"cauchy"))      y = TRUE
-    if(identical(x,"inv_gamma"))       y = TRUE
-    if(identical(x,"inv_chi_square"))  y = TRUE
     if(identical(x,"gamma"))       y = TRUE
+    if(identical(x,"inv_chi_square"))  y = TRUE
+    if(identical(x,"inv_gamma"))       y = TRUE
   }
   if(par == "dfv"){
     if(identical(x,"normal"))      y = TRUE
-    if(identical(x,"inv_gamma"))   y = TRUE
+    if(identical(x,"gamma"))       y = TRUE
     if(identical(x,"Jeffrey"))     y = TRUE
     if(identical(x,"inv_gamma"))   y = TRUE
   }
@@ -315,16 +396,4 @@ check_type <- function(x) {
     if(identical(x,"sigma0")) y = TRUE
     if(identical(x,"dfv"))    y = TRUE
   return(y)
-}
-###############################################################################################
-#                  Generic Functions
-###############################################################################################
-
-#'  Set the generic function for print a varstan class
-#'
-#'  @export
-#'
-#'
-print = function(obj,...){
-  UseMethod("print")
 }

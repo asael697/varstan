@@ -1,6 +1,6 @@
 Package: varstan
 Title: An r package for fitting structured time series models with STAN
-Version: 0.5.0.000
+Version: 0.5.1.000
 Authors@R: 
   person(given = "Asael",
            family = "Alonzo Matamoros",
@@ -42,8 +42,12 @@ Collate:
     'varstan-package.R'
     'varstan.R'
     'Fit.R'
-    'Residuals.R'
-    'fitted_values.R'
-    'point_estimate.R'
+    'posterior_residuals.R'
+    'posterior_fit.R'
+    'posterior_estimate.R'
+    'posterior_intervals.R'
+    'posterior_predict.R'
+    'predictive_error.R'
     'report.R'
     'summary.R'
+    'print.R'

@@ -59,7 +59,6 @@ arima = function(ts,p = 1,d = 0, q = 1,sd = mgarch(s=0,k =0,h = 0)){
 #'
 #' @param obj: an arima object
 #'
-#' @export
 #'
 is.arima = function(obj){
   y = FALSE
@@ -108,19 +107,19 @@ get_params_arima = function(dat,...){
     pars = list(include = c(include,"loglik"),exclude = exclude)
   return(pars)
 }
-#' @export
-print <- function(obj, ...) {
-  UseMethod("print")
-}
-#' @method print arima
-#' @export print
-#' @export
+#' Extracts all the order coeffients in a list
 #'
-print.arima = function(obj){
-  if(is.arima(obj)){
-    print(report(obj))
+get_order_arima= function(dat){
+  if (is.arima(dat)){
+    return(list(p = dat$p,q=dat$q,s=dat$s,k=dat$k,h=dat$h))
   }
-  else{
-    print("The current object is not an arima model")
+  else print("The object is not an arima model")
+}
+#' Max order  coeffients in an arima model
+#'
+max_order_arima= function(dat){
+  if (is.arima(dat)){
+    return(max(c(dat$p,dat$q,dat$s,dat$k,dat$h)))
   }
+  else print("The object is not an arima model")
 }

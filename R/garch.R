@@ -30,7 +30,7 @@
 #'  \item prior_ma: a matrix with the hyper-parameters for the ma  coefficients
 #' }
 #'
-garch = function(ts,s = 1,k = 1, h = 0,mean = arma(s=0,k=0),genT = FALSE,aysm = FALSE){
+garch = function(ts,s = 1,k = 1, h = 0,mean = arma(p=0,q=0),genT = FALSE,aysm = FALSE){
   n = length(as.numeric(ts))
   y = as.numeric(ts)
   m1 = list(n = n,
@@ -64,7 +64,6 @@ garch = function(ts,s = 1,k = 1, h = 0,mean = arma(s=0,k=0),genT = FALSE,aysm = 
 #' Checks if is a garch object
 #' @param obj: a  garch object
 #'
-#' @export
 #'
 is.garch = function(obj){
   y = FALSE
@@ -111,15 +110,19 @@ get_params_garch = function(dat,...){
     pars = list(include = c(include,"loglik"),exclude = exclude)
   return(pars)
 }
-#' @method print garch
-#' @export print
-#' @export
+#' Extracts all the order coeffients in a list
 #'
-print.garch = function(obj){
-  if(is.garch(obj)){
-    print(report(obj))
+get_order_garch= function(dat){
+  if (is.garch(dat)){
+    return(list(p = dat$p,q=dat$q,s=dat$s,k=dat$k,h=dat$h))
   }
-  else{
-    print("The current object is not a garch model")
+  else print("The object is not a garch model")
+}
+#' Max order  coeffients in a garch model
+#'
+max_order_garch= function(dat){
+  if (is.garch(dat)){
+    return(max(c(dat$p,dat$q,dat$s,dat$k,dat$h)))
   }
+  else print("The object is not a garch model")
 }

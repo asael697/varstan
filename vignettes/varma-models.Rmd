@@ -104,7 +104,6 @@ or
 ```{r}
 md1 = set_prior(md1,type = "dfv",par1 = 2,par2 = 0.1,dist = "gamma")
 get_prior(md1,"dfv")
-
 ```
 
 
@@ -121,12 +120,12 @@ sft1 = varstan(md1,chains = 1,iter = 2000)
 
 A summary of the results can be obtained using the summary_varstan function
 ```{r}
-summary_varstan(sft1,robust = TRUE)
+summary(sft1,robust = TRUE)
 ```
 
 The point estimate values can be obtained by
 ```{r}
-pe = point_estimate(sft1)
+pe = posterior_estimate(sft1)
 pe
 ```
 
@@ -165,8 +164,15 @@ A simple diagnostic plot for the arch[1,1] $\alpha(1,1)$  parameter is possible,
 
 For further plot diagnostic you can extract the stanfit object from varstan as follows
 ```{r}
-
 stanfit = get_rstan(sft1)
 class(stanfit)
+```
+
+
+
+
+```{r}
+yh = posterior_predict(obj = sft1,h = 5)
+head(yh)
 ```
 

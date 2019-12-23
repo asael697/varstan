@@ -25,7 +25,7 @@ On the beta version 0.5.0.000, the avaliable models are:
 The dynamic of varstan is to build your own model using one of the avaliable model constructor, personalize your own priors (*check the Use Priors vignette*), and fit your model using the varstan function. On the next example we show you how to create and fit a simple bayesian arima model.
 
 
-```{r message=FALSE}
+```{r}
 library(varstan)
 library(forecast)
 library(bayesplot)
@@ -131,7 +131,7 @@ summary(mc$residuals)
 
 The posterior mean of the residual statistics of the bayesian model are:
 ```{r}
-resid = residuals(sfit)
+resid = posterior_residuals(sfit)
 summary(resid)
 ```
 
@@ -140,5 +140,10 @@ And the residual plot for both models are:
 p1 = autoplot(ts(resid))+labs(x = "time",y = "Residuals",title = "Bayesian posterior mean residuals")
 p2 = autoplot(mc$residuals)+labs(x = "time",y = "Residuals",title = "Residuals Classic")
  grid.arrange(p1,p2,nrow = 2)
+```
+
+
+```{r}
+yh = posterior_predict(sfit,h = 4,robust = TRUE)
 ```
 

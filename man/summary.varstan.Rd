@@ -2,26 +2,29 @@
 % Please edit documentation in R/summary.R
 \name{summary.varstan}
 \alias{summary.varstan}
-\title{Summary of  a varstan object}
+\title{Summary method for a varstan object}
 \usage{
 summary(obj)
 }
 \arguments{
 \item{obj:}{a varstan object}
 
-\item{robust:}{a boolean for obtain the robust estimation}
+\item{robust:}{A boolean value, if its \code{TRUE} it returns the median of the posterior distribution,
+And if its \code{FALSE} it returns the mean, by default is the \code{FALSE} value}
 
-\item{conf:}{a value between 0 and 1 with the desired probability in the
-credible intervals}
+\item{prob:}{A number \eqn{p \in (0,1)}{p (0 < p < 1)} indicating the desired
+probability mass to include in the intervals. The default is to report
+\eqn{90}\% intervals (\code{prob=0.9}) rather than the traditionally used
+\eqn{95}\%.}
 }
 \value{
-a list with the components
-\itemize{
- \item summary with all the important fitted parameters
-}
+A data.frame with the posterior mean, standard error, credible intervals, efective sample
+size (ess),and Rhat for all the model parameters in a varstan model, if \code{robust} is \code{TRUE}
+then the posterior mean and standard error, are replaced by the posterior mean and MAD.
 }
 \description{
-Summary of the model estimates in a varstan object
+Summaries of parameter estimates and MCMC convergence diagnostics
+(Monte Carlo error, effective sample size, Rhat).
 }
 \author{
 Asael Alonzo Matamoros

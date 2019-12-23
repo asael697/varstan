@@ -3,6 +3,26 @@
 ###########################################################################################################
 
 
+Date: 23/12/2019
+version: 0.5.1.000
+###########################################################################################################
+
+Features:
+ - The method posterior_predict and predictive_error  are implemented for the varstan class
+ - The objets VarBekk and Varbekkm are replaced for the object varma
+
+Improvements:
+ - Fixing the methods and overloaded functions for print, and summary
+
+Changes:
+ - point_estimate name change to posterior_estimate
+ - fit_values change to posterior_fit
+ - get_residuals change to posterior_residuals
+
+Fixes:
+ - Correctión of the point_estimate in mgarch parameter.
+
+###########################################################################################################
 Date: 11/11/2019
 version: 0.5.0.000
 ###########################################################################################################

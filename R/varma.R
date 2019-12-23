@@ -63,7 +63,6 @@ varma = function(ts,p = 1,q  = 1,sd = mbekk(s=0,k=0,h=0),genT = FALSE){
 }
 #' Checks if is a varma object
 #' @param obj: a varma object
-#' @export
 #'
 is.varma = function(obj){
   y = FALSE
@@ -114,7 +113,6 @@ get_params_varma = function(dat,...){
   pars = list(include = c(include,"loglik"),exclude = exclude)
   return(pars)
 }
-
 #' Get the degree freedom values of a varma model
 #'
 #' get the degree freedom values of a varma(p,q) model  in STAN
@@ -168,15 +166,19 @@ get_lag_varma = function(type,fit,model,robust = FALSE,...){
   }
   else cat(Type,"is not a fitted parameter")
 }
-#' @method print varma
-#' @export print
-#' @export
+#' Extracts all the order coeffients in a list
 #'
-print.varma = function(obj){
-  if(is.varma(obj)){
-    print(report(obj))
+get_order_varma= function(dat){
+  if (is.varma(dat)){
+    return(list(p = dat$p,q=dat$q,s=dat$s,k=dat$k,h=dat$h))
   }
-  else{
-    print("The current object is not a varma model")
+  else print("The object is not a varma model")
+}
+#' Max order  coeffients in a varma model
+#'
+max_order_varma= function(dat){
+  if (is.varma(dat)){
+    return(max(c(dat$p,dat$q,dat$s,dat$k,dat$h)))
   }
+  else print("The object is not a garch model")
 }
