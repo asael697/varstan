@@ -221,7 +221,7 @@ generated quantities{
 
   for(i in 1:n){
     if(i<=d) residual[i] = 0;
-    else residual[i] = epsilon[i-d];
+    else residual[i] = normal_rng(epsilon[i-d],sigma[i]);
     fit[i] = y[i]-residual[i];
     if(i <=m){
       log_lik[i] = normal_lpdf(y_dif[i]|mu[i],sigma[i]);

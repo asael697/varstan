@@ -1523,7 +1523,7 @@ public:
                     current_statement_begin__ = 224;
                     stan::model::assign(residual, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                get_base1(epsilon, (i - d), "epsilon", 1), 
+                                normal_rng(get_base1(epsilon, (i - d), "epsilon", 1), get_base1(sigma, i, "sigma", 1), base_rng__), 
                                 "assigning variable residual");
                 }
                 current_statement_begin__ = 225;

@@ -2,7 +2,7 @@
 % Please edit documentation in R/garch.R
 \name{garch}
 \alias{garch}
-\title{Constructor garch(s,k,h) object}
+\title{A  constructor for a garch(s,k,h) model}
 \usage{
 garch(ts,s,k)
 }
@@ -14,19 +14,21 @@ garch(ts,s,k)
 \item{k}{an integer with the order of the garch(k) part}
 
 \item{h}{an integer with the order of the mean part}
-
-\item{mu0:}{a list with the mgarch parameters}
 }
 \value{
 a list with the components
 \itemize{
  \item n: the length of the time series
- \item p: an integer with the order of the ar coefficients
- \item d: an integert with the order of diferences
- \item q: an integer with the order of the ma coefficients
+ \item s: an integer with the order of the arch coefficients
+ \item k: an integer with the order of the garch coefficients
+ \item h: an integer with the order of the mgarch coefficients
  \item y: vector with the multivariate time series
- \item prior_ar: a matrix with the hyper-parameters for the var coeff icient
- \item prior_ma: a matrix with the hyper-parameters for the ma  coefficients
+ \item prior_arch:   a matrix with the hyper-parameters for the arch coefficients
+ \item prior_garch:  a matrix with the hyper-parameters for the garch  coefficients
+ \item prior_mgarch: a matrix with the hyper-parameters for the mgarch  coefficients
+ \item p: an integer with the order of ar coefficients
+ \item q: an inter withe the order of ma coefficients
+ \item prior_arch:   a matrix with the hyper-parameters for the arch coefficients
 }
 }
 \description{

@@ -33,7 +33,7 @@ static int current_statement_begin__;
 stan::io::program_reader prog_reader__() {
     stan::io::program_reader reader;
     reader.add_event(0, 0, "start", "model_tvarma");
-    reader.add_event(216, 214, "end", "model_tvarma");
+    reader.add_event(217, 215, "end", "model_tvarma");
     return reader;
 }
 template <typename T0__, typename T1__>
@@ -1349,6 +1349,7 @@ public:
         names__.push_back("log_lik");
         names__.push_back("fit");
         names__.push_back("residual");
+        names__.push_back("temp");
     }
     void get_dims(std::vector<std::vector<size_t> >& dimss__) const {
         dimss__.resize(0);
@@ -1449,6 +1450,9 @@ public:
         dimss__.push_back(dims__);
         dims__.resize(0);
         dims__.push_back(n);
+        dims__.push_back(d);
+        dimss__.push_back(dims__);
+        dims__.resize(0);
         dims__.push_back(d);
         dimss__.push_back(dims__);
     }
@@ -1893,27 +1897,34 @@ public:
             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> residual(n, d);
             stan::math::initialize(residual, DUMMY_VAR__);
             stan::math::fill(residual, DUMMY_VAR__);
+            current_statement_begin__ = 205;
+            validate_non_negative_index("temp", "d", d);
+            Eigen::Matrix<double, Eigen::Dynamic, 1> temp(d);
+            stan::math::initialize(temp, DUMMY_VAR__);
+            stan::math::fill(temp, DUMMY_VAR__);
             // generated quantities statements
             current_statement_begin__ = 206;
             for (int i = 1; i <= n; ++i) {
                 current_statement_begin__ = 207;
+                stan::math::assign(temp, multi_normal_cholesky_rng(get_base1(epsilon, i, "epsilon", 1), get_base1(Lsigma, i, "Lsigma", 1), base_rng__));
+                current_statement_begin__ = 208;
                 stan::model::assign(residual, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                            get_base1(epsilon, i, "epsilon", 1), 
+                            transpose(temp), 
                             "assigning variable residual");
-                current_statement_begin__ = 208;
+                current_statement_begin__ = 209;
                 stan::model::assign(fit, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             subtract(get_base1(y, i, "y", 1), get_base1(residual, i, "residual", 1)), 
                             "assigning variable fit");
-                current_statement_begin__ = 209;
+                current_statement_begin__ = 210;
                 if (as_bool(logical_lte(i, m))) {
-                    current_statement_begin__ = 210;
+                    current_statement_begin__ = 211;
                     stan::model::assign(log_lik, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                                 multi_normal_cholesky_log(get_base1(y, i, "y", 1), get_base1(mu, i, "mu", 1), get_base1(Lsigma, i, "Lsigma", 1)), 
                                 "assigning variable log_lik");
-                    current_statement_begin__ = 211;
+                    current_statement_begin__ = 212;
                     stan::math::assign(loglik, (loglik + get_base1(log_lik, i, "log_lik", 1)));
                 }
             }
@@ -1940,6 +1951,11 @@ public:
                 for (size_t j_1__ = 0; j_1__ < residual_j_1_max__; ++j_1__) {
                     vars__.push_back(residual(j_1__, j_2__));
                 }
+            }
+            current_statement_begin__ = 205;
+            size_t temp_j_1_max__ = d;
+            for (size_t j_1__ = 0; j_1__ < temp_j_1_max__; ++j_1__) {
+                vars__.push_back(temp(j_1__));
             }
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
@@ -2197,6 +2213,12 @@ public:
                 param_names__.push_back(param_name_stream__.str());
             }
         }
+        size_t temp_j_1_max__ = d;
+        for (size_t j_1__ = 0; j_1__ < temp_j_1_max__; ++j_1__) {
+            param_name_stream__.str(std::string());
+            param_name_stream__ << "temp" << '.' << j_1__ + 1;
+            param_names__.push_back(param_name_stream__.str());
+        }
     }
     void unconstrained_param_names(std::vector<std::string>& param_names__,
                                    bool include_tparams__ = true,
@@ -2424,6 +2446,12 @@ public:
                 param_name_stream__ << "residual" << '.' << j_1__ + 1 << '.' << j_2__ + 1;
                 param_names__.push_back(param_name_stream__.str());
             }
+        }
+        size_t temp_j_1_max__ = d;
+        for (size_t j_1__ = 0; j_1__ < temp_j_1_max__; ++j_1__) {
+            param_name_stream__.str(std::string());
+            param_name_stream__ << "temp" << '.' << j_1__ + 1;
+            param_names__.push_back(param_name_stream__.str());
         }
     }
 }; // model

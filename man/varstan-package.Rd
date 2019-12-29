@@ -6,7 +6,7 @@
 \alias{varstan}
 \title{The 'varstan' package.}
 \description{
-A DESCRIPTION OF THE PACKAGE
+The goal of this package is analyze time series with structured models such as arima, m-garch, Varma, m-Bekk, SVD, HMM and state space models. So far a arima, garch and varma models are aviable for use.
 }
 \references{
 Stan Development Team (2019). RStan: the R interface to Stan. R package version 2.19.2. https://mc-stan.org
