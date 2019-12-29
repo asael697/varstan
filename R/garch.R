@@ -22,12 +22,14 @@
 #' @return  a list with the components
 #' \itemize{
 #'  \item n: the length of the time series
-#'  \item p: an integer with the order of the ar coefficients
-#'  \item d: an integert with the order of diferences
-#'  \item q: an integer with the order of the ma coefficients
+#'  \item s: an integer with the order of the arch coefficients
+#'  \item k: an integer with the order of the garch coefficients
+#'  \item h: an integer with the order of the mgarch coefficients
 #'  \item y: vector with the multivariate time series
 #'  \item prior_ar: a matrix with the hyper-parameters for the var coeff icient
 #'  \item prior_ma: a matrix with the hyper-parameters for the ma  coefficients
+#'  \item p: an integer with the order of ar coefficients
+#'  \item q: an inter withe the order of ma coefficients
 #' }
 #'
 garch = function(ts,s = 1,k = 1, h = 0,mean = arma(p=0,q=0),genT = FALSE,aysm = FALSE){
