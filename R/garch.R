@@ -1,4 +1,4 @@
-#' Constructor garch(s,k,h) object
+#' A  constructor for a garch(s,k,h) model
 #'
 #' Constructor of the garch(s,k,h) object for bayesian estimation in STAN
 #'
@@ -11,7 +11,6 @@
 #' @param s an integer with the order of the arch(s) part
 #' @param k an integer with the order of the garch(k) part
 #' @param h an integer with the order of the mean part
-#' @param mu0: a list with the mgarch parameters
 #'
 #' @author  Asael Alonzo Matamoros
 #'
@@ -26,10 +25,12 @@
 #'  \item k: an integer with the order of the garch coefficients
 #'  \item h: an integer with the order of the mgarch coefficients
 #'  \item y: vector with the multivariate time series
-#'  \item prior_ar: a matrix with the hyper-parameters for the var coeff icient
-#'  \item prior_ma: a matrix with the hyper-parameters for the ma  coefficients
+#'  \item prior_arch:   a matrix with the hyper-parameters for the arch coefficients
+#'  \item prior_garch:  a matrix with the hyper-parameters for the garch  coefficients
+#'  \item prior_mgarch: a matrix with the hyper-parameters for the mgarch  coefficients
 #'  \item p: an integer with the order of ar coefficients
 #'  \item q: an inter withe the order of ma coefficients
+#'  \item prior_arch:   a matrix with the hyper-parameters for the arch coefficients
 #' }
 #'
 garch = function(ts,s = 1,k = 1, h = 0,mean = arma(p=0,q=0),genT = FALSE,aysm = FALSE){
