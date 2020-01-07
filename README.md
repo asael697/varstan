@@ -1,4 +1,3 @@
-
 <img src="man/figures/varstan.png" width = 120 alt="brms Logo"/>[<img src="https://raw.githubusercontent.com/stan-dev/logos/master/logo_tm.png" align="right" width=120 alt="Stan Logo"/>](http://mc-stan.org)
 
 **varstan**
@@ -137,7 +136,6 @@ To Change the default prior of one of the model parameter, just use the
 second ma component for a beta distribution on the $\Theta = [-1,1]$
 parameter space.
 
-
 $$\theta_2 \sim beta(2.5,2.5)$$
 
 ``` r
@@ -179,12 +177,12 @@ summary(sfit,robust= TRUE,conf = 0.95)
 ```
 
     ##            median    mad      2.5%     97.5%       ess   Rhat
-    ## mu0       -0.0540 0.0528   -0.1796    0.0392  953.9154 1.0004
-    ## sigma0     0.1906 0.0196    0.1554    0.2331  964.6914 1.0010
-    ## phi        0.0707 0.1927   -0.2790    0.4654 1067.9812 0.9992
-    ## theta.1    0.4500 0.1782    0.0710    0.7596 1053.1794 0.9994
-    ## theta.2    0.2980 0.1000    0.0554    0.4759 1099.7187 1.0004
-    ## loglik  -116.2385 1.5007 -120.5187 -114.5112  968.9084 1.0014
+    ## mu0       -0.0515 0.0519   -0.1638    0.0437  891.0121 0.9996
+    ## sigma0     0.1894 0.0184    0.1555    0.2303  935.3320 0.9993
+    ## phi        0.0742 0.1793   -0.2847    0.4148  991.6449 0.9999
+    ## theta.1    0.4510 0.1673    0.1065    0.7674 1051.0946 0.9995
+    ## theta.2    0.3030 0.1032    0.0769    0.4832  919.9781 0.9995
+    ## loglik  -116.1694 1.3328 -120.2128 -114.5293 1039.0184 0.9994
 
 You can plot the fitted values and posterior intervals using the
 posterior\_fit and posterior\_intervals functions
@@ -217,7 +215,7 @@ post = extract_stan(sfit,pars = "phi",permuted = TRUE,inc_warmup = FALSE,include
 post = as.data.frame(post)
 ```
 
-A simple diagnostic plot for the ar *ϕ* parameter is possible, using the
+A simple diagnostic plot for the ar $\phi$ parameter is possible, using the
 [bayesplot package](https://mc-stan.org/bayesplot/) that visualize
 posterior distributions and other diagnosis.
 
@@ -233,7 +231,9 @@ posterior distributions and other diagnosis.
   grid.arrange(p1,p2,p3,nrow = 2,layout_matrix = matrix(c(1,3,2,3),ncol=2,byrow=TRUE))
 ```
 
-<img src="README_files/figure-markdown_github/unnamed-chunk-12-1.png" style="display: block; margin: auto;" />
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+![](README_files/figure-markdown_github/unnamed-chunk-12-1.png)
 
 For further exploration and diagnostic use the **get\_stan** function to
 extract the whole rstan fit object and personalize diagnosis using other
@@ -276,12 +276,12 @@ yh
 ```
 
     ##          Estimate         Q5       Q95
-    ## yh.1 -0.008599151 -0.7161741 0.6979416
-    ## yh.2  0.023600139 -0.6824340 0.7318604
-    ## yh.3 -0.029355480 -0.7369407 0.7100206
-    ## yh.4 -0.073190748 -0.7822577 0.6064223
-    ## yh.5 -0.068290786 -0.7823892 0.6443836
-    ## yh.6 -0.086091808 -0.8188402 0.6804906
+    ## yh.1 -0.002792465 -0.7097385 0.7031202
+    ## yh.2  0.032253432 -0.6731531 0.7398842
+    ## yh.3 -0.021387415 -0.7283437 0.7173315
+    ## yh.4 -0.064833582 -0.7732703 0.6141754
+    ## yh.5 -0.060054876 -0.7735186 0.6519860
+    ## yh.6 -0.077788218 -0.8098853 0.6881128
 
 As well you can estimate the predictive\_errors, be aware that at the
 begining we extract the last 5 observation of our simulated series, so
@@ -298,11 +298,11 @@ pred_error
 ```
 
     ##        Estimate         Q5         Q95
-    ## yh.1 -0.2639891 -0.9929510  0.42762626
-    ## yh.2 -1.1959179 -1.8607292 -0.52204619
-    ## yh.3 -0.9602172 -1.6887834 -0.25882007
-    ## yh.4 -0.6989591 -1.4490622  0.05977272
-    ## yh.5  0.2407928 -0.5292184  0.94081805
+    ## yh.1 -0.2697744 -0.9980883  0.42122617
+    ## yh.2 -1.2046116 -1.8688320 -0.53133892
+    ## yh.3 -0.9683216 -1.6962402 -0.26754793
+    ## yh.4 -0.7071946 -1.4566310  0.05086277
+    ## yh.5  0.2326692 -0.5366576  0.93207220
 
 ### The classical arima estimation
 
@@ -346,8 +346,8 @@ resid = posterior_residuals(sfit)
 summary(resid)
 ```
 
-    ##       Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
-    ## -1.1863060 -0.2924615  0.0003691  0.0004678  0.2750913  1.5420862
+    ##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+    ## -1.194332 -0.294985 -0.021783 -0.003146  0.284935  1.507109
 
 And the residual plot for both models are:
 

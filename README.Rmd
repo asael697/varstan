@@ -86,7 +86,7 @@ First step is make a simulation of a simple arma model with 200 observations as 
 $$Y_t = \mu_0 + 0.338Y_{t-1} - 0.2279\epsilon_{t-1} - 0.2488\epsilon_{t-2}, \text{ } \epsilon_t \sim N(0,\sigma^2_0)$$
 
 
-```{r fig.width=7.3}
+```{r, results='hide'}
 
 y = arima.sim(n = 205, list(ar =0.35, ma = c(0.2279, 0.2488)),sd = sqrt(0.1796))
 
@@ -138,7 +138,7 @@ summary(sfit,robust= TRUE,conf = 0.95)
 
 You can plot the fitted values and posterior intervals using the posterior_fit and posterior_intervals functions
 
-```{r}
+```{r, results='hide'}
 fit = posterior_fit(sfit)
 pe = data.frame(extract_stan(obj = sfit,pars = "fit"))
 pe = posterior_interval(as.matrix(pe),prob = 0.95)
@@ -164,7 +164,7 @@ post = as.data.frame(post)
 
 A simple diagnostic plot for the ar $\phi$ parameter is possible, using the [bayesplot package](https://mc-stan.org/bayesplot/) that visualize posterior distributions and other diagnosis.
 
-```{r fig.align="center",message=FALSE}
+```{r, results='hide'}
  color_scheme_set("viridis")
 
   p1 = mcmc_trace(post,  pars = "phi",
@@ -242,7 +242,7 @@ summary(resid)
 ```
 
 And the residual plot for both models are:
-```{r fig.width=7.3}
+```{r, results='hide'}
 r1=ts(cbind(resid,mc$residuals))
 p1 = autoplot(r1)+
   scale_colour_discrete(name = "Dose", labels = c("Posterior mean", "Classical"))+
