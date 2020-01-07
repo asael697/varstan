@@ -74,9 +74,10 @@ install_github("asael697/varstan")
 First step is make a simulation of a simple arma model with 200
 observations as follows:
 
-$$Y_t = \mu_0 + 0.338Y_{t-1} - 0.2279\epsilon_{t-1} - 0.2488\epsilon_{t-2}, \text{ } \epsilon_t \sim N(0,\sigma^2_0)$$
+*Y*<sub>*t*</sub> = *μ*<sub>0</sub> + 0.338*Y*<sub>*t* − 1</sub> − 0.2279*ϵ*<sub>*t* − 1</sub> − 0.2488*ϵ*<sub>*t* − 2</sub>,  *ϵ*<sub>*t*</sub> ∼ *N*(0, *σ*<sub>0</sub><sup>2</sup>)
 
 ``` r
+
 y = arima.sim(n = 205, list(ar =0.35, ma = c(0.2279, 0.2488)),sd = sqrt(0.1796))
 
 yh1 = y[201:205]
@@ -85,7 +86,7 @@ y = ts(y[1:200])
 autoplot(y)+labs(x = "time",title = "Simulated ARMA Process")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-4-1.png)
+<img src="man/figures/fig1-1.png" width="60%" style="display: block; margin: auto;" />
 
 Proceding to built the arima model using the varstan constructor:
 
@@ -99,52 +100,50 @@ printing the current model
 
 ``` r
 model1
+#> 
+#> y ~ arima( 1 , 0 , 2 ) 
+#> Priors: 
+#>  Intercept:
+#> mu0 ~ normal (loc = 0 , scl = 1 )
+#> 
+#>  Scale Parameter: 
+#> sigma0 ~ half_t (loc = 0 ,scl = 1 ,df = 7 )
+#> 
+#>  ar parameters: 
+#> ar[ 1 ] ~ normal (mu =  0 , sd =  1 ) 
+#> 
+#>  ma parameters: 
+#> ma[ 1 ] ~ normal (mu =  0 , sd =  1 ) 
+#> ma[ 2 ] ~ normal (mu =  0 , sd =  1 ) 
+#> sigma ~ garch( 0 , 0 , 0 ) 
+#> 
+#>  Volatility components:
+#>  arch parameters: 
+#> There is no arch part defined 
+#> 
+#>  garch parameters: 
+#> There is no garch part defined 
+#> 
+#>  mgarch parameters: 
+#> There is no mgarch part defined 
+#> NULL
 ```
-
-    ## 
-    ## y ~ arima( 1 , 0 , 2 ) 
-    ## Priors: 
-    ##  Intercept:
-    ## mu0 ~ normal (loc = 0 , scl = 1 )
-    ## 
-    ##  Scale Parameter: 
-    ## sigma0 ~ half_t (loc = 0 ,scl = 1 ,df = 7 )
-    ## 
-    ##  ar parameters: 
-    ## ar[ 1 ] ~ normal (mu =  0 , sd =  1 ) 
-    ## 
-    ##  ma parameters: 
-    ## ma[ 1 ] ~ normal (mu =  0 , sd =  1 ) 
-    ## ma[ 2 ] ~ normal (mu =  0 , sd =  1 ) 
-    ## sigma ~ garch( 0 , 0 , 0 ) 
-    ## 
-    ##  Volatility components:
-    ##  arch parameters: 
-    ## There is no arch part defined 
-    ## 
-    ##  garch parameters: 
-    ## There is no garch part defined 
-    ## 
-    ##  mgarch parameters: 
-    ## There is no mgarch part defined 
-    ## NULL
 
 ### Change prior distribution
 
 To Change the default prior of one of the model parameter, just use the
 *set\_prior* and *get\_prior* functions, in this example we change the
-second ma component for a beta distribution on the $\Theta = [-1,1]$
+second ma component for a beta distribution on the *Θ* = \[ − 1, 1\]
 parameter space.
 
-$$\theta_2 \sim beta(2.5,2.5)$$
+*θ*<sub>2</sub> ∼ *b**e**t**a*(2.5, 2.5)
 
 ``` r
 model1 = set_prior(model1,type = "ma",par1 = 2.5,par2 = 2.5,lag = 2,dist = "beta")
 get_prior(model1,type = "ma")
+#> ma[ 1 ] ~ normal (mu =  0 , sd =  1 ) 
+#> ma[ 2 ] ~ beta (form1 =  2.5 , form2 =  2.5 )
 ```
-
-    ## ma[ 1 ] ~ normal (mu =  0 , sd =  1 ) 
-    ## ma[ 2 ] ~ beta (form1 =  2.5 , form2 =  2.5 )
 
 To see more details of the avaliable priors and the model structure see
 the vignettes *Use\_prior* and *arima\_models*, respectively.
@@ -174,15 +173,14 @@ converged. More detail for parameter diagnostics could be found
 
 ``` r
 summary(sfit,robust= TRUE,conf = 0.95)
+#>            median    mad      2.5%     97.5%       ess   Rhat
+#> mu0       -0.0515 0.0519   -0.1638    0.0437  891.0121 0.9996
+#> sigma0     0.1894 0.0184    0.1555    0.2303  935.3320 0.9993
+#> phi        0.0742 0.1793   -0.2847    0.4148  991.6449 0.9999
+#> theta.1    0.4510 0.1673    0.1065    0.7674 1051.0946 0.9995
+#> theta.2    0.3030 0.1032    0.0769    0.4832  919.9781 0.9995
+#> loglik  -116.1694 1.3328 -120.2128 -114.5293 1039.0184 0.9994
 ```
-
-    ##            median    mad      2.5%     97.5%       ess   Rhat
-    ## mu0       -0.0515 0.0519   -0.1638    0.0437  891.0121 0.9996
-    ## sigma0     0.1894 0.0184    0.1555    0.2303  935.3320 0.9993
-    ## phi        0.0742 0.1793   -0.2847    0.4148  991.6449 0.9999
-    ## theta.1    0.4510 0.1673    0.1065    0.7674 1051.0946 0.9995
-    ## theta.2    0.3030 0.1032    0.0769    0.4832  919.9781 0.9995
-    ## loglik  -116.1694 1.3328 -120.2128 -114.5293 1039.0184 0.9994
 
 You can plot the fitted values and posterior intervals using the
 posterior\_fit and posterior\_intervals functions
@@ -200,7 +198,7 @@ ggplot(pe, aes(x = t, y = Estimate)) +
   labs(x = "time",title = "Fitted model")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-10-1.png)
+<img src="man/figures/fig2-1.png" width="60%" style="display: block; margin: auto;" />
 
 ### Parameter Diagnostic
 
@@ -215,7 +213,7 @@ post = extract_stan(sfit,pars = "phi",permuted = TRUE,inc_warmup = FALSE,include
 post = as.data.frame(post)
 ```
 
-A simple diagnostic plot for the ar $\phi$ parameter is possible, using the
+A simple diagnostic plot for the ar *ϕ* parameter is possible, using the
 [bayesplot package](https://mc-stan.org/bayesplot/) that visualize
 posterior distributions and other diagnosis.
 
@@ -229,11 +227,10 @@ posterior distributions and other diagnosis.
     facet_text(size = 15)
   p3 = mcmc_acf(post, pars = "phi", lags = 10,)
   grid.arrange(p1,p2,p3,nrow = 2,layout_matrix = matrix(c(1,3,2,3),ncol=2,byrow=TRUE))
+#> `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ```
 
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-
-![](README_files/figure-markdown_github/unnamed-chunk-12-1.png)
+<img src="man/figures/fig3-1.png" width="60%" style="display: block; margin: auto;" />
 
 For further exploration and diagnostic use the **get\_stan** function to
 extract the whole rstan fit object and personalize diagnosis using other
@@ -245,11 +242,10 @@ packages ( [bloo](https://mc-stan.org/loo),
 ``` r
 stanfit = get_rstan(sfit)
 class(stanfit)
+#> [1] "stanfit"
+#> attr(,"package")
+#> [1] "rstan"
 ```
-
-    ## [1] "stanfit"
-    ## attr(,"package")
-    ## [1] "rstan"
 
 ### Forecasting h-step ahead
 
@@ -273,15 +269,14 @@ So the 6-steps ahead prediction of the model are:
 
 ``` r
 yh
+#>          Estimate         Q5       Q95
+#> yh.1 -0.002792465 -0.7097385 0.7031202
+#> yh.2  0.032253432 -0.6731531 0.7398842
+#> yh.3 -0.021387415 -0.7283437 0.7173315
+#> yh.4 -0.064833582 -0.7732703 0.6141754
+#> yh.5 -0.060054876 -0.7735186 0.6519860
+#> yh.6 -0.077788218 -0.8098853 0.6881128
 ```
-
-    ##          Estimate         Q5       Q95
-    ## yh.1 -0.002792465 -0.7097385 0.7031202
-    ## yh.2  0.032253432 -0.6731531 0.7398842
-    ## yh.3 -0.021387415 -0.7283437 0.7173315
-    ## yh.4 -0.064833582 -0.7732703 0.6141754
-    ## yh.5 -0.060054876 -0.7735186 0.6519860
-    ## yh.6 -0.077788218 -0.8098853 0.6881128
 
 As well you can estimate the predictive\_errors, be aware that at the
 begining we extract the last 5 observation of our simulated series, so
@@ -295,14 +290,13 @@ pred_error <- cbind(
   Q95 = apply(eh, 2, quantile, probs = 0.95)
 )
 pred_error
+#>        Estimate         Q5         Q95
+#> yh.1 -0.2697744 -0.9980883  0.42122617
+#> yh.2 -1.2046116 -1.8688320 -0.53133892
+#> yh.3 -0.9683216 -1.6962402 -0.26754793
+#> yh.4 -0.7071946 -1.4566310  0.05086277
+#> yh.5  0.2326692 -0.5366576  0.93207220
 ```
-
-    ##        Estimate         Q5         Q95
-    ## yh.1 -0.2697744 -0.9980883  0.42122617
-    ## yh.2 -1.2046116 -1.8688320 -0.53133892
-    ## yh.3 -0.9683216 -1.6962402 -0.26754793
-    ## yh.4 -0.7071946 -1.4566310  0.05086277
-    ## yh.5  0.2326692 -0.5366576  0.93207220
 
 ### The classical arima estimation
 
@@ -313,18 +307,17 @@ the low informative prior*)
 ``` r
 mc = stats::arima(y,order = c(1,0,2))
 mc
+#> 
+#> Call:
+#> stats::arima(x = y, order = c(1, 0, 2))
+#> 
+#> Coefficients:
+#>          ar1     ma1     ma2  intercept
+#>       0.0626  0.4639  0.3140    -0.0622
+#> s.e.  0.1986  0.1872  0.1089     0.0572
+#> 
+#> sigma^2 estimated as 0.1832:  log likelihood = -114.26,  aic = 238.51
 ```
-
-    ## 
-    ## Call:
-    ## stats::arima(x = y, order = c(1, 0, 2))
-    ## 
-    ## Coefficients:
-    ##          ar1     ma1     ma2  intercept
-    ##       0.0626  0.4639  0.3140    -0.0622
-    ## s.e.  0.1986  0.1872  0.1089     0.0572
-    ## 
-    ## sigma^2 estimated as 0.1832:  log likelihood = -114.26,  aic = 238.51
 
 We can compare our residuals with the ones obtained in classical model,
 and compare. As you will see in the next chunks, they both models have
@@ -334,20 +327,18 @@ The residuals of the classical estimation are:
 
 ``` r
 summary(mc$residuals)
+#>       Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
+#> -1.1974679 -0.2973318 -0.0104121 -0.0006024  0.2778172  1.5344517
 ```
-
-    ##       Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
-    ## -1.1974679 -0.2973318 -0.0104121 -0.0006024  0.2778172  1.5344517
 
 The posterior mean of the residual statistics of the bayesian model are:
 
 ``` r
 resid = posterior_residuals(sfit)
 summary(resid)
+#>      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+#> -1.194332 -0.294985 -0.021783 -0.003146  0.284935  1.507109
 ```
-
-    ##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
-    ## -1.194332 -0.294985 -0.021783 -0.003146  0.284935  1.507109
 
 And the residual plot for both models are:
 
@@ -363,7 +354,7 @@ p3 = autoplot(mc$residuals)+labs(x = "time",y = "Residuals",title = "Posterior m
 grid.arrange(p1,p2,p3,nrow = 2,layout_matrix = matrix(c(1,1,2,3),ncol=2,byrow=TRUE))
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-20-1.png)
+<img src="man/figures/fig4-1.png" width="60%" style="display: block; margin: auto;" />
 
 ### References
 
