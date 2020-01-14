@@ -72,8 +72,9 @@ M <- file.path(dotR, ifelse(.Platform$OS.type == "windows", "Makevars.win", "Mak
 if (!file.exists(M)) file.create(M)
 cat("\nCXX14FLAGS=-O3 -march=native -mtune=native",
     if( grepl("^darwin", R.version$os)) "CXX14FLAGS += -arch x86_64 -ftemplate-depth-256" else
-    if (.Platform$OS.type == "windows") "CXX11FLAGS=-O3 -march=native -mtune=native" else
-    "CXX14FLAGS += -fPIC",
+      if (.Platform$OS.type == "windows") "CXX11FLAGS=-O3 -march=native -mtune=native" else
+        "CXX14FLAGS += -fPIC","CXX11FLAGS=-O3 -mtune=native CXX14 = $(BINPREF)g++ -m$(WIN) -std=c++1y",
+    "CXX14 = g++ -std=c++1y","CXX14FLAGS = -O3 -Wno-unused-variable -Wno-unused-function",
     file = M, sep = "\n", append = TRUE)
 ```
 

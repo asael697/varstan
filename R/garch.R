@@ -28,7 +28,7 @@
 #'  \item{"dfv"}{dfv ~ gamm(2,0.1)}
 #' }
 #'
-#' For changing the default prior use the function \code{set_prior}
+#' @details  For changing the default prior use the function \code{set_prior}
 #'
 #' @author  Asael Alonzo Matamoros
 #'
