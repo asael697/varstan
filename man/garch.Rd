@@ -9,23 +9,7 @@ garch(ts,s,k)
 \arguments{
 \item{ts}{an univariateivariate time series}
 
-\item{genT}{a boolean value to specify for a generalized t-student garch model
-
-
-The default priors used in Sarima are:
-
-\itemize{
- \item{"ar"}{ar ~ normal(0,0.5)}
- \item{"ma"}{ma ~ normal(0,0.5)}
- \item{"mu0"}{mu0 ~ t-student(0,2.5,6)}
- \item{"sigma0"}{sigma0 ~ t-student(0,1,7)}
- \item{"arch"}{arch ~ normal(0,0.5)}
- \item{"garch"}{garch ~ normal(0,0.5)}
- \item{"mgarch"}{mgarch ~ normal(0,0.5)}
- \item{"dfv"}{dfv ~ gamm(2,0.1)}
-}
-
-For changing the default prior use the function \code{set_prior}}
+\item{genT}{a boolean value to specify for a generalized t-student garch model}
 
 \item{order:}{A specification of thegarch  model: thethree components (s, k, h)
 are the arch order, the garch order, and the mgarch order.}
@@ -39,6 +23,27 @@ Constructor of the garch(s,k,h) object for bayesian estimation in STAN
 \details{
 The function returns  a list with the data for running stan() function of
  rstan package
+
+The default priors used in Sarima are:
+
+\itemize{
+ \item{ar ~ normal(0,0.5)}
+ \item{ma ~ normal(0,0.5)}
+ \item{mu0 ~ t-student(0,2.5,6)}
+ \item{sigma0 ~ t-student(0,1,7)}
+ \item{arch ~ normal(0,0.5)}
+ \item{garch ~ normal(0,0.5)}
+ \item{mgarch ~ normal(0,0.5)}
+ \item{dfv ~ gamm(2,0.1)}
+}
+
+For changing the default prior use the function \code{set_prior}
+}
+\examples{
+\dontrun{
+dat = garch(ipc,order = c(1,1,0),arma = c(1,1))
+}
+
 }
 \references{
 Engle, Robert F. (1982). ?Autoregressive Conditional Heteroscedasticity with

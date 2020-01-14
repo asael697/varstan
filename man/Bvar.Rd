@@ -13,8 +13,7 @@ https://research.stlouisfed.org/econ/mccracken/fred-databases/
 Bvar
 }
 \description{
-**Description**
- Bvar is a subsample differenced and at logarithm scale of the quarterly frequency companion
+Bvar is a subsample differenced and at logarithm scale of the quarterly frequency companion
  to FRED-MD, a large macroeconomic database. It is designed to emulate the dataset used in
  "Disentangling the Channels of the 2007-2009 Recession" by Stock and Watson (2012), but also
  contains several additional series. The currently included dataset is from April 2019,

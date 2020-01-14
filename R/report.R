@@ -20,6 +20,18 @@
 #'
 #' @return  a  string with the defined time series report
 #'
+#' @examples
+#'
+#' dat = Sarima(ipc,order = c(1,1,2))
+#' report(dat)
+#'
+#' dat2 = garch(birth,order = c(1,1,0))
+#' report(dat2)
+#'
+#' dat = varma(Astrovan,p=1,q=1)
+#' report(dat)
+#'
+#'
 report <- function(obj,...) {
   UseMethod("report")
 }
@@ -81,7 +93,7 @@ report.garch = function(obj){
       if(obj$p  > 0 )get_prior(dat = obj,type = "ar")
       if(obj$q  > 0 )get_prior(dat = obj,type = "ma")
     }
-    if(dat$genT == TRUE){
+    if(obj$genT == TRUE){
       cat("\n Generalized t-student \n")
       cat("\n lambda ~ G(v/2,v/2) \n")
       get_prior(obj,type = "dfv")
@@ -110,7 +122,7 @@ report.varma = function(obj){
       if(obj$k  > 0 )get_prior(dat = obj,type = "garch")
       if(obj$h  > 0 )get_prior(dat = obj,type = "mgarch")
     }
-    if(dat$genT == TRUE){
+    if(obj$genT == TRUE){
       cat("\n Generalized t-student \n")
       cat("\n lambda ~ G(v/2,v/2) \n")
       get_prior(obj,type = "dfv")

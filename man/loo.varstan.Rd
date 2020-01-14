@@ -3,7 +3,6 @@
 \name{loo.varstan}
 \alias{loo.varstan}
 \alias{loo}
-\alias{.varstan}
 \title{Leave-one-out cross-validation}
 \usage{
 loo.varstan(obj)
@@ -24,7 +23,7 @@ model = Sarima(birth,order = c(0,1,2),seasonal = c(1,1,1))
 fit1 = varstan(model,chains = 1)
 
 loo1 <- loo(fit1)
-loo1 
+loo1
 }
 }
 \seealso{

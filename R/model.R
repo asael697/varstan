@@ -2,7 +2,7 @@
 #'
 #' The function returns a string with the users defined model for the given time series data
 #'
-#' @usage  get_residuals(obj)
+#' @usage  model(obj)
 #'
 #' @param obj: a varstan object or one of the defined current defined models in varstan package
 #'
@@ -15,11 +15,17 @@
 #'
 #' @author  Asael Alonzo Matamoros
 #'
-#' @seealso report
+#' @seealso \code{report} \code{print}
 #'
 #' @export
 #'
 #' @return  a  string with the defined time series model
+#'
+#' @examples
+#'
+#' model1 = Sarima(birth,order = c(0,1,2),seasonal = c(1,1,1))
+#' model(model1)
+#'
 #'
 model <- function(obj,...) {
   UseMethod("model")

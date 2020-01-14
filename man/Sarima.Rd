@@ -27,26 +27,7 @@ deafault the value frequency(ts) is used.}
 Constructor of the Sarima model  for bayesian estimation in STAN
 }
 \details{
-The function returns  a list with  all the neccesary data for running a
-Seasonal arima model in stan
 
-If \code{xreg} option is used, the model by default will cancel the
-seasonal differences adjusted (D = 0). If a value \code{d} > 0 is used, all
-the regressor variables in xreg will be differenced aswell
-
-The default priors used in Sarima are:
-
-\itemize{
- \item{"ar"}{ar ~ normal(0,0.5)}
- \item{"ma"}{ma ~ normal(0,0.5)}
- \item{"mu0"}{mu0 ~ t-student(0,2.5,6)}
- \item{"sigma0"}{sigma0 ~ t-student(0,1,7)}
- \item{"seasonal ar"}{sar ~ normal(0,0.5)}
- \item{"seasonal ma"}{sma ~ normal(0,0.5)}
- \item{"seasonal breg"}{breg ~ t-student(0,2.5,6)}
-}
-
-For changing the default prior use the function \code{set_prior}
 }
 \examples{
 # Declare a seasonal arima model for the birth data of asta package

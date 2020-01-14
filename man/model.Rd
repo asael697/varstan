@@ -4,7 +4,7 @@
 \alias{model}
 \title{Print the defined model of a varstan object}
 \usage{
-get_residuals(obj)
+model(obj)
 }
 \arguments{
 \item{obj:}{a varstan object or one of the defined current defined models in varstan package}
@@ -23,8 +23,15 @@ then it will print the model information aswell.
 For full information of the model with the used priors use the function report or just
 print the object
 }
+\examples{
+
+model1 = Sarima(birth,order = c(0,1,2),seasonal = c(1,1,1))
+model(model1)
+
+
+}
 \seealso{
-report
+\code{report} \code{print}
 }
 \author{
 Asael Alonzo Matamoros

@@ -12,8 +12,7 @@
 birth
 }
 \description{
-**Description**
- Monthly live births (adjusted) in thousands for the United States, 1948-1979.
+Monthly live births (adjusted) in thousands for the United States, 1948-1979.
 }
 \references{
 http://www.stat.pitt.edu/stoffer/tsa4/

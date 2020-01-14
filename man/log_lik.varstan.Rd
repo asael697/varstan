@@ -10,17 +10,17 @@
 \arguments{
 \item{obj}{A varstan object of the time seires fitted model.}
 
-\item{permuted}{A logical scalar indicating whether the draws after 
-the warmup period in each chain should be permuted and merged. 
-If FALSE, the original order is kept. For each stanfit object, 
-the permutation is fixed (i.e., extracting samples a second time 
+\item{permuted}{A logical scalar indicating whether the draws after
+the warmup period in each chain should be permuted and merged.
+If FALSE, the original order is kept. For each stanfit object,
+the permutation is fixed (i.e., extracting samples a second time
 will give the same sequence of iterations).}
 }
 \value{
 Usually, an S x N matrix containing the pointwise log-likelihood
- samples, where S is the number of samples and N is the number 
- of observations in the data. If 
- \code{permuted} is \code{FALSE}, an S x N x R array is returned, 
+ samples, where S is the number of samples and N is the number
+ of observations in the data. If
+ \code{permuted} is \code{FALSE}, an S x N x R array is returned,
  where R is the number of fitted chains.
 }
 \description{

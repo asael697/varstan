@@ -10,23 +10,23 @@ bic(obj)
 \item{obj}{A varstan object of the time seires fitted model.}
 }
 \value{
-A numeric array  of size R, containing the posterior samples of the aic 
+A numeric array  of size R, containing the posterior samples of the aic
 for a varstan object, where R is the number of iterations. If multiple chains are
 fitted, then the array is of length M*R, where M is the number of chains
 }
 \description{
-Convenience function for computing the pointwise Bayesian Information Criteria 
+Convenience function for computing the pointwise Bayesian Information Criteria
 method from a varstan object.
 }
 \examples{
- 
+
 \dontrun{
 library(birth)
 model = Sarima(birth,order = c(0,1,2),seasonal = c(1,1,1))
 fit1 = varstan(model,chains = 1)
 
 bic1 <- bic(fit1)
-mean(bic1) 
+mean(bic1)
 }
 
 }

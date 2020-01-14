@@ -26,13 +26,13 @@
 #' The default priors used in Sarima are:
 #'
 #' \itemize{
-#'  \item{"ar"}{ar ~ normal(0,0.5)}
-#'  \item{"ma"}{ma ~ normal(0,0.5)}
-#'  \item{"mu0"}{mu0 ~ t-student(0,2.5,6)}
-#'  \item{"sigma0"}{sigma0 ~ t-student(0,1,7)}
-#'  \item{"seasonal ar"}{sar ~ normal(0,0.5)}
-#'  \item{"seasonal ma"}{sma ~ normal(0,0.5)}
-#'  \item{"seasonal breg"}{breg ~ t-student(0,2.5,6)}
+#'  \item{ar ~ normal(0,0.5)}
+#'  \item{ma ~ normal(0,0.5)}
+#'  \item{mu0 ~ t-student(0,2.5,6)}
+#'  \item{{sigma0 ~ t-student(0,1,7)}
+#'  \item{sar ~ normal(0,0.5)}
+#'  \item{sma ~ normal(0,0.5)}
+#'  \item{breg ~ t-student(0,2.5,6)}
 #' }
 #'
 #' For changing the default prior use the function \code{set_prior}

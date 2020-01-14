@@ -21,6 +21,17 @@
 #'
 #' @export
 #'
+#' @examples
+#'
+#' dat = Sarima(ipc,order = c(1,1,2))
+#' dat = set_prior(dat,type = "ar",par1 =0,par2 = 1,dist = "normal")
+#' get_prior(dat,type = "ar")
+#'
+#' dat = set_prior(dat,type = "mu0",par1 = 0,par2 = 2.5,df = 7,dist = "student")
+#' get_prior(dat,type = "mu0")
+#'
+#' dat = set_prior(dat,type = "ma",par1 =2,par2 = 2,dist = "beta",lag = 2)
+#' get_prior(dat,type = "ma")
 #'
 set_prior = function(dat,type,lag = 0,par1 = 0,par2 = 1,dist = "normal",df = 1){
   if(check_type(type)){
@@ -55,6 +66,17 @@ set_prior = function(dat,type,lag = 0,par1 = 0,par2 = 1,dist = "normal",df = 1){
 #'
 #' @export
 #'
+#' @examples
+#'
+#' dat = Sarima(ipc,order = c(1,1,2))
+#' dat = set_prior(dat,type = "ar",par1 =0,par2 = 1,dist = "normal")
+#' get_prior(dat,type = "ar")
+#'
+#' dat = set_prior(dat,type = "mu0",par1 = 0,par2 = 2.5,df = 7,dist = "student")
+#' get_prior(dat,type = "mu0")
+#'
+#' dat = set_prior(dat,type = "ma",par1 =2,par2 = 2,dist = "beta",lag = 2)
+#' get_prior(dat,type = "ma")
 #'
 get_prior = function(dat,type,lag = 0){
   if(check_type(type)){

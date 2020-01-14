@@ -25,6 +25,19 @@ for all the lags.}
 \description{
 Generic function for setting a prior to an specify parameter
 }
+\examples{
+
+dat = Sarima(ipc,order = c(1,1,2))
+dat = set_prior(dat,type = "ar",par1 =0,par2 = 1,dist = "normal")
+get_prior(dat,type = "ar")
+
+dat = set_prior(dat,type = "mu0",par1 = 0,par2 = 2.5,df = 7,dist = "student")
+get_prior(dat,type = "mu0")
+
+dat = set_prior(dat,type = "ma",par1 =2,par2 = 2,dist = "beta",lag = 2)
+get_prior(dat,type = "ma")
+
+}
 \author{
 Asael Alonzo Matamoros
 }

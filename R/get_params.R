@@ -1,7 +1,6 @@
 #'
 #' Excluded and included parameters in a defined time series model
 #' @param obj a varstan object
-#' @export
 #'
 get_params = function(obj,...){
   if(!is.varstan(obj))

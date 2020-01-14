@@ -9,15 +9,15 @@ loglik(obj, permuted = TRUE)
 \arguments{
 \item{obj}{A varstan object of the time seires fitted model.}
 
-\item{permuted}{A logical scalar indicating whether the draws after 
-the warmup period in each chain should be permuted and merged. 
-If FALSE, the original order is kept. For each stanfit object, 
-the permutation is fixed (i.e., extracting samples a second time 
+\item{permuted}{A logical scalar indicating whether the draws after
+the warmup period in each chain should be permuted and merged.
+If FALSE, the original order is kept. For each stanfit object,
+the permutation is fixed (i.e., extracting samples a second time
 will give the same sequence of iterations).}
 }
 \value{
-Usually, A n S array containing the acumulated log-likelihood
- samples, where S is the number of samples. If \code{permuted} is \code{FALSE}, 
+Usually, A nxS array containing the acumulated log-likelihood
+ samples, where S is the number of samples. If \code{permuted} is \code{FALSE},
  an Sx R array is returned, where R is the number of fitted chains.
 }
 \description{

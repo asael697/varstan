@@ -1,6 +1,5 @@
 #' U.S. Monthly Live Births
 #'
-#' **Description**
 #'  Monthly live births (adjusted) in thousands for the United States, 1948-1979.
 #'
 #' @format the format is: Time-Series [1:373] from 1948 to 1979:

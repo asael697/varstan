@@ -85,12 +85,14 @@ cat("\nCXX14FLAGS=-O3 -march=native -mtune=native",
 For installing varstan package for git use the code on the next chunk:
 
 ```{r, eval = FALSE}
+install.packages(c("rstan","bridgesampling","loo","Rcpp","rstantools","devtools"))
+
 library(devtools)
 Sys.setenv(PATH = paste("C:/Rtools/bin", Sys.getenv("PATH"), sep=";"))
 Sys.setenv(PATH = paste("C:\\Rtools\\mingw_64\\bin", Sys.getenv("PATH"), sep=";"))
 Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
 
-install_github("asael697/varstan")
+install_github("asael697/varstan",dependencies = TRUE)
 ```
  
  

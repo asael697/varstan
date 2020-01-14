@@ -15,20 +15,20 @@
 #' @param genT a boolean value to specify for a generalized t-student garch model
 #'
 #'
-#' The default priors used in Sarima are:
+#' @details The default priors used in Sarima are:
 #'
 #' \itemize{
-#'  \item{"ar"}{ar ~ normal(0,0.5)}
-#'  \item{"ma"}{ma ~ normal(0,0.5)}
-#'  \item{"mu0"}{mu0 ~ t-student(0,2.5,6)}
-#'  \item{"sigma0"}{sigma0 ~ t-student(0,1,7)}
-#'  \item{"arch"}{arch ~ normal(0,0.5)}
-#'  \item{"garch"}{garch ~ normal(0,0.5)}
-#'  \item{"mgarch"}{mgarch ~ normal(0,0.5)}
-#'  \item{"dfv"}{dfv ~ gamm(2,0.1)}
+#'  \item{ar ~ normal(0,0.5)}
+#'  \item{ma ~ normal(0,0.5)}
+#'  \item{mu0 ~ t-student(0,2.5,6)}
+#'  \item{sigma0 ~ t-student(0,1,7)}
+#'  \item{arch ~ normal(0,0.5)}
+#'  \item{garch ~ normal(0,0.5)}
+#'  \item{mgarch ~ normal(0,0.5)}
+#'  \item{dfv ~ gamm(2,0.1)}
 #' }
 #'
-#' @details  For changing the default prior use the function \code{set_prior}
+#' For changing the default prior use the function \code{set_prior}
 #'
 #' @author  Asael Alonzo Matamoros
 #'
@@ -41,6 +41,10 @@
 #'
 #' @seealso \code{\link{Sarima}} \code{\link{auto.arima}} \code{\link{set_prior}}
 #'
+#' @examples
+#' \dontrun{
+#' dat = garch(ipc,order = c(1,1,0),arma = c(1,1))
+#' }
 #'
 garch = function(ts,order = c(1,1,0),arma = c(0,0),genT = FALSE,aysm = FALSE){
   n = length(as.numeric(ts))

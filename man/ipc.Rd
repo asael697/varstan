@@ -12,7 +12,6 @@ https://www.bch.hn/series_estadisticas.php
 ipc
 }
 \description{
-**Description**
 Monthly return coefficients for the inflation. An economic indicator of
 a country's economy.
 }

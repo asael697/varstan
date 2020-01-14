@@ -21,6 +21,19 @@ if \code{obj} is a varstan object the function will print the information of the
 defined model inside of the object. If \code{obj} is one of the model classes (like Sarima or garch)
 then it will print the report information aswell.
 }
+\examples{
+
+dat = Sarima(ipc,order = c(1,1,2))
+report(dat)
+
+dat2 = garch(birth,order = c(1,1,0))
+report(dat2)
+
+dat = varma(Astrovan,p=1,q=1)
+report(dat)
+
+
+}
 \seealso{
 \code{\link{report}} \code{\link{prior}}
 }
