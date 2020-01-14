@@ -1,4 +1,4 @@
-#' Generic function and method for the posterior estimate of all  parameters in varstan object
+#' Generic function and method for the posteriorpoint estimate of all  parameters in varstan object
 #'
 #' It returns a list with the point estimate value of the posterior distribution
 #' of \strong{all} the model parameters of the varstan object. By defaults it returns the
@@ -12,14 +12,9 @@
 #'
 #' @author  Asael Alonzo Matamoros
 #'
-#' @return  a list with the components
-#' \itemize{
-#'  \item A matrix with the posterior value of the var coefficients
-#'  \item A matrix with the posterior value of the scale parameter
-#'  \item A vector with the posterior value of the degree freedom
-#'  \item A time series with the posterior value of the correction parameter
-#'  for the variance
-#' }
+#' @return  a list with the components of mu0, sigma0, ar, ma, sar, sma, arch, garch, mgarch, and breg,
+#' of one of the defined varstan models
+#'
 #'
 #' @export
 #'
@@ -33,15 +28,13 @@ posterior_estimate <- function(obj, ...) {
 #' @export
 #'
 posterior_estimate.varstan = function(obj,robust = FALSE,...){
-  if(is.varstan(obj)){
-    if(is.arima(obj$model)) resume = point_estimate_arima(model = obj$model,fit = obj$stanfit,roubst = robust)
-    if(is.garch(obj$model)) resume = point_estimate_garch(model = obj$model,fit = obj$stanfit,roubst = robust)
-    if(is.varma(obj$model)) resume = point_estimate_varma(model = obj$model,fit = obj$stanfit,roubst = robust)
-  }
-  else{
-    resume = NULL
-    print("The current object is not a varstan object")
-  }
+  if(!is.varstan(obj))
+    stop("The current object is not a varstan class")
+
+  if(is.Sarima(obj$model)) resume = point_estimate_arima(model = obj$model,fit = obj$stanfit,roubst = robust)
+  if(is.garch(obj$model))  resume = point_estimate_garch(model = obj$model,fit = obj$stanfit,roubst = robust)
+  if(is.varma(obj$model))  resume = point_estimate_varma(model = obj$model,fit = obj$stanfit,roubst = robust)
+
   return(resume)
 }
 #' point estimate of an garch model
@@ -118,17 +111,17 @@ point_estimate_arima = function(model,fit,robust = FALSE,...){
     if(model$q > 0 ){
       l1$theta = extract_estimate(fit = fit,model = model,par = "theta",robust)
     }
-    # alpha Parameter
-    if(model$s > 0 ){
-      l1$alpha = extract_estimate(fit = fit,model = model,par = "alpha",robust)
+    # sar Parameter
+    if(model$P > 0 ){
+      l1$sphi = extract_estimate(fit = fit,model = model,par = "sphi",robust)
     }
-    # beta Parameter
-    if(model$k > 0 ){
-      l1$beta = extract_estimate(fit = fit,model = model,par = "beta",robust)
+    # sma Parameter
+    if(model$Q > 0 ){
+      l1$stheta = extract_estimate(fit = fit,model = model,par = "stheta",robust)
     }
-    # mgarch Parameter
-    if(model$h > 0 ){
-      l1$mgarch = extract_estimate(fit = fit,model = model,par = "mgarch",robust)
+    # bregParameter
+    if(model$d1 > 0 ){
+      l1$breg = extract_estimate(fit = fit,model = model,par = "breg",robust)
     }
     return(l1)
 }

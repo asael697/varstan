@@ -202,10 +202,10 @@ generated quantities{
   vector[m] log_lik;
   matrix[n,d] fit;
   matrix[n,d] residual;
-  vector[d] temp;
+
   for(i in 1:n){
-    temp = multi_normal_cholesky_rng(epsilon[i],Lsigma[i]);
-    residual[i] = temp';
+    fit[i] = multi_normal_cholesky_rng(mu[i],Lsigma[i])';
+    residual[i] = y[i]-residual[i];
     fit[i] = y[i]-residual[i];
     if(i <=m){
       log_lik[i] = multi_normal_cholesky_lpdf(y[i]|mu[i],Lsigma[i]);

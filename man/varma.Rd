@@ -4,12 +4,17 @@
 \alias{varma}
 \title{Constructor var(p)-bekk(s,k) object}
 \usage{
-varbekk(ts,p,s,k)
+varma(ts,p,q,sd = mbekk(s,k,h))
 }
 \arguments{
 \item{ts}{an multivariate time series}
 
 \item{p}{an integer with the order of the var(p) part}
+
+\item{q}{an integer with the order of the vma(1) part}
+
+\item{sd}{an optional value for specify the Bekk  part for variance, using the
+\code{mbekk} function}
 
 \item{genT}{a boolean value to specify a Generalized a t-student model Cruz (2015)}
 
@@ -17,27 +22,54 @@ varbekk(ts,p,s,k)
 
 \item{k}{an integer with the order of the arch(k) part}
 }
-\value{
-a list with the components
-\itemize{
- \item n: the length of the time series
- \item d: the dimension of the time series
- \item p: an integer with the order of the var coefficients
- \item s: an integer with the order of the arch coefficients
- \item k: an interger with the order of th garch coefficients
- \item v: a real with degree freedom for a t-student sample
- \item y: vector with the multivariate time series
- \item prior_var:   a vector with the hyper-parameters for the var   coefficient
- \item prior_arch:  a vector with the hyper-parameters for the arch  coefficient
- \item prior_garch: a vector with the hyper-parameters for the garch coefficient
-}
-}
 \description{
 Constructor of the var(p)-bekk(s,k) object for bayesian estimation in STAN
 }
 \details{
 The function returns  a list with the data for running stan() function of
  rstan package
+
+If \code{sd} option can only be used with the mbekk function, and it  adds
+a m-Bekk model for volatility.
+
+If a mbekk model is not considerated, then sigma0 represents the covariance matrix
+of the model.
+
+If a bekk model is specified, then sigma0 represents the triangular inferior matrix
+alpha0 of a bekk model
+
+The default priors used in varma are:
+
+\itemize{
+ \item{"ar"}{ar ~ normal(0,0.5)}
+ \item{"ma"}{ma ~ normal(0,0.5)}
+ \item{"mu0"}{mu0 ~ normal(0,1)}
+ \item{"sigma0"}{sigma0 ~ t-student(0,1,7)}
+ \item{"arch"}{arch ~ normal(0,0.5)}
+ \item{"garch"}{garch ~ normal(0,0.5)}
+ \item{"mgarch"}{mgarch ~ normal(0,0.5)}
+ \item{"dfv"}{dfv ~ gamm(2,0.1)}
+}
+
+For changing the default prior use the function \code{set_prior}
+}
+\examples{
+# Declare a varma model for the Astrovan data
+
+model = varma(Astrovan,p=1,q=1,sd=mbekk(1,1,0))
+model
+
+
+}
+\references{
+Polasek, Ren(1999).
+ A mulltivariate GARCH-M model for exchange rates in the US,Germany and Japan
+
+ Fonseca,Ferreira, Migon (2008)
+ Objective Bayesian analysis for the Student-t regression model
+}
+\seealso{
+\code{\link{garch}} \code{\link{Sarima}} \code{\link{set_prior}}
 }
 \author{
 Asael Alonzo Matamoros

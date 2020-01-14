@@ -1,4 +1,4 @@
-<img src="man/figures/varstan.png" width = 120 alt="brms Logo"/>[<img src="https://raw.githubusercontent.com/stan-dev/logos/master/logo_tm.png" align="right" width=120 alt="Stan Logo"/>](http://mc-stan.org)
+<img src="man/figures/varstan.png" width = 120 alt="varstan Logo"/>
 
 **varstan**
 ===========
@@ -16,9 +16,11 @@ Filters, varma and bekk models.
 On the beta version 0.5.0.000, the avaliable models are:
 
 -   arima
+-   Seasonal arima
 -   garch
 -   varma
--   bekk
+-   Bekk
+-   Dynamic regression +Dynamic Harmonic regresion
 
 The dynamic of varstan is to build your own model using one of the
 avaliable model constructor, personalize your own priors (*check the Use
@@ -69,12 +71,40 @@ Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
 install_github("asael697/varstan")
 ```
 
+### Current models
+
+The package offers an S3 object for the basic models implemented, for
+simplicity you can use the function to see the list of all the models
+implemented in the actual package version:
+
+``` r
+version(View = FALSE)
+#> package: varstan 
+#> version: 1.0.0.000 
+#> Algorithm: Stan-NUTS 
+#> Current classes: varstan, Sarima, garch, varma, Bekk,DWR 
+#> Current models: 
+#>        model                           functions                              GenT
+#> 1 Seasonal arima              Sarima(order = c(p,d,q), seasonal = c(P,D,Q) ) FALSE
+#> 2 Dynamic regression          Sarima(order = c(p,d,q), xreg != NULL )        FALSE
+#> 3 arma-mgarch                 garch(order=c(s,k,h), mean = c(p,q) )          TRUE
+#> 4 varma-mbekk                 varma(p,q, sd = mbekk(s,k,h) )                 TRUE
+#> 5 Bekk                        Bekk(s,k,h)                                    TRUE
+#> 6 Dynamic Harmonic Regression DWR(K, order = c(p,d,q),base = "Harmonic" )    FALSE
+#>                                          
+#>  * model column represent the avaliable model 
+#>  * functions column represent the function structure 
+#>  * GenT column represent if the model admits a generalized t-student distribution 
+#>  * Report a bug in asael_am@hotmail.com 
+#> 
+```
+
 ### Simulated arma model
 
 First step is make a simulation of a simple arma model with 200
 observations as follows:
 
-*Y*<sub>*t*</sub> = *μ*<sub>0</sub> + 0.338*Y*<sub>*t* − 1</sub> − 0.2279*ϵ*<sub>*t* − 1</sub> − 0.2488*ϵ*<sub>*t* − 2</sub>,  *ϵ*<sub>*t*</sub> ∼ *N*(0, *σ*<sub>0</sub><sup>2</sup>)
+$$Y_t = \mu_0 + 0.338Y_{t-1} - 0.2279\epsilon_{t-1} - 0.2488\epsilon_{t-2}, \text{ } \epsilon_t \sim N(0,\sigma^2_0)$$
 
 ``` r
 
@@ -91,7 +121,7 @@ autoplot(y)+labs(x = "time",title = "Simulated ARMA Process")
 Proceding to built the arima model using the varstan constructor:
 
 ``` r
-model1 = arima(y,p = 1,d = 0,q = 2)
+model1 = Sarima(y,order = c(1,0,2))
 ```
 
 Automatically varstan builds a bayesian arima model, with default normal
@@ -101,31 +131,21 @@ printing the current model
 ``` r
 model1
 #> 
-#> y ~ arima( 1 , 0 , 2 ) 
+#> y ~ Sarima(1,0,2) 
+#> 200 observations and 1 dimension 
+#> Differences: 0 seasonal Diferences: 0 
+#> Current observations: 200 
+#>  
 #> Priors: 
 #>  Intercept:
-#> mu0 ~ normal (loc = 0 , scl = 1 )
+#> mu0 ~ t (loc = 0 ,scl = 2.5 ,df = 6 )
 #> 
 #>  Scale Parameter: 
 #> sigma0 ~ half_t (loc = 0 ,scl = 1 ,df = 7 )
 #> 
-#>  ar parameters: 
-#> ar[ 1 ] ~ normal (mu =  0 , sd =  1 ) 
-#> 
-#>  ma parameters: 
-#> ma[ 1 ] ~ normal (mu =  0 , sd =  1 ) 
-#> ma[ 2 ] ~ normal (mu =  0 , sd =  1 ) 
-#> sigma ~ garch( 0 , 0 , 0 ) 
-#> 
-#>  Volatility components:
-#>  arch parameters: 
-#> There is no arch part defined 
-#> 
-#>  garch parameters: 
-#> There is no garch part defined 
-#> 
-#>  mgarch parameters: 
-#> There is no mgarch part defined 
+#> ar[ 1 ] ~ normal (mu =  0 , sd =  0.5 ) 
+#> ma[ 1 ] ~ normal (mu =  0 , sd =  0.5 ) 
+#> ma[ 2 ] ~ normal (mu =  0 , sd =  0.5 ) 
 #> NULL
 ```
 
@@ -133,15 +153,15 @@ model1
 
 To Change the default prior of one of the model parameter, just use the
 *set\_prior* and *get\_prior* functions, in this example we change the
-second ma component for a beta distribution on the *Θ* = \[ − 1, 1\]
+second ma component for a beta distribution on the $\Theta = [-1,1]$
 parameter space.
 
-*θ*<sub>2</sub> ∼ *b**e**t**a*(2.5, 2.5)
+$$\theta_2 \sim beta(2.5,2.5)$$
 
 ``` r
 model1 = set_prior(model1,type = "ma",par1 = 2.5,par2 = 2.5,lag = 2,dist = "beta")
 get_prior(model1,type = "ma")
-#> ma[ 1 ] ~ normal (mu =  0 , sd =  1 ) 
+#> ma[ 1 ] ~ normal (mu =  0 , sd =  0.5 ) 
 #> ma[ 2 ] ~ beta (form1 =  2.5 , form2 =  2.5 )
 ```
 
@@ -166,20 +186,30 @@ sfit = varstan(model1,chains = 1,iter = 2000)
 The function **summary**, provides a a full description of all the
 fitted parameters in the model, the robust option, prints the median,
 mad, and quantiles. If the robust option is false, the mean, se and
-estimated credible intervals are printed. The *R**h**a**t* and efective
+estimated credible intervals are printed. The *Rhat* and efective
 sample size for preliminary diagnostic if the simulated chains have
 converged. More detail for parameter diagnostics could be found
 [here](https://mc-stan.org/bayesplot/articles/visual-mcmc-diagnostics.html).
 
 ``` r
-summary(sfit,robust= TRUE,conf = 0.95)
-#>            median    mad      2.5%     97.5%       ess   Rhat
-#> mu0       -0.0515 0.0519   -0.1638    0.0437  891.0121 0.9996
-#> sigma0     0.1894 0.0184    0.1555    0.2303  935.3320 0.9993
-#> phi        0.0742 0.1793   -0.2847    0.4148  991.6449 0.9999
-#> theta.1    0.4510 0.1673    0.1065    0.7674 1051.0946 0.9995
-#> theta.2    0.3030 0.1032    0.0769    0.4832  919.9781 0.9995
-#> loglik  -116.1694 1.3328 -120.2128 -114.5293 1039.0184 0.9994
+sfit
+#> 
+#> y ~ Sarima(1,0,2) 
+#> 200 observations and 1 dimension 
+#> Differences: 0 seasonal Diferences: 0 
+#> Current observations: 200 
+#>  
+#>              mean     se      2.5%     97.5%       ess   Rhat
+#> mu0       -0.0527 0.0016   -0.0558   -0.0495  903.7780 0.9996
+#> sigma0     0.4360 0.0007    0.4346    0.4373  826.3291 0.9993
+#> phi        0.1225 0.0054    0.1118    0.1331 1019.8168 0.9998
+#> theta.1   -0.3981 0.0052   -0.4083   -0.3880 1034.5011 0.9993
+#> theta.2   -0.2697 0.0033   -0.2762   -0.2632  992.8232 0.9995
+#> loglik  -116.5353 0.0451 -116.6238 -116.4469  993.1324 0.9993
+#> 
+#>  Samples were drawn using sampling(NUTS). For each parameter, ess
+#>  is the effective sample size, and Rhat is the potential
+#>  scale reduction factor on split chains (at convergence, Rhat = 1).
 ```
 
 You can plot the fitted values and posterior intervals using the
@@ -188,7 +218,7 @@ posterior\_fit and posterior\_intervals functions
 ``` r
 fit = posterior_fit(sfit)
 pe = data.frame(extract_stan(obj = sfit,pars = "fit"))
-pe = posterior_interval(as.matrix(pe),prob = 0.95)
+pe = posterior_interval(as.matrix(pe),prob = 0.90)
 
 pe =  data.frame(t = 1:length(y),Estimate = fit, q2.5 = pe[,1],q97.5 = pe[,2])
 
@@ -269,13 +299,13 @@ So the 6-steps ahead prediction of the model are:
 
 ``` r
 yh
-#>          Estimate         Q5       Q95
-#> yh.1 -0.002792465 -0.7097385 0.7031202
-#> yh.2  0.032253432 -0.6731531 0.7398842
-#> yh.3 -0.021387415 -0.7283437 0.7173315
-#> yh.4 -0.064833582 -0.7732703 0.6141754
-#> yh.5 -0.060054876 -0.7735186 0.6519860
-#> yh.6 -0.077788218 -0.8098853 0.6881128
+#>         Estimate         Q5       Q95
+#> yh.1 -0.01520601 -0.7211613 0.6897174
+#> yh.2  0.02433321 -0.6800848 0.7309723
+#> yh.3 -0.02193132 -0.7278968 0.7157524
+#> yh.4 -0.06817462 -0.7756185 0.6098828
+#> yh.5 -0.06363148 -0.7760954 0.6474116
+#> yh.6 -0.08177508 -0.8128462 0.6830526
 ```
 
 As well you can estimate the predictive\_errors, be aware that at the
@@ -291,11 +321,11 @@ pred_error <- cbind(
 )
 pred_error
 #>        Estimate         Q5         Q95
-#> yh.1 -0.2697744 -0.9980883  0.42122617
-#> yh.2 -1.2046116 -1.8688320 -0.53133892
-#> yh.3 -0.9683216 -1.6962402 -0.26754793
-#> yh.4 -0.7071946 -1.4566310  0.05086277
-#> yh.5  0.2326692 -0.5366576  0.93207220
+#> yh.1 -0.2573273 -0.9846205  0.43270498
+#> yh.2 -1.1966077 -1.8598973 -0.52427851
+#> yh.3 -0.9677629 -1.6946614 -0.26797129
+#> yh.4 -0.7042236 -1.4526098  0.05277139
+#> yh.5  0.2361858 -0.5320628  0.93460869
 ```
 
 ### The classical arima estimation
@@ -337,7 +367,7 @@ The posterior mean of the residual statistics of the bayesian model are:
 resid = posterior_residuals(sfit)
 summary(resid)
 #>      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
-#> -1.194332 -0.294985 -0.021783 -0.003146  0.284935  1.507109
+#> -1.156576 -0.300552 -0.007274 -0.002176  0.276978  1.552347
 ```
 
 And the residual plot for both models are:

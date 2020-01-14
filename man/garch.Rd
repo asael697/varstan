@@ -9,27 +9,29 @@ garch(ts,s,k)
 \arguments{
 \item{ts}{an univariateivariate time series}
 
-\item{s}{an integer with the order of the arch(s) part}
+\item{genT}{a boolean value to specify for a generalized t-student garch model
 
-\item{k}{an integer with the order of the garch(k) part}
 
-\item{h}{an integer with the order of the mean part}
-}
-\value{
-a list with the components
+The default priors used in Sarima are:
+
 \itemize{
- \item n: the length of the time series
- \item s: an integer with the order of the arch coefficients
- \item k: an integer with the order of the garch coefficients
- \item h: an integer with the order of the mgarch coefficients
- \item y: vector with the multivariate time series
- \item prior_arch:   a matrix with the hyper-parameters for the arch coefficients
- \item prior_garch:  a matrix with the hyper-parameters for the garch  coefficients
- \item prior_mgarch: a matrix with the hyper-parameters for the mgarch  coefficients
- \item p: an integer with the order of ar coefficients
- \item q: an inter withe the order of ma coefficients
- \item prior_arch:   a matrix with the hyper-parameters for the arch coefficients
+ \item{"ar"}{ar ~ normal(0,0.5)}
+ \item{"ma"}{ma ~ normal(0,0.5)}
+ \item{"mu0"}{mu0 ~ t-student(0,2.5,6)}
+ \item{"sigma0"}{sigma0 ~ t-student(0,1,7)}
+ \item{"arch"}{arch ~ normal(0,0.5)}
+ \item{"garch"}{garch ~ normal(0,0.5)}
+ \item{"mgarch"}{mgarch ~ normal(0,0.5)}
+ \item{"dfv"}{dfv ~ gamm(2,0.1)}
 }
+
+For changing the default prior use the function \code{set_prior}}
+
+\item{order:}{A specification of thegarch  model: thethree components (s, k, h)
+are the arch order, the garch order, and the mgarch order.}
+
+\item{arma:}{A specification of the  ARMA model,same as order parameter:  the two
+components (p, q) are the AR order,and the  MA order.}
 }
 \description{
 Constructor of the garch(s,k,h) object for bayesian estimation in STAN
@@ -38,8 +40,13 @@ Constructor of the garch(s,k,h) object for bayesian estimation in STAN
 The function returns  a list with the data for running stan() function of
  rstan package
 }
+\references{
+Engle, Robert F. (1982). ?Autoregressive Conditional Heteroscedasticity with
+  Estimates of the Variance of United Kingdom Inflation?.
+  Econometrica 50 (4): 987-1007. JSTOR 1912773.
+}
 \seealso{
-\code{\link{arima}}
+\code{\link{Sarima}} \code{\link{auto.arima}} \code{\link{set_prior}}
 }
 \author{
 Asael Alonzo Matamoros

@@ -1,6 +1,6 @@
 Package: varstan
 Title: An r package for fitting structured time series models with STAN
-Version: 0.5.1.000
+Version: 1.0.0.000
 Authors@R: 
   person(given = "Asael",
            family = "Alonzo Matamoros",
@@ -26,28 +26,38 @@ LinkingTo:
     rstan (>= 2.18.1),
     StanHeaders (>= 2.18.0)
 SystemRequirements: GNU make
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Suggests: 
     knitr,
     rmarkdown
 VignetteBuilder: knitr
 Collate: 
     'Astrovan.R'
-    'arima.R'
-    'Misc.R'
-    'garch.R'
-    'prior.R'
-    'stanmodels.R'
-    'varma.R'
-    'varstan-package.R'
-    'varstan.R'
+    'bayes_factor.R'
+    'Bvar.R'
+    'Birth.R'
     'Fit.R'
+    'gbp.R'
+    'garch.R'
+    'get_params.R'
+    'ipc.R'
+    'log_lik.R'
+    'Misc.R'
+    'model.R'
+    'Others.R'
     'posterior_residuals.R'
     'posterior_fit.R'
     'posterior_estimate.R'
     'posterior_intervals.R'
     'posterior_predict.R'
     'predictive_error.R'
-    'report.R'
-    'summary.R'
     'print.R'
+    'prior.R'
+    'report.R'
+    'Sarima.R'
+    'summary.R'
+    'stanmodels.R'
+    'Sunspots.R'
+    'varma.R'
+    'varstan-package.R'
+    'varstan.R'

@@ -16,5 +16,5 @@ extract_mts(obj, par, d = 1, lag = 1, robust = FALSE)
 \details{
 @author Asael Alonzo Matamoros
 
-@return
+ @return
 }

@@ -13,6 +13,9 @@ object}) or, for the \code{"ppd"} method, a matrix of draws from the
 posterior predictive distribution returned by
 \code{\link{posterior_predict}}.}
 
+\item{xreg:}{Optionally, a numerical matrix of external regressors,
+which must have the same number of rows as ts. It should not be a data frame.}
+
 \item{newdata}{An array with the newdata vector}
 
 \item{draws, seed, offset, re.form}{Optional arguments passed to

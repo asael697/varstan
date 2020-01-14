@@ -11,6 +11,8 @@
 #' @param iter the number of iteration per chain
 #' @param warmup the number of initial iteration to be burned
 #' @param adapt.delta the thin of the jumps in a HMC method
+#' @param  tree.depth maximum  depth of the trees  evaluated
+#' during each iteration
 #'
 #' @import rstan
 #'
@@ -18,21 +20,14 @@
 #'
 #' @return  a stanfit object
 #'
-fit_arima = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta = 0.90,...){
-  if(is.arima(model)){
-    stanfit = rstan::sampling(stanmodels$arima,
-                              data = model,
-                              chains = chains,
-                              iter = iter,
-                              warmup = warmup,
-                              control = list(adapt_delta = adapt.delta),
-                              par = get_params_arima(model)$exclude,
-                              include = FALSE)
-  }
-  else{
-    stanfit = NULL
-    print("There is no accurate data to fit an arima model \n")
-  }
+fit_Sarima = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta = 0.90,tree.depth,...){
+  stanfit = rstan::sampling(stanmodels$Sarima,
+                            data = model,
+                            chains = chains,
+                            iter = iter,
+                            warmup = warmup,
+                            control = list(adapt_delta = adapt.delta,max_treedepth = tree.depth))
+
   return(stanfit)
 }
 #' Fit a mgarch model
@@ -48,6 +43,8 @@ fit_arima = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta =
 #' @param iter the number of iteration per chain
 #' @param warmup the number of initial iteration to be burned
 #' @param adapt.delta the thin of the jumps in a HMC method
+#' @param  tree.depth maximum  depth of the trees  evaluated
+#' during each iteration
 #'
 #' @import rstan
 #'
@@ -56,37 +53,28 @@ fit_arima = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta =
 #'
 #' @return  a stanfit object
 #'
-fit_garch = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta = 0.90,...){
-  if(is.garch(model)){
-    pars = get_params_garch(model)$exclude
+fit_garch = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta = 0.90,tree.depth,...){
 
-    if(model$genT == FALSE){
+  pars = get_params_garch(model)$exclude
 
-      stanfit = rstan::sampling(stanmodels$garch,
-                                data = model,
-                                chains = chains,
-                                iter = iter,
-                                warmup = warmup,
-                                control = list(adapt_delta = adapt.delta),
-                                par = pars,
-                                include = FALSE)
-    }
-    else{
-
-      stanfit = rstan::sampling(stanmodels$tgarch,
-                                data = model,
-                                chains = chains,
-                                iter = iter,
-                                warmup = warmup,
-                                control = list(adapt_delta = adapt.delta),
-                                par = pars,
-                                include = FALSE)
-    }
+  if(model$genT == FALSE){
+    stanfit = rstan::sampling(stanmodels$garch,
+                              data = model,
+                              chains = chains,
+                              iter = iter,
+                              warmup = warmup,
+                              control = list(adapt_delta = adapt.delta,max_treedepth = tree.depth))
   }
   else{
-    stanfit = NULL
-    print("There is no accurate data to fit an garch model \n")
+
+    stanfit = rstan::sampling(stanmodels$tgarch,
+                              data = model,
+                              chains = chains,
+                              iter = iter,
+                              warmup = warmup,
+                              control = list(adapt_delta = adapt.delta,max_treedepth = tree.depth))
   }
+
   return(stanfit)
 }
 #' Fit a  varma model
@@ -103,6 +91,8 @@ fit_garch = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta =
 #' @param iter the number of iteration per chain
 #' @param warmup the number of initial iteration to be burned
 #' @param adapt.delta the thin of the jumps in a HMC method
+#' @param  tree.depth maximum  depth of the trees  evaluated
+#' during each iteration
 #'
 #' @import rstan
 #'
@@ -114,37 +104,26 @@ fit_varma = function(model,
                      chains=4,
                      iter=2000,
                      warmup=floor(iter/2),
-                     adapt.delta = 0.90,...){
-  if(is.varma(model)){
+                     adapt.delta = 0.90,tree.depth,...){
 
-    pars = get_params_varma(model)$exclude
+  pars = get_params_varma(model)$exclude
 
-    if(model$genT == FALSE){
+  if(model$genT == FALSE){
 
-      stanfit = rstan::sampling(stanmodels$varma,
-                                data = model,
-                                chains = chains,
-                                iter = iter,
-                                warmup = warmup,
-                                control = list(adapt_delta = adapt.delta),
-                                par = pars,
-                                include = FALSE)
-    }
-    else{
-
-      stanfit = rstan::sampling(stanmodels$tvarma,
-                                data = model,
-                                chains = chains,
-                                iter = iter,
-                                warmup = warmup,
-                                control = list(adapt_delta = adapt.delta),
-                                par = pars,
-                                include = FALSE)
-    }
+    stanfit = rstan::sampling(stanmodels$varma,
+                              data = model,
+                              chains = chains,
+                              iter = iter,
+                              warmup = warmup,
+                              control = list(adapt_delta = adapt.delta,max_treedepth = tree.depth))
   }
   else{
-    stanfit = NULL
-    print("There is no accurate data to fit a varma model \n")
+    stanfit = rstan::sampling(stanmodels$tvarma,
+                              data = model,
+                              chains = chains,
+                              iter = iter,
+                              warmup = warmup,
+                              control = list(adapt_delta = adapt.delta,max_treedepth = tree.depth))
   }
   return(stanfit)
 }

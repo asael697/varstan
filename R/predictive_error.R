@@ -13,6 +13,8 @@
 #'   object}) or, for the \code{"ppd"} method, a matrix of draws from the
 #'   posterior predictive distribution returned by
 #'   \code{\link{posterior_predict}}.
+#' @param xreg:	Optionally, a numerical matrix of external regressors,
+#' which must have the same number of rows as ts. It should not be a data frame.
 #' @param newdata An array with the newdata vector
 #' @param draws,seed,offset,re.form Optional arguments passed to
 #'   \code{\link{posterior_predict}}. For binomial models, please see the
@@ -42,7 +44,7 @@ predictive_error = function(obj,...){
 #' @method predictive_error varstan
 #' @export
 #'
-predictive_error.varstan = function(obj,newdata,draws = 1000,seed = NULL){
+predictive_error.varstan = function(obj,newdata,xreg = NULL,draws = 1000,seed = NULL){
 
   if( !is.varstan(obj) & !is.data.frame(obj) )
      stop("The current object is not a varstan class or a data.frame containing
@@ -57,7 +59,7 @@ predictive_error.varstan = function(obj,newdata,draws = 1000,seed = NULL){
     nd = newdata
 
   if(is.varstan(obj))
-    yh = posterior_predict(obj = obj,h = length(nd),draws = draws,seed = seed)
+    yh = posterior_predict(obj = obj,h = length(nd),xreg = xreg,draws = draws,seed = seed)
 
   else yh = obj
 

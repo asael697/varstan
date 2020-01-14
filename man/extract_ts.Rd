@@ -15,5 +15,5 @@ extract_ts(obj, par, lag = 1, robust = FALSE)
 \details{
 @author Asael Alonzo Matamoros
 
-@return
+ @return
 }

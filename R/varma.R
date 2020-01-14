@@ -5,31 +5,60 @@
 #' The function returns  a list with the data for running stan() function of
 #'  rstan package
 #'
-#' @usage varbekk(ts,p,s,k)
+#' @usage varma(ts,p,q,sd = mbekk(s,k,h))
 #'
 #' @param ts an multivariate time series
-#' @param p an integer with the order of the var(p) part
-#' @param s an integer with the order of the arch(s) part
-#' @param k an integer with the order of the arch(k) part
+#' @param p  an integer with the order of the var(p) part
+#' @param q  an integer with the order of the vma(1) part
+#' @param s  an integer with the order of the arch(s) part
+#' @param k  an integer with the order of the arch(k) part
+#' @param sd an optional value for specify the Bekk  part for variance, using the
+#' \code{mbekk} function
 #' @param genT a boolean value to specify a Generalized a t-student model Cruz (2015)
+#'
+#' @details If \code{sd} option can only be used with the mbekk function, and it  adds
+#' a m-Bekk model for volatility.
+#'
+#' If a mbekk model is not considerated, then sigma0 represents the covariance matrix
+#' of the model.
+#'
+#' If a bekk model is specified, then sigma0 represents the triangular inferior matrix
+#' alpha0 of a bekk model
+#'
+#' The default priors used in varma are:
+#'
+#' \itemize{
+#'  \item{"ar"}{ar ~ normal(0,0.5)}
+#'  \item{"ma"}{ma ~ normal(0,0.5)}
+#'  \item{"mu0"}{mu0 ~ normal(0,1)}
+#'  \item{"sigma0"}{sigma0 ~ t-student(0,1,7)}
+#'  \item{"arch"}{arch ~ normal(0,0.5)}
+#'  \item{"garch"}{garch ~ normal(0,0.5)}
+#'  \item{"mgarch"}{mgarch ~ normal(0,0.5)}
+#'  \item{"dfv"}{dfv ~ gamm(2,0.1)}
+#' }
+#'
+#' For changing the default prior use the function \code{set_prior}
 #'
 #' @author  Asael Alonzo Matamoros
 #'
 #' @export
 #'
-#' @return  a list with the components
-#' \itemize{
-#'  \item n: the length of the time series
-#'  \item d: the dimension of the time series
-#'  \item p: an integer with the order of the var coefficients
-#'  \item s: an integer with the order of the arch coefficients
-#'  \item k: an interger with the order of th garch coefficients
-#'  \item v: a real with degree freedom for a t-student sample
-#'  \item y: vector with the multivariate time series
-#'  \item prior_var:   a vector with the hyper-parameters for the var   coefficient
-#'  \item prior_arch:  a vector with the hyper-parameters for the arch  coefficient
-#'  \item prior_garch: a vector with the hyper-parameters for the garch coefficient
-#' }
+#' @references
+#'  Polasek, Ren(1999).
+#'  A mulltivariate GARCH-M model for exchange rates in the US,Germany and Japan
+#'
+#'  Fonseca,Ferreira, Migon (2008)
+#'  Objective Bayesian analysis for the Student-t regression model
+#'
+#' @seealso \code{\link{garch}} \code{\link{Sarima}} \code{\link{set_prior}}
+#'
+#' @examples
+#' # Declare a varma model for the Astrovan data
+#'
+#' model = varma(Astrovan,p=1,q=1,sd=mbekk(1,1,0))
+#' model
+#'
 #'
 varma = function(ts,p = 1,q  = 1,sd = mbekk(s=0,k=0,h=0),genT = FALSE){
   n = dim(ts)[2]
@@ -95,24 +124,6 @@ mbekk = function(s=1,k=1,h=0){
   ml$sd = "mgarch"
   return(ml)
 }
-#' Excluded parameters in a  varbekk model
-#'
-#'
-get_params_varma = function(dat,...){
-  include = c("mu0","sigma0")
-  if(dat$p > 0) include = c(include,"phi")
-  if(dat$q > 0) include = c(include,"theta")
-  if(dat$sd == "mgarch"){
-    if(dat$s > 0) include = c(include,"alpha")
-    if(dat$k > 0) include = c(include,"beta")
-    if(dat$h > 0) include = c(include,"mgarch")
-    if(dat$genT == TRUE) include = c(include,"v")
-  }
-  exclude = c("phi0","theta0","Msigma0","vsigma0",
-              "sigma1","Lsigma","vsigma","lambda1")
-  pars = list(include = c(include,"loglik"),exclude = exclude)
-  return(pars)
-}
 #' Get the degree freedom values of a varma model
 #'
 #' get the degree freedom values of a varma(p,q) model  in STAN
@@ -130,13 +141,10 @@ get_params_varma = function(dat,...){
 #' @return  a data frame with all the important fitted parameters
 #'
 get_df_varma = function(fit,model,robust = FALSE,...){
-  if(model$genT == TRUE){
     post = as.data.frame(rstan::extract(fit,"lambda", permuted = TRUE) )
     if(robust) sum1 = t(matrix(apply(post,2,median),nrow = model$d,byrow = TRUE))
     else sum1 = t(matrix(apply(post,2,mean),nrow = model$d,byrow = TRUE))
     return(sum1)
-}
-  else cat("The current model is not a Generalized t-student varma model")
 }
 #' Get the lag parameters of a varma model
 #'
@@ -169,16 +177,11 @@ get_lag_varma = function(type,fit,model,robust = FALSE,...){
 #' Extracts all the order coeffients in a list
 #'
 get_order_varma= function(dat){
-  if (is.varma(dat)){
-    return(list(p = dat$p,q=dat$q,s=dat$s,k=dat$k,h=dat$h))
-  }
-  else print("The object is not a varma model")
+  return(list(p = dat$p,q=dat$q,s=dat$s,k=dat$k,h=dat$h))
+
 }
 #' Max order  coeffients in a varma model
 #'
 max_order_varma= function(dat){
-  if (is.varma(dat)){
-    return(max(c(dat$p,dat$q,dat$s,dat$k,dat$h)))
-  }
-  else print("The object is not a garch model")
+  return(max(c(dat$p,dat$q,dat$s,dat$k,dat$h)))
 }

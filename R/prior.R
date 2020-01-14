@@ -26,12 +26,15 @@ set_prior = function(dat,type,lag = 0,par1 = 0,par2 = 1,dist = "normal",df = 1){
   if(check_type(type)){
     if(type=="ar")    dat = set_prior_ar(dat = dat,lag = lag,par1 = par1,par = par2,dist = dist)
     if(type=="ma")    dat = set_prior_ma(dat = dat,lag = lag,par1 = par1,par = par2,dist = dist)
+    if(type=="sar")   dat = set_prior_sar(dat = dat,lag = lag,par1 = par1,par = par2,dist = dist)
+    if(type=="sma")   dat = set_prior_sma(dat = dat,lag = lag,par1 = par1,par = par2,dist = dist)
     if(type=="arch")  dat = set_prior_arch(dat = dat,lag = lag,par1 = par1,par = par2,dist = dist)
     if(type=="garch") dat = set_prior_garch(dat = dat,lag = lag,par1 = par1,par = par2,dist = dist)
     if(type=="mgarch")dat = set_prior_mgarch(dat = dat,lag = lag,par1 = par1,par = par2,dist = dist)
+    if(type=="breg")  dat = set_prior_breg(dat = dat,lag = lag,par1 = par1,par = par2,dist = dist)
     if(type=="mu0")   dat = set_prior_mu0(dat = dat,par1 = par1,par = par2,dist = dist,df = df)
     if(type=="sigma0")dat = set_prior_sigma0(dat = dat,par1 = par1,par = par2,dist = dist,df = df)
-    if(type=="dfv")dat = set_prior_dfv(dat = dat,par1 = par1,par = par2,dist = dist,df = df)
+    if(type=="dfv")   dat = set_prior_dfv(dat = dat,par1 = par1,par = par2,dist = dist,df = df)
   }
   else{
     cat(type, "is not a defined parameter")
@@ -57,12 +60,15 @@ get_prior = function(dat,type,lag = 0){
   if(check_type(type)){
     if(type=="ar")     get_prior_ar(dat = dat,lag = lag)
     if(type=="ma")     get_prior_ma(dat = dat,lag = lag)
+    if(type=="sar")    get_prior_sar(dat = dat,lag = lag)
+    if(type=="sma")    get_prior_sma(dat = dat,lag = lag)
     if(type=="arch")   get_prior_arch(dat = dat,lag = lag)
     if(type=="garch")  get_prior_garch(dat = dat,lag = lag)
     if(type=="mgarch") get_prior_mgarch(dat = dat,lag = lag)
-    if(type=="mu0") get_prior_mu0(dat = dat)
-    if(type=="sigma0")get_prior_sigma0(dat = dat)
-    if(type=="dfv")get_prior_dfv(dat = dat)
+    if(type=="breg")   get_prior_breg(dat = dat,lag = lag)
+    if(type=="mu0")    get_prior_mu0(dat = dat)
+    if(type=="sigma0") get_prior_sigma0(dat = dat)
+    if(type=="dfv")    get_prior_dfv(dat = dat)
   }
   else{
     cat(type, "is not a defined parameter \n")
@@ -243,11 +249,16 @@ get_prior_dfv = function(dat){
 #'
 #' @author  Asael Alonzo Matamoros
 #'
-set_one_prior_lag = function(par1,par2,dist = "normal"){
-  if(check_dist(dist,par = "ar")){
+set_one_prior_lag = function(par,par1,par2,dist = "normal"){
+  if(check_dist(dist,par = par)){
     if(identical(dist,"normal") )  x = c(check_loc(par1),check_scl(par2),1,1)
     if(identical(dist,"beta"))     x = c(check_form(par1),check_form(par2),1,2)
     if(identical(dist,"uniform"))  x = c(1,1,1,3)
+  }
+  if(check_dist(dist,par = par)){
+    if(identical(dist,"normal") ) x= c(check_loc(par1),check_scl(par2),1,1)
+    if(identical(dist,"student")) x = c(check_loc(par1),check_scl(par2),check_df(df),4)
+    if(identical(dist,"cauchy"))  x = c(check_loc(par1),check_scl(par2),1,5)
   }
   else{
     cat(dist,"is not a family defined for lagged models, a default normal prior is used")
@@ -283,10 +294,10 @@ set_prior_ar = function(dat,type,par1,par2,dist = "normal",lag=0){
     }
     else{
       if(lag == 0){
-        for(i in 1:dat$p) dat$prior_ar[i,] = set_one_prior_lag(par1 = par1,par2 = par2,dist = dist)
+        for(i in 1:dat$p) dat$prior_ar[i,] = set_one_prior_lag(par = "ar",par1 = par1,par2 = par2,dist = dist)
       }
       else{
-        if(lag <= dat$p) dat$prior_ar[lag,] = set_one_prior_lag(par1[1],par2[1],dist[1])
+        if(lag <= dat$p) dat$prior_ar[lag,] = set_one_prior_lag(par = "ar",par1[1],par2[1],dist[1])
         else cat("lag = ",lag,"is not lower than p = ",dat$p)
       }
     }
@@ -351,6 +362,100 @@ get_prior_ar = function(dat,lag = 0){
 }
 
 ##################################################################################################################
+#                                     Seasoanl AR Priors
+##################################################################################################################
+
+
+#' Set Prior distribution for a sar model
+#'
+#' Generic function for setting a prior to sar parameters
+#'
+#' @usage set_prior(type,lag,par1,par2,dist)
+#'
+#' @param dat: an Sarima model speficied in varstan.
+#' @param lag: the lag of the parameter which the prior is defined if lag = 0, then the prior will be applied
+#' for all the lags.
+#' @param par1 The first hyper-parameter of the prior distribution
+#' @param par2 The second hyper-parameter of the prior distribution
+#' @param dist: the distribution of the prior distribution, could be: a normal,beta, and uniform
+#'
+#' @author  Asael Alonzo Matamoros
+#'
+set_prior_sar = function(dat,type,par1,par2,dist = "normal",lag=0){
+  if(is.model(dat) ){
+    if(dat$P == 0 ){
+      cat(class(dat),"doesnt have an sar part defined")
+    }
+    else{
+      if(lag == 0){
+        for(i in 1:dat$P) dat$prior_sar[i,] = set_one_prior_lag(par = "ar",par1 = par1,par2 = par2,dist = dist)
+      }
+      else{
+        if(lag <= dat$P) dat$prior_sar[lag,] = set_one_prior_lag(par = "ar",par1[1],par2[1],dist[1])
+        else cat("lag = ",lag,"is not lower than P = ",dat$Q)
+      }
+    }
+  }
+  else{
+    cat(class(dat),"is not a defined  model")
+  }
+  return(dat)
+}
+#' Get one Prior distribution for an sar model
+#'
+#'
+#' @usage get_one_prior(dat,lag = 1)
+#'
+#' @param dat: an Sarima model speficied in varstan.
+#' @param lag: the lag of the parameter which the prior is defined if lag = 0, then the prior will be applied
+#' for all the lags.
+#'
+#' @author  Asael Alonzo Matamoros
+#'
+get_one_prior_sar = function(dat,lag = 1){
+  if(is.model(dat)){
+    if(dat$P == 0){
+      cat("There is no sar part defined \n")
+    }
+    else{
+      if(lag <= dat$P){
+        prior_ar = dat$prior_sar[lag,]
+        if(prior_ar[4] ==1) cat("sar[",lag,"] ~ normal","(mu = ",prior_ar[1],", sd = ",prior_ar[2],") \n")
+        if(prior_ar[4] ==2) cat("sar[",lag,"] ~ beta","(form1 = ",prior_ar[1],", form2 = ",prior_ar[2],") \n")
+        if(prior_ar[4] ==3) cat("sar[",lag,"] ~ uniform","(form1 = ",prior_ar[1],", form2 = " ,prior_ar[2],") \n")
+      }
+      else cat("lag = ",lag,"is not lower than P = ",dat$P)
+    }
+  }
+  else cat(class(dat), "is not an Sarima model \n")
+}
+#' Get Prior distribution for a sar model
+#'
+#'
+#' @usage get_prior(dat,lag)
+#'
+#' @param dat: an arima model speficied in varstan.
+#' @param lag: the lag of the parameter which the prior is defined if lag = 0, then the prior will be applied
+#' for all the lags.
+#'
+#' @author  Asael Alonzo Matamoros
+#'
+get_prior_sar = function(dat,lag = 0){
+  if(is.model(dat)){
+    if(dat$P == 0 ){
+      cat("There is no sar part defined \n")
+    }
+    else{
+      if(lag == 0){
+        for(i in 1:dat$P) get_one_prior_sar(dat = dat,lag = i)
+      }
+      else get_one_prior_sar(dat = dat,lag = lag)
+    }
+  }
+  else cat(class(dat), "is not an Sarima model \n")
+}
+
+##################################################################################################################
 #                                     ma Priors
 ##################################################################################################################
 
@@ -377,10 +482,10 @@ set_prior_ma = function(dat,type,par1,par2,dist = "normal",lag=0){
     }
     else{
       if(lag == 0){
-        for(i in 1:dat$q) dat$prior_ma[i,] = set_one_prior_lag(par1 = par1,par2 = par2,dist = dist)
+        for(i in 1:dat$q) dat$prior_ma[i,] = set_one_prior_lag(par = "ar",par1 = par1,par2 = par2,dist = dist)
       }
       else{
-        if(lag <= dat$q) dat$prior_ma[lag,] = set_one_prior_lag(par1[1],par2[1],dist[1])
+        if(lag <= dat$q) dat$prior_ma[lag,] = set_one_prior_lag(par = "ar",par1[1],par2[1],dist[1])
         else cat("lag = ",lag,"is not lower than q = ",dat$q)
       }
     }
@@ -444,6 +549,99 @@ get_prior_ma = function(dat,lag = 0){
   else cat(class(dat), "is not an arima model \n")
 }
 
+##################################################################################################################
+#                                    Seasonal  ma Priors
+##################################################################################################################
+
+
+#' Set Prior distribution for a sma model
+#'
+#' Generic function for setting a prior to sma parameters
+#'
+#' @usage set_prior(type,lag,par1,par2,dist)
+#'
+#' @param dat: an arima model speficied in varstan.
+#' @param lag: the lag of the parameter which the prior is defined if lag = 0, then the prior will be applied
+#' for all the lags.
+#' @param par1 The first hyper-parameter of the prior distribution
+#' @param par2 The second hyper-parameter of the prior distribution
+#' @param dist: the distribution of the prior distribution, could be: a normal,beta, and uniform
+#'
+#' @author  Asael Alonzo Matamoros
+#'
+set_prior_sma = function(dat,type,par1,par2,dist = "normal",lag=0){
+  if(is.model(dat) ){
+    if(dat$Q == 0 ){
+      cat(class(dat),"doesnt have a sma part \n")
+    }
+    else{
+      if(lag == 0){
+        for(i in 1:dat$Q) dat$prior_sma[i,] = set_one_prior_lag(par = "ar",par1 = par1,par2 = par2,dist = dist)
+      }
+      else{
+        if(lag <= dat$Q) dat$prior_sma[lag,] = set_one_prior_lag(par = "ar",par1[1],par2[1],dist[1])
+        else cat("lag = ",lag,"is not lower than Q = ",dat$Q)
+      }
+    }
+  }
+  else{
+    cat(class(dat),"is not a defined  model \n")
+  }
+  return(dat)
+}
+#' Get one Prior distribution for a sma model
+#'
+#'
+#' @usage get_one_prior(dat,lag = 1)
+#'
+#' @param dat: an Sarima model speficied in varstan.
+#' @param lag: the lag of the parameter which the prior is defined if lag = 0, then the prior will be applied
+#' for all the lags.
+#'
+#' @author  Asael Alonzo Matamoros
+#'
+get_one_prior_sma = function(dat,lag = 1){
+  if(is.model(dat)){
+    if(dat$Q == 0){
+      cat("There is no sma part defined \n")
+    }
+    else{
+      if(lag <= dat$Q){
+        prior_ar = dat$prior_sma[lag,]
+        if(prior_ar[4] ==1) cat("sma[",lag,"] ~ normal","(mu = ",prior_ar[1],", sd = ",prior_ar[2],") \n")
+        if(prior_ar[4] ==2) cat("sma[",lag,"] ~ beta","(form1 = ",prior_ar[1],", form2 = ",prior_ar[2],") \n")
+        if(prior_ar[4] ==3) cat("sma[",lag,"] ~ uniform","(form1 = ",prior_ar[1],", form2 = " ,prior_ar[2],") \n")
+      }
+      else cat("lag = ",lag,"is not lower than Q = ",dat$Q)
+    }
+  }
+  else cat(class(dat), "is not an arima model \n")
+}
+#' Get Prior distribution for an ar model
+#'
+#'
+#' @usage get_prior(dat,lag)
+#'
+#' @param dat: a Sarima model speficied in varstan.
+#' @param lag: the lag of the parameter which the prior is defined if lag = 0, then the prior will be applied
+#' for all the lags.
+#'
+#' @author  Asael Alonzo Matamoros
+#'
+get_prior_sma = function(dat,lag = 0){
+  if(is.model(dat)){
+    if(dat$Q == 0 ){
+      cat("There is no sma part defined \n")
+    }
+    else{
+      if(lag == 0){
+        for(i in 1:dat$Q) get_one_prior_sma(dat = dat,lag = i)
+      }
+      else get_one_prior_sma(dat = dat,lag = lag)
+    }
+  }
+  else cat(class(dat), "is not an Sarima model \n")
+}
 
 ##################################################################################################################
 #                                     arch Priors
@@ -472,10 +670,10 @@ set_prior_arch = function(dat,type,par1,par2,dist = "normal",lag=0){
     }
     else{
       if(lag == 0){
-        for(i in 1:dat$s) dat$prior_arch[i,] = set_one_prior_lag(par1 = par1,par2 = par2,dist = dist)
+        for(i in 1:dat$s) dat$prior_arch[i,] = set_one_prior_lag(par = "ar",par1 = par1,par2 = par2,dist = dist)
       }
       else{
-        if(lag <= dat$s) dat$prior_arch[lag,] = set_one_prior_lag(par1[1],par2[1],dist[1])
+        if(lag <= dat$s) dat$prior_arch[lag,] = set_one_prior_lag(par = "ar",par1[1],par2[1],dist[1])
         else cat("lag = ",lag,"is not lower than s = ",dat$k)
       }
     }
@@ -566,10 +764,10 @@ set_prior_garch = function(dat,type,par1,par2,dist = "normal",lag=0){
     }
     else{
       if(lag == 0){
-        for(i in 1:dat$k) dat$prior_garch[i,] = set_one_prior_lag(par1 = par1,par2 = par2,dist = dist)
+        for(i in 1:dat$k) dat$prior_garch[i,] = set_one_prior_lag(par = "ar",par1 = par1,par2 = par2,dist = dist)
       }
       else{
-        if(lag <= dat$k) dat$prior_garch[lag,] = set_one_prior_lag(par1[1],par2[1],dist[1])
+        if(lag <= dat$k) dat$prior_garch[lag,] = set_one_prior_lag(par = "ar",par1[1],par2[1],dist[1])
         else cat("lag = ",lag,"is not lower than k = ",dat$k)
       }
     }
@@ -660,10 +858,10 @@ set_prior_mgarch = function(dat,type,par1,par2,dist = "normal",lag=0){
     }
     else{
       if(lag == 0){
-        for(i in 1:dat$h) dat$prior_mgarch[i,] = set_one_prior_lag(par1 = par1,par2 = par2,dist = dist)
+        for(i in 1:dat$h) dat$prior_mgarch[i,] = set_one_prior_lag(par = "ar",par1 = par1,par2 = par2,dist = dist)
       }
       else{
-        if(lag <= dat$h) dat$prior_mgarch[lag,] = set_one_prior_lag(par1[1],par2[1],dist[1])
+        if(lag <= dat$h) dat$prior_mgarch[lag,] = set_one_prior_lag(par = "ar",par1[1],par2[1],dist[1])
         else cat("lag = ",lag,"is not lower than h = ",dat$h)
       }
     }
@@ -725,4 +923,97 @@ get_prior_mgarch = function(dat,lag = 0){
     }
   }
   else cat(class(dat), "is not an garch model \n")
+}
+##################################################################################################################
+#                                     breg Priors
+##################################################################################################################
+
+
+#' Set Prior distribution for regression coefficients in a Sarima model
+#'
+#' Generic function for setting a prior for regression coefficients
+#'
+#' @usage set_prior(type,lag,par1,par2,dist)
+#'
+#' @param dat: a sarima model speficied in varstan.
+#' @param lag: the lag of the parameter which the prior is defined if lag = 0, then the prior will be applied
+#' for all the lags.
+#' @param par1 The first hyper-parameter of the prior distribution
+#' @param par2 The second hyper-parameter of the prior distribution
+#' @param dist: the distribution of the prior distribution, could be: a normal,beta, and uniform
+#'
+#' @author  Asael Alonzo Matamoros
+#'
+set_prior_breg = function(dat,type,par1,par2,dist = "normal",lag=0){
+  if(is.model(dat) ){
+    if(dat$d1 == 0 ){
+      cat(class(dat),"doesnt have a regression part \n")
+    }
+    else{
+      if(lag == 0){
+        for(i in 1:dat$d1) dat$prior_breg[i,] = set_one_prior_lag(par = "breg",par1 = par1,par2 = par2,dist = dist)
+      }
+      else{
+        if(lag <= dat$d1) dat$prior_breg[lag,] = set_one_prior_lag(par = "breg",par1[1],par2[1],dist[1])
+        else cat("lag = ",lag,"is not lower than the number of columns d1 = ",dat$d1)
+      }
+    }
+  }
+  else{
+    cat(class(dat),"is not a defined  model \n")
+  }
+  return(dat)
+}
+#' Get one Prior distribution for a regression coefficient in a Sarima model
+#'
+#'
+#' @usage get_one_prior(dat,lag = 1)
+#'
+#' @param dat: a Sarima model speficied in varstan.
+#' @param lag: the lag of the parameter which the prior is defined if lag = 0, then the prior will be applied
+#' for all the lags.
+#'
+#' @author  Asael Alonzo Matamoros
+#'
+get_one_prior_breg = function(dat,lag = 1){
+  if(is.model(dat)){
+    if(dat$d1 == 0){
+      cat("There is no regression part defined \n")
+    }
+    else{
+      if(lag <= dat$d1){
+        prior_ar = dat$prior_breg[lag,]
+        if(prior_ar[4] ==1) cat("breg[",lag,"] ~ normal","(loc = ",prior_ar[1],", scl = ",prior_ar[2],") \n")
+        if(prior_ar[4] ==4) cat("breg[",lag,"] ~ t","(loc = ",prior_ar[1],", scl= ",prior_ar[2],",df =",prior_ar[3],")\n")
+        if(prior_ar[4] ==5) cat("breg[",lag,"] ~ cauchy","(loc = ",prior_ar[1],", scl = " ,prior_ar[2],") \n")
+      }
+      else cat("lag = ",lag,"is not lower than the number of columns d1= ",dat$d1)
+    }
+  }
+  else cat(class(dat), "is not a Sarima model \n")
+}
+#' Get Prior distribution for aregression coefficients in a Sarima model
+#'
+#'
+#' @usage get_prior(dat,lag)
+#'
+#' @param dat: an garch model speficied in varstan.
+#' @param lag: the lag of the parameter which the prior is defined if lag = 0, then the prior will be applied
+#' for all the lags.
+#'
+#' @author  Asael Alonzo Matamoros
+#'
+get_prior_breg = function(dat,lag = 0){
+  if(is.model(dat)){
+    if(dat$d1 == 0 ){
+      cat("There is no regression part defined \n")
+    }
+    else{
+      if(lag == 0){
+        for(i in 1:dat$d1) get_one_prior_breg(dat = dat,lag = i)
+      }
+      else get_one_prior_breg(dat = dat,lag = lag)
+    }
+  }
+  else cat(class(dat), "is not a Sarima model \n")
 }

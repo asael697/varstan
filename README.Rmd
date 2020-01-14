@@ -25,14 +25,28 @@ knitr::opts_chunk$set(
 
 # **varstan**
 
+```{r,include=FALSE}
+set.seed(294)
+
+library(varstan)
+library(forecast)
+library(bayesplot)
+library(ggplot2)
+library(gridExtra)
+```
+
+
 Varstan is a a package for bayesian estimation of structured time series models,using the Hamiltonian monte carlo method, implemented with [Stan](http://mc-stan.org/), a probabilistic language model in C++. The aim of varstan is to have an interface of the most popular time series modeles such as: sarima,garch, stochastic Volatility models (*SVM*), Hiden Markov models(*HMM*), Dynamic Harmonic regresion, additive non-linear models (*via* [prophet](https://github.com/facebook/prophet)), univariate kalman Filters, varma and bekk models.
 
 On the beta version 0.5.0.000, the avaliable models are:
  
   + arima
+  + Seasonal arima
   + garch
   + varma
-  + bekk
+  + Bekk
+  + Dynamic regression
+  +Dynamic Harmonic regresion
 
 The dynamic of varstan is to build your own model using one of the avaliable model constructor, personalize your own priors (*check the Use Priors vignette*), and fit your model using the varstan function. On the next example we show you how to create and fit a simple bayesian arima model.
 
@@ -79,17 +93,18 @@ install_github("asael697/varstan")
 ```
  
  
+### Current models 
+ 
+The package offers an S3 object for the basic models implemented, for simplicity you can use the \code{version} function to see the list of all the models implemented in the actual package version:
+
+```{r}
+version(View = FALSE)
+```
+
+
+ 
 ### Simulated arma model
 
-```{r,include=FALSE}
-set.seed(294)
-
-library(varstan)
-library(forecast)
-library(bayesplot)
-library(ggplot2)
-library(gridExtra)
-```
 
 
 First step is make a simulation of a simple arma model with 200 observations as follows:
@@ -109,7 +124,7 @@ autoplot(y)+labs(x = "time",title = "Simulated ARMA Process")
 
 Proceding to built the arima model using the varstan constructor:
 ```{r}
-model1 = arima(y,p = 1,d = 0,q = 2)
+model1 = Sarima(y,order = c(1,0,2))
 ```
 
 Automatically varstan builds a bayesian arima model, with default normal priors, you can check the model using the report function or just printing the current model
@@ -143,7 +158,7 @@ sfit = varstan(model1,chains = 1,iter = 2000)
 The function **summary**, provides a a full description of all the fitted parameters in the model, the robust option, prints the median, mad, and quantiles. If the robust option is false, the mean, se and estimated credible intervals are printed. The $Rhat$ and efective sample size for preliminary diagnostic if the simulated chains have converged. More detail for parameter diagnostics could be found [here](https://mc-stan.org/bayesplot/articles/visual-mcmc-diagnostics.html).
 
 ```{r}
-summary(sfit,robust= TRUE,conf = 0.95)
+sfit
 ```
 
 
@@ -152,7 +167,7 @@ You can plot the fitted values and posterior intervals using the posterior_fit a
 ```{r, fig2}
 fit = posterior_fit(sfit)
 pe = data.frame(extract_stan(obj = sfit,pars = "fit"))
-pe = posterior_interval(as.matrix(pe),prob = 0.95)
+pe = posterior_interval(as.matrix(pe),prob = 0.90)
 
 pe =  data.frame(t = 1:length(y),Estimate = fit, q2.5 = pe[,1],q97.5 = pe[,2])
 

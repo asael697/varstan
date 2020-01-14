@@ -57,7 +57,7 @@ transformed parameters{
     //  ar Estimation
     if(p > 0) for(j in 1:p) if(i > j) mu[i] +=  y[i-j]*phi[j];
     // ma estimation
-    if(q > 0) for(j in 1:q) if(i > j) mu[i] += epsilon[i-j]*theta[j];
+    if(q > 0) for(j in 1:q) if(i > j) mu[i] += -epsilon[i-j]*theta[j];
     epsilon[i] = y[i] - mu[i];
     // Garch Iteration
     if(s >= k){

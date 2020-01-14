@@ -1,84 +1,120 @@
-#' Print a report of the constructed model
+#' Print a full report of the time series model in a  varstan object
 #'
-#' @param dat: an arima object
+#' The function returns a report with the users defined model for the given time series data
+#' and all the current defined priors of the model
+#'
+#' @usage  report(obj)
+#'
+#' @param obj: a varstan object or one of the defined current defined reports in varstan package
+#'
+#' @details if \code{obj} is a varstan object the function will print the information of the
+#' defined model inside of the object. If \code{obj} is one of the model classes (like Sarima or garch)
+#' then it will print the report information aswell.
+#'
+#'
+#' @author  Asael Alonzo Matamoros
+#'
+#' @seealso \code{\link{report}} \code{\link{prior}}
 #'
 #' @export
 #'
-report = function(dat){
-  if( is.arima(dat)){
-    cat("\n")
-    cat("y ~ arima(",dat$p,",",dat$d,",",dat$q,") \n")
+#' @return  a  string with the defined time series report
+#'
+report <- function(obj,...) {
+  UseMethod("report")
+}
+#'
+#' @method report varstan
+#' @export
+#'
+report.varstan = function(obj){
+  if(is.varstan(obj)){
+    if( is.Sarima(obj$model)) report.Sarima(obj$model)
+    if( is.garch(obj$model))  report.garch(obj$model)
+    if( is.varma(obj$model))  report.varma(obj$model)
+  }
+  else cat("The current object is not a varstan class")
+}
+#'
+#' @method report Sarima
+#' @export
+#'
+report.Sarima = function(obj){
+  if( is.Sarima(obj)){
+    model.Sarima(obj)
     cat("Priors: \n Intercept:\n")
-    get_prior(dat,type = "mu0")
+    get_prior(obj,type = "mu0")
     cat("\n Scale Parameter: \n")
-    get_prior(dat,type = "sigma0")
-    cat("\n ar parameters: \n")
-    get_prior(dat,type = "ar")
-    cat("\n ma parameters: \n")
-    get_prior(dat,type = "ma")
-    if(dat$sd == "mgarch"){
-      cat("sigma ~ garch(",dat$s,",",dat$k,",",dat$h,") \n")
-      cat("\n Volatility components:")
-      cat("\n arch parameters: \n")
-      get_prior(dat,type = "arch")
-      cat("\n garch parameters: \n")
-      get_prior(dat,type = "garch")
-      cat("\n mgarch parameters: \n")
-      get_prior(dat,type = "mgarch")
+    get_prior(obj,type = "sigma0")
+    cat("\n")
+    if(obj$p  > 0 )get_prior(dat = obj,type = "ar")
+    if(obj$q  > 0 )get_prior(dat = obj,type = "ma")
+    if(obj$P != 0 || obj$Q != 0 || obj$D != 0){
+      cat("\n Seasonal Parameters: \n")
+      if(obj$P  > 0 )get_prior(dat = obj,type = "sar")
+      if(obj$Q  > 0 )get_prior(dat = obj,type = "sma")
+    }
+    if(obj$d1 > 0 ){
+      cat("\n Regression Parameters: \n")
+      get_prior(dat = obj,type = "breg")
     }
   }
-  if(is.garch(dat)){
-    cat("\n")
-    cat("y ~ garch(",dat$s,",",dat$k,",",dat$h,") \n")
+  else cat("The object is not a Sarima model \n")
+}
+#'
+#' @method report garch
+#' @export
+#'
+report.garch = function(obj){
+  if(is.garch(obj)){
+    model.garch(obj)
     cat("Priors: \n Intercept:\n")
-    get_prior(dat,type = "mu0")
+    get_prior(obj,type = "mu0")
     cat("\n Scale Parameter: \n")
-    get_prior(dat,type = "sigma0")
-    cat("\n arch parameters: \n")
-    get_prior(dat,type = "arch")
-    cat("\n garch parameters: \n")
-    get_prior(dat,type = "garch")
-    cat("\n mgarch parameters: \n")
-    get_prior(dat,type = "mgarch")
-    if(dat$mean == "arma"){
-      cat("mu ~ garch(",dat$p,",",dat$q,") \n")
-      cat("\n meancomponents:")
-      cat("\n ar parameters: \n")
-      get_prior(dat,type = "ar")
-      cat("\n ma parameters: \n")
-      get_prior(dat,type = "ma")
+    get_prior(obj,type = "sigma0")
+    cat("\n")
+    if(obj$s  > 0 )get_prior(dat = obj,type = "arch")
+    if(obj$k  > 0 )get_prior(dat = obj,type = "garch")
+    if(obj$h  > 0 )get_prior(dat = obj,type = "mgarch")
+    if(obj$p != 0 || obj$q != 0 ){
+      cat("\n mean Parameters: \n")
+      if(obj$p  > 0 )get_prior(dat = obj,type = "ar")
+      if(obj$q  > 0 )get_prior(dat = obj,type = "ma")
     }
     if(dat$genT == TRUE){
       cat("\n Generalized t-student \n")
       cat("\n lambda ~ G(v/2,v/2) \n")
-      get_prior(dat,type = "dfv")
+      get_prior(obj,type = "dfv")
     }
   }
-  if(is.varma(dat)){
-    cat("\n")
-    cat("y ~ varma(",dat$p,",",dat$q,") of dimension d =",dat$d,"and length d =",dat$n, "\n")
+  else cat("The object is not a garch model \n")
+}
+#'
+#' @method report varma
+#' @export
+#'
+report.varma = function(obj){
+  if(is.varma(obj)){
+    model.varma(obj)
     cat("Priors: \n Intercept:\n")
-    get_prior(dat,type = "mu0")
+    get_prior(obj,type = "mu0")
     cat("\n Scale Parameter: \n")
-    get_prior(dat,type = "sigma0")
-    cat("\n ar parameters: \n")
-    get_prior(dat,type = "ar")
-    cat("\n ma parameters: \n")
-    get_prior(dat,type = "ma")
-    if(dat$sd == "mgarch"){
-      cat("sigma ~ Bekk(",dat$s,",",dat$k,",",dat$h,") \n")
-      cat("\n Volatility components:")
-      cat("\n arch parameters: \n")
-      get_prior(dat,type = "arch")
-      cat("\n garch parameters: \n")
-      get_prior(dat,type = "garch")
-      cat("\n mgarch parameters: \n")
-      get_prior(dat,type = "mgarch")
+    get_prior(obj,type = "sigma0")
+    cat("\n mean Parameters: \n")
+    if(obj$p  > 0 )get_prior(dat = obj,type = "ar")
+    if(obj$q  > 0 )get_prior(dat = obj,type = "ma")
+
+    if(obj$s != 0 || obj$k != 0 || obj$h != 0 ){
+      cat("\n Bekk Parameters: \n")
+      if(obj$s  > 0 )get_prior(dat = obj,type = "arch")
+      if(obj$k  > 0 )get_prior(dat = obj,type = "garch")
+      if(obj$h  > 0 )get_prior(dat = obj,type = "mgarch")
     }
     if(dat$genT == TRUE){
       cat("\n Generalized t-student \n")
       cat("\n lambda ~ G(v/2,v/2) \n")
-      get_prior(dat,type = "dfv")
+      get_prior(obj,type = "dfv")
     }
   }
+  else cat("The object is not a varma model \n")
 }

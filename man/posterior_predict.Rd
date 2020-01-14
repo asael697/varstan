@@ -12,6 +12,9 @@ posterior_predict(obj)
 \item{h:}{An integer indicating the number of predictions. The default number
 of predictions is 1.}
 
+\item{xreg:}{Optionally, a numerical matrix of external regressors,
+which must have the same number of rows as ts. It should not be a data frame.}
+
 \item{robust:}{A boolean for obtain the robust estimation. The default}
 
 \item{draws:}{An integer indicating the number of draws to return. The default

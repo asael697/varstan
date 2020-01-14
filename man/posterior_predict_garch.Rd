@@ -2,7 +2,7 @@
 % Please edit documentation in R/posterior_predict.R
 \name{posterior_predict_garch}
 \alias{posterior_predict_garch}
-\title{Draw from posterior predictive distribution of an arima-garch model}
+\title{Draw from posterior predictive distribution of an arma-garch model}
 \usage{
 posterior_predict_garch(obj)
 }
@@ -26,7 +26,7 @@ A \code{draws} by \code{h} data.frame of simulations from the
   posterior distribution.
 }
 \description{
-Draw from posterior predictive distribution of an arima-garch model
+Draw from posterior predictive distribution of an arma-garch model
 }
 \author{
 Asael Alonzo Matamoros

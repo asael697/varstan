@@ -548,7 +548,7 @@ public:
                             current_statement_begin__ = 60;
                             stan::model::assign(mu, 
                                         stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                        (stan::model::rvalue(mu, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "mu") + (get_base1(epsilon, (i - j), "epsilon", 1) * get_base1(theta, j, "theta", 1))), 
+                                        (stan::model::rvalue(mu, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "mu") + (-(get_base1(epsilon, (i - j), "epsilon", 1)) * get_base1(theta, j, "theta", 1))), 
                                         "assigning variable mu");
                         }
                     }
@@ -994,7 +994,7 @@ public:
                             current_statement_begin__ = 60;
                             stan::model::assign(mu, 
                                         stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                        (stan::model::rvalue(mu, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "mu") + (get_base1(epsilon, (i - j), "epsilon", 1) * get_base1(theta, j, "theta", 1))), 
+                                        (stan::model::rvalue(mu, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "mu") + (-(get_base1(epsilon, (i - j), "epsilon", 1)) * get_base1(theta, j, "theta", 1))), 
                                         "assigning variable mu");
                         }
                     }

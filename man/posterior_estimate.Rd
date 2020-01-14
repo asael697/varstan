@@ -2,7 +2,7 @@
 % Please edit documentation in R/posterior_estimate.R
 \name{posterior_estimate}
 \alias{posterior_estimate}
-\title{Generic function and method for the posterior estimate of all  parameters in varstan object}
+\title{Generic function and method for the posteriorpoint estimate of all  parameters in varstan object}
 \usage{
 point_estimate(obj)
 }
@@ -13,14 +13,8 @@ point_estimate(obj)
 And if its \code{FALSE} it returns the mean, by default is the \code{FALSE} value}
 }
 \value{
-a list with the components
-\itemize{
- \item A matrix with the posterior value of the var coefficients
- \item A matrix with the posterior value of the scale parameter
- \item A vector with the posterior value of the degree freedom
- \item A time series with the posterior value of the correction parameter
- for the variance
-}
+a list with the components of mu0, sigma0, ar, ma, sar, sma, arch, garch, mgarch, and breg,
+of one of the defined varstan models
 }
 \description{
 It returns a list with the point estimate value of the posterior distribution

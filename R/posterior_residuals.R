@@ -1,17 +1,22 @@
-#' Get the residual values of the fitted model
+#' Generic function and method for extract the residual of a varstan object
 #'
-#' The function returns a matrix with the residual values
+#' The function returns the posterior estimate of the residuals
+#' of a varstan model, similar to the residual functions of other
+#' packages.
 #'
-#' @usage  get_residuals(obj)
+#' @usage  posterior_residuals(obj,robust = FALSE)
 #'
-#' @param obj: a varstan object
-#' @param robust: a boolean for obtain the robust estimation
+#' @param obj: A varstan object, \code{\link[=varstan]{varstan}}
+#' @param robust: A boolean value, if its \code{TRUE} it returns the median of the posterior distribution,
+#' and if its \code{FALSE} it returns the mean, by default is the \code{FALSE} value
 #'
 #' @author  Asael Alonzo Matamoros
 #'
 #' @export
 #'
-#' @return  a data frame with all the important fitted parameters
+#' @return  An array with the posterior estimate of the residuals of the time series model,
+#' if a varma model is used, then the return will be a matrix with columns as the dimension of
+#' the time series, and rows as the length
 #'
 posterior_residuals <- function(obj,...) {
   UseMethod("posterior_residuals")
@@ -22,9 +27,9 @@ posterior_residuals <- function(obj,...) {
 #'
 posterior_residuals.varstan = function(obj,robust = FALSE,...){
   if(is.varstan(obj) ){
-    if(is.arima(obj$model)) resd = get_residuals_arima(fit = obj$stanfit,robust)
-    if(is.garch(obj$model)) resd = get_residuals_garch(fit = obj$stanfit,robust)
-    if(is.varma(obj$model)) resd = get_residuals_varma(fit = obj$stanfit,d = obj$model$d,robust)
+    if(is.Sarima(obj$model)) resd = get_residuals_arima(fit = obj$stanfit,robust)
+    if(is.garch(obj$model))  resd = get_residuals_garch(fit = obj$stanfit,robust)
+    if(is.varma(obj$model))  resd = get_residuals_varma(fit = obj$stanfit,d = obj$model$d,robust)
   }
   else{
     resd = NULL

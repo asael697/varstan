@@ -2,20 +2,25 @@
 % Please edit documentation in R/posterior_residuals.R
 \name{posterior_residuals}
 \alias{posterior_residuals}
-\title{Get the residual values of the fitted model}
+\title{Generic function and method for extract the residual of a varstan object}
 \usage{
-get_residuals(obj)
+posterior_residuals(obj,robust = FALSE)
 }
 \arguments{
-\item{obj:}{a varstan object}
+\item{obj:}{A varstan object, \code{\link[=varstan]{varstan}}}
 
-\item{robust:}{a boolean for obtain the robust estimation}
+\item{robust:}{A boolean value, if its \code{TRUE} it returns the median of the posterior distribution,
+and if its \code{FALSE} it returns the mean, by default is the \code{FALSE} value}
 }
 \value{
-a data frame with all the important fitted parameters
+An array with the posterior estimate of the residuals of the time series model,
+if a varma model is used, then the return will be a matrix with columns as the dimension of
+the time series, and rows as the length
 }
 \description{
-The function returns a matrix with the residual values
+The function returns the posterior estimate of the residuals
+of a varstan model, similar to the residual functions of other
+packages.
 }
 \author{
 Asael Alonzo Matamoros

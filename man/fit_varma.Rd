@@ -17,6 +17,9 @@ fit.varma(model)
 
 \item{adapt.delta}{the thin of the jumps in a HMC method}
 
+\item{tree.depth}{maximum  depth of the trees  evaluated
+during each iteration}
+
 \item{t.student}{a boolean if the model has generalized t-student distribution}
 }
 \value{

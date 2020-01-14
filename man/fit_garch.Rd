@@ -16,6 +16,9 @@ fit.garch(model,chains,iter,warmup,...)
 \item{warmup}{the number of initial iteration to be burned}
 
 \item{adapt.delta}{the thin of the jumps in a HMC method}
+
+\item{tree.depth}{maximum  depth of the trees  evaluated
+during each iteration}
 }
 \value{
 a stanfit object

@@ -2,13 +2,28 @@
 % Please edit documentation in R/report.R
 \name{report}
 \alias{report}
-\title{Print a report of the constructed model}
+\title{Print a full report of the time series model in a  varstan object}
 \usage{
-report(dat)
+report(obj)
 }
 \arguments{
-\item{dat:}{an arima object}
+\item{obj:}{a varstan object or one of the defined current defined reports in varstan package}
+}
+\value{
+a  string with the defined time series report
 }
 \description{
-Print a report of the constructed model
+The function returns a report with the users defined model for the given time series data
+and all the current defined priors of the model
+}
+\details{
+if \code{obj} is a varstan object the function will print the information of the
+defined model inside of the object. If \code{obj} is one of the model classes (like Sarima or garch)
+then it will print the report information aswell.
+}
+\seealso{
+\code{\link{report}} \code{\link{prior}}
+}
+\author{
+Asael Alonzo Matamoros
 }

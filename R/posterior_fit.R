@@ -1,10 +1,10 @@
-#' Generic function and method for extract the fitted values
+#' Generic function and method for extract the fitted values of a varstan object
 #'
 #' The function returns the posterior estimate of the fitted values
 #' of a varstan model, similar to the fit_values functions of other
 #' packages.
 #'
-#' @usage  posterior_fit(obj)
+#' @usage  posterior_fit(obj, robust = FALSE)
 #'
 #' @param obj: A varstan object, \code{\link[=varstan]{varstan}}
 #' @param robust: A boolean value, if its \code{TRUE} it returns the median of the posterior distribution,
@@ -14,8 +14,9 @@
 #'
 #' @export
 #'
-#' @return  An array with the fitted values of the time series model, if a varma model is used, then
-#' the return will be a matrix with columns as the dimension of the time series, and rows as the length
+#' @return  An array with the posterior estimate of the fitted values of the time series model,
+#' if a varma model is used, then the return will be a matrix with columns as the dimension of
+#' the time series, and rows as the length
 #'
 posterior_fit<- function(obj, ...) {
   UseMethod("posterior_fit")
@@ -26,15 +27,13 @@ posterior_fit<- function(obj, ...) {
 #' @export
 #'
 posterior_fit.varstan = function(obj,robust = FALSE,...){
-  if(is.varstan(obj) ){
-    if(is.arima(obj$model)) fit = get_fit_arima(model = obj$model,fit = obj$stanfit,robust)
-    if(is.garch(obj$model)) fit = get_fit_garch(model = obj$model,fit = obj$stanfit,robust)
-    if(is.varma(obj$model)) fit = get_fit_varma(model = obj$model,fit = obj$stanfit,robust)
-  }
-  else{
-    fit = NULL
-    print("The current object is not a varstan object")
-  }
+  if( !is.varstan(obj) )
+    stop("The current object is not a varstan class")
+
+  if(is.Sarima(obj$model)) fit = get_fit_arima(model = obj$model,fit = obj$stanfit,robust)
+  if(is.garch(obj$model))  fit = get_fit_garch(model = obj$model,fit = obj$stanfit,robust)
+  if(is.varma(obj$model))  fit = get_fit_varma(model = obj$model,fit = obj$stanfit,robust)
+
   return(fit)
 }
 #' Get the fitted values of an garch model

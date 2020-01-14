@@ -109,6 +109,74 @@ extract_mts = function(obj,par,d=1,lag=1,robust=FALSE){
   }
   return(pe)
 }
+#' Extract the initial values of a differenced time series
+#'
+#'  @param ts: An univariate time series
+#'  @param d: the number of differences
+#'  @param D: the number of seasonal differences
+#'  @param period: the time serie's period
+#'
+#'  @author Asael Alonzo Matamoros
+#'
+#'  @return A list with the differenced time series, the initials values
+#'  for inverse differences
+#'
+#'
+dif = function(ts,d = 0,D = 0,period = 1){
+
+  y_diff = ts;init  = NULL;inits = NULL
+
+  if(d > 0){
+    for(i in 1:d){
+      init = c(tail(y_diff,n = 1),init)
+      y_diff = diff(y_diff)
+    }
+  }
+  if(D > 0){
+    for(i in 1:D){
+      inits = c(tail(y_diff,n = period),inits)
+      y_diff = diff(y_diff,lag = period)
+    }
+  }
+  if (D > 1) inits  = matrix(inits,nrow = D,ncol = period,byrow = TRUE)
+  m = list(y = y_diff,init = init,inits = inits)
+  return(m)
+}
+#' Inverse difference time series to forecasted values
+#'
+#'  @param ts: An univariate time series
+#'  @param init: the initial values for normal difference
+#'  @param inits: the initial values for seasonal difference
+#'
+#'  @author Asael Alonzo Matamoros
+#'
+#'  @return A vector with the inverse difference time series
+#'
+#'
+inv_dif = function(ts,init,inits){
+  y = ts; n = length(ts);d = 0;D = 0; period = 0
+
+  if(!is.null(init)) d = length(init)
+  if(!is.null(inits)) {
+    if(!is.matrix(inits)){
+      D = 1
+      period = length(inits)
+    }
+    else{
+      D = nrow(inits)
+      period = ncol(inits)
+    }
+  }
+
+  if(D > 0){
+    if(D == 1) for(i in 1:D) y = tail(diffinv(y,lag = period,xi = inits),n = n)
+    else for(i in 1:D) y = tail(diffinv(y,lag = period,xi = inits[i,]),n = n)
+  }
+  if(d > 0){
+    for(i in 1:d) y = tail(diffinv(y,xi = init[i]),n = n)
+  }
+  return(y)
+}
 #'
 #' Replicate Elements of Vector
 #'
@@ -175,10 +243,12 @@ complete = function(x,d,x0){
 #'
 is.model = function(obj){
   y = FALSE
-  if(class(obj) == "arima") y = TRUE
-  if(class(obj) == "garch") y = TRUE
-  if(class(obj) == "varma") y = TRUE
-  if(class(obj) == "bekk")  y = TRUE
+  if(is(obj,"Sarima")) y = TRUE
+  if(is(obj,"arima"))  y = TRUE
+  if(is(obj,"garch"))  y = TRUE
+  if(is(obj,"varma"))  y = TRUE
+  if(is(obj,"Bekk"))   y = TRUE
+  if(is(obj,"DWR"))    y = TRUE
   return (y)
 }
 #'  summary function
@@ -362,7 +432,22 @@ check_dist <- function(x,par) {
     if(identical(x,"beta"))    y = TRUE
     if(identical(x,"uniform")) y = TRUE
   }
+  if(par == "sar"){
+    if(identical(x,"normal"))  y = TRUE
+    if(identical(x,"beta"))    y = TRUE
+    if(identical(x,"uniform")) y = TRUE
+  }
+  if(par == "breg"){
+    if(identical(x,"normal"))  y = TRUE
+    if(identical(x,"student")) y = TRUE
+    if(identical(x,"cauchy"))  y = TRUE
+    }
   if(par == "mu"){
+    if(identical(x,"normal"))  y = TRUE
+    if(identical(x,"student")) y = TRUE
+    if(identical(x,"cauchy"))  y = TRUE
+  }
+  if(par == "mu0"){
     if(identical(x,"normal"))  y = TRUE
     if(identical(x,"student")) y = TRUE
     if(identical(x,"cauchy"))  y = TRUE
@@ -387,12 +472,16 @@ check_dist <- function(x,par) {
 #'
 check_type <- function(x) {
   y = FALSE
+    if(identical(x,"sma"))    y = TRUE
     if(identical(x,"ma"))     y = TRUE
     if(identical(x,"ar"))     y = TRUE
+    if(identical(x,"sar"))    y = TRUE
     if(identical(x,"arch"))   y = TRUE
     if(identical(x,"garch"))  y = TRUE
     if(identical(x,"mgarch")) y = TRUE
     if(identical(x,"mu0"))    y = TRUE
+    if(identical(x,"breg"))   y = TRUE
+    if(identical(x,"breg"))   y = TRUE
     if(identical(x,"sigma0")) y = TRUE
     if(identical(x,"dfv"))    y = TRUE
   return(y)

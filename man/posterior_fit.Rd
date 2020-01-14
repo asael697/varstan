@@ -2,9 +2,9 @@
 % Please edit documentation in R/posterior_fit.R
 \name{posterior_fit}
 \alias{posterior_fit}
-\title{Generic function and method for extract the fitted values}
+\title{Generic function and method for extract the fitted values of a varstan object}
 \usage{
-posterior_fit(obj)
+posterior_fit(obj, robust = FALSE)
 }
 \arguments{
 \item{obj:}{A varstan object, \code{\link[=varstan]{varstan}}}
@@ -13,8 +13,9 @@ posterior_fit(obj)
 and if its \code{FALSE} it returns the mean, by default is the \code{FALSE} value}
 }
 \value{
-An array with the fitted values of the time series model, if a varma model is used, then
-the return will be a matrix with columns as the dimension of the time series, and rows as the length
+An array with the posterior estimate of the fitted values of the time series model,
+if a varma model is used, then the return will be a matrix with columns as the dimension of
+the time series, and rows as the length
 }
 \description{
 The function returns the posterior estimate of the fitted values

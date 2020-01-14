@@ -8,53 +8,60 @@
 #' @usage garch(ts,s,k)
 #'
 #' @param ts an univariateivariate time series
-#' @param s an integer with the order of the arch(s) part
-#' @param k an integer with the order of the garch(k) part
-#' @param h an integer with the order of the mean part
+#' @param order: A specification of thegarch  model: thethree components (s, k, h)
+#' are the arch order, the garch order, and the mgarch order.
+#' @param arma: A specification of the  ARMA model,same as order parameter:  the two
+#' components (p, q) are the AR order,and the  MA order.
+#' @param genT a boolean value to specify for a generalized t-student garch model
+#'
+#'
+#' The default priors used in Sarima are:
+#'
+#' \itemize{
+#'  \item{"ar"}{ar ~ normal(0,0.5)}
+#'  \item{"ma"}{ma ~ normal(0,0.5)}
+#'  \item{"mu0"}{mu0 ~ t-student(0,2.5,6)}
+#'  \item{"sigma0"}{sigma0 ~ t-student(0,1,7)}
+#'  \item{"arch"}{arch ~ normal(0,0.5)}
+#'  \item{"garch"}{garch ~ normal(0,0.5)}
+#'  \item{"mgarch"}{mgarch ~ normal(0,0.5)}
+#'  \item{"dfv"}{dfv ~ gamm(2,0.1)}
+#' }
+#'
+#' For changing the default prior use the function \code{set_prior}
 #'
 #' @author  Asael Alonzo Matamoros
 #'
 #' @export
 #'
-#' @seealso \code{\link{arima}}
+#' @references
+#'   Engle, Robert F. (1982). ?Autoregressive Conditional Heteroscedasticity with
+#'   Estimates of the Variance of United Kingdom Inflation?.
+#'   Econometrica 50 (4): 987-1007. JSTOR 1912773.
 #'
-#' @return  a list with the components
-#' \itemize{
-#'  \item n: the length of the time series
-#'  \item s: an integer with the order of the arch coefficients
-#'  \item k: an integer with the order of the garch coefficients
-#'  \item h: an integer with the order of the mgarch coefficients
-#'  \item y: vector with the multivariate time series
-#'  \item prior_arch:   a matrix with the hyper-parameters for the arch coefficients
-#'  \item prior_garch:  a matrix with the hyper-parameters for the garch  coefficients
-#'  \item prior_mgarch: a matrix with the hyper-parameters for the mgarch  coefficients
-#'  \item p: an integer with the order of ar coefficients
-#'  \item q: an inter withe the order of ma coefficients
-#'  \item prior_arch:   a matrix with the hyper-parameters for the arch coefficients
-#' }
+#' @seealso \code{\link{Sarima}} \code{\link{auto.arima}} \code{\link{set_prior}}
 #'
-garch = function(ts,s = 1,k = 1, h = 0,mean = arma(p=0,q=0),genT = FALSE,aysm = FALSE){
+#'
+garch = function(ts,order = c(1,1,0),arma = c(0,0),genT = FALSE,aysm = FALSE){
   n = length(as.numeric(ts))
   y = as.numeric(ts)
   m1 = list(n = n,
-            s = no_negative_check(s),
-            k = no_negative_check(k),
-            h = no_negative_check(h),
+            s = no_negative_check(order[1] ),
+            k = no_negative_check(order[2]),
+            h = no_negative_check(order[3]),
             y = y)
   m1$prior_mu0 = c(0,1,0,1)
   m1$prior_sigma0 = c(0,1,7,4)
-  m1$prior_arch    = matrix(rep(c(3,3,1,2),s),ncol = 4,byrow = TRUE)
-  m1$prior_garch   = matrix(rep(c(3,3,1,2),k),ncol = 4,byrow = TRUE)
-  m1$prior_mgarch  = matrix(rep(c(3,3,1,2),h),ncol = 4,byrow = TRUE)
+  m1$prior_arch    = matrix(rep(c(3,3,1,2),order[1]),ncol = 4,byrow = TRUE)
+  m1$prior_garch   = matrix(rep(c(3,3,1,2),order[2]),ncol = 4,byrow = TRUE)
+  m1$prior_mgarch  = matrix(rep(c(3,3,1,2),order[3]),ncol = 4,byrow = TRUE)
+
   # arma representation
-  if( !is.null(mean) ){
-    m1$p = mean$arma_order[1]
-    m1$q = mean$arma_order[2]
-    m1$prior_ar =  mean$prior_ar
-    m1$prior_ma =  mean$prior_ma
-    m1$mean = "arma"
-  }
-  else   m1$mean = "none"
+  m1$p = arma[1]
+  m1$q = arma[2]
+  m1$prior_ar =  matrix(rep(c(3,3,1,2),arma[1]),ncol = 4,byrow = TRUE)
+  m1$prior_ma =  matrix(rep(c(3,3,1,2),arma[2]),ncol = 4,byrow = TRUE)
+
   # Generalized t distribution
   if(genT == TRUE){
     m1$genT = TRUE
@@ -70,62 +77,17 @@ garch = function(ts,s = 1,k = 1, h = 0,mean = arma(p=0,q=0),genT = FALSE,aysm = 
 #'
 is.garch = function(obj){
   y = FALSE
-  if(class(obj) == "garch") y = TRUE
+  if(is(obj,"garch")) y = TRUE
   return (y)
-}
-#' Adds an arma(p,q) object to a garch model
-#'
-#' Adds an arma(p,q) object to a garch model
-#'
-#' The function returns  a list with the data for running stan() function of
-#'  rstan package
-#'
-#' @usage arma(p,q)
-#'
-#' @param p an integer with the order of the ar(p) part
-#' @param q an integer with the order of the ma(q) part
-#'
-#' @author  Asael Alonzo Matamoros
-#'
-#' @export
-#'
-arma = function(p=1,q=1){
-  ml = list()
-  ml$arma_order = c(no_negative_check(p),no_negative_check(q))
-  ml$prior_ar   = matrix(rep(c(0,10,1,1),p),ncol = 4,byrow = TRUE)
-  ml$prior_ma   = matrix(rep(c(0,10,1,1),q),ncol = 4,byrow = TRUE)
-  ml$mean = "arma"
-  return(ml)
-}
-#' Excluded parameters in a  Garch model
-#'
-#'
-get_params_garch = function(dat,...){
-  include = c("mu0","sigma0")
-    if(dat$s > 0) include = c(include,"alpha")
-    if(dat$k > 0) include = c(include,"beta")
-    if(dat$h > 0) include = c(include,"mgarch")
-    if(dat$p > 0) include = c(include,"phi")
-    if(dat$q > 0) include = c(include,"theta")
-    if(dat$genT == TRUE) include = c(include,"v")
-
-    exclude = c("phi0","theta0")
-    pars = list(include = c(include,"loglik"),exclude = exclude)
-  return(pars)
 }
 #' Extracts all the order coeffients in a list
 #'
 get_order_garch= function(dat){
-  if (is.garch(dat)){
     return(list(p = dat$p,q=dat$q,s=dat$s,k=dat$k,h=dat$h))
-  }
-  else print("The object is not a garch model")
 }
 #' Max order  coeffients in a garch model
 #'
 max_order_garch= function(dat){
-  if (is.garch(dat)){
-    return(max(c(dat$p,dat$q,dat$s,dat$k,dat$h)))
-  }
-  else print("The object is not a garch model")
+
+  return(max(c(dat$p,dat$q,dat$s,dat$k,dat$h)))
 }
