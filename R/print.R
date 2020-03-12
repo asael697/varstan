@@ -1,7 +1,11 @@
+#' Print a Sarima model
+#'
+#' @param  obj a Sarima model from the varstan package
+#'
 #' @method print Sarima
 #' @export
 #'
-print.Sarima = function(obj){
+print.Sarima = function(obj,...){
   if(is.Sarima(obj)){
     print(report(obj))
   }
@@ -9,10 +13,29 @@ print.Sarima = function(obj){
     print("The current object is not an arima model")
   }
 }
+#' Print a naive model
+#'
+#' @param  obj a navie model from the varstan package
+#'
+#' @method print naive
+#' @export
+#'
+print.naive = function(obj,...){
+  if(is.naive(obj)){
+    print(report(obj))
+  }
+  else{
+    print("The current object is not an arima model")
+  }
+}
+#' Print a garch model
+#'
+#' @param obj a garch model from the varstan package
+#'
 #' @method print garch
 #' @export
 #'
-print.garch = function(obj){
+print.garch = function(obj,...){
   if(is.garch(obj)){
     print(report(obj))
   }
@@ -20,10 +43,14 @@ print.garch = function(obj){
     print("The current object is not a garch model")
   }
 }
+#' Print a varma model
+#'
+#' @param obj a varma model from the varstan package
+#'
 #' @method print varma
 #' @export
 #'
-print.varma = function(obj){
+print.varma = function(obj,...){
   if(is.varma(obj)){
     print(report(obj))
   }
@@ -31,10 +58,29 @@ print.varma = function(obj){
     print("The current object is not a varma model")
   }
 }
+#' Print a Bekk model
+#'
+#' @param obj a Bekk model from the varstan package
+#'
+#' @method print Bekk
+#' @export
+#'
+print.Bekk= function(obj,...){
+  if(is.Bekk(obj)){
+    print(report(obj))
+  }
+  else{
+    print("The current object is not a Bekk model")
+  }
+}
+#' Print a varstan object
+#'
+#' @param obj a varstan object
+#'
 #' @method print varstan
 #' @export
 #'
-print.varstan = function(obj){
+print.varstan = function(obj,...){
   if(is.varstan(obj)){
     model(obj)
     print(summary(obj))

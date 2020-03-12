@@ -1,18 +1,19 @@
 #' Constructor varstan object
 #'
-#' Constructor of the varstan object for bayesian estimation in STAN
+#' Constructor of the varstan object for Bayesian estimation in STAN
 #'
 #' The function returns  a list with the data for running stan() function of
 #'  rstan package
 #'
-#' @usage varstan(model)
+#' @usage varstan(model,chains=4,iter=2000,warmup=floor(iter/2),
+#' adapt.delta = 0.90,tree.depth =10,...)
 #'
 #' @param model One of the varstan model classes defined in the package
 #' @param chains An integer of the number of Markov Chains chains to be run,
 #' by default 4 chains are run
-#' @param iter An integer of total iterations per chain including the warm up,
+#' @param iter An integer of total iterations per chain including the warm-up,
 #' by default  the number of iterations are 2000
-#' @param warmup  A positive integer specifying number of warmup (aka burnin)
+#' @param warmup  A positive integer specifying number of warm-up (aka burn-in)
 #'   iterations. This also specifies the number of iterations used for stepsize
 #'   adaptation, so warmup samples should not be used for inference. The number
 #'   of warmup should not be larger than \code{iter} and the default is
@@ -22,14 +23,13 @@
 #' @param  tree.depth An integer of the maximum  depth of the trees  evaluated
 #' during each iteration. By default is 10
 #'
-#' @details If \code{xreg} option is used, the model by default will cancel the
-#' seasonal differences adjusted (D = 0). If a value \code{d} > 0 is used, all
-#' the regressor variables in xreg will be differenced aswell
+#' @details This is the principal package's function and the link with Stan,
+#' this function fits the posterior distribution of every
 #'
 #'   Default priors are chosen to be non or very weakly informative so that their
 #'   influence on the results will. However, after getting more familiar with Bayesian
 #'   statistics, I recommend you to start thinking about reasonable informative priors
-#'   for your model parameters. For mor information see \code{set_prior}
+#'   for your model parameters. For more information see \code{set_prior}
 #'
 #'   \bold{Adjusting the sampling behavior of \pkg{Stan}}
 #'
@@ -58,9 +58,9 @@
 #'
 #' @return  a list with the components
 #' \itemize{
-#'  \item stanfit: An stanfit object returned by rstan
-#'  \item model: the current fitted model
-#'  \item stanparams: The stan parameters used in the HMC NUTS algorithm
+#'  \item stanfit An stanfit object returned by rstan
+#'  \item model the current fitted model
+#'  \item stanparams The stan parameters used in the HMC NUTS algorithm
 #' }
 #'
 #' @seealso \code{\link[rstan:stan]{rstan:stan}}.
@@ -93,8 +93,10 @@ varstan = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta = 0
   m = list()
 
   if(is.Sarima(model)) sft = fit_Sarima(model,chains,iter,warmup,adapt.delta,tree.depth)
+  if(is.naive(model))  sft = fit_Sarima(model,chains,iter,warmup,adapt.delta,tree.depth)
   if(is.garch(model))  sft = fit_garch(model,chains,iter,warmup,adapt.delta,tree.depth)
   if(is.varma(model))  sft = fit_varma(model,chains,iter,warmup,adapt.delta,tree.depth)
+  if(is.Bekk(model))   sft = fit_Bekk(model,chains,iter,warmup,adapt.delta,tree.depth)
 
   sp = list(Algorithm = "HMC NUTS",chains = chains,iter = iter,warmup = warmup,
             adapt.delta =adapt.delta,max_treedepth = tree.depth)
@@ -107,9 +109,9 @@ varstan = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta = 0
 #'
 #' @method is varstan
 #'
-#' @param obj: a varstan object
+#' @param obj a varstan object
 #'
-#' @export
+#' @noRd
 #'
 is.varstan = function(obj){
   y = FALSE
@@ -122,16 +124,16 @@ is.varstan = function(obj){
 #'
 #' The function returns a data.frame object with the degree freedom values
 #'
-#' @usage  get_df.varma(fit)
+#' @usage  get_df(fit,robust = FALSE,...)
 #'
-#' @param obj: a varstan object
-#' @param robust: a boolean for obtain the robust estimation
+#' @param obj a varstan object
+#' @param robust a boolean for obtain the robust estimation
 #'
 #' @author  Asael Alonzo Matamoros
 #'
 #' @export
 #'
-#' @return  a data frame with all the important fitted parameters
+#' @return  a data frame with the degree freedom time series parameter
 #'
 get_df = function(obj,robust = FALSE,...){
   if( !is.varstan(obj) )
@@ -147,21 +149,21 @@ get_df = function(obj,robust = FALSE,...){
 #' Extract chains of an stanfit object implemented in rstan package
 #'
 #'
-#' @usage  extract_stan(obj)
+#' @usage  extract_stan(obj,permuted = TRUE,inc_warmup = FALSE,include = TRUE)
 #'
-#' @param obj: a varstan object
-#' @param pars: n optional character vector providing the parameter names
+#' @param obj a varstan object
+#' @param pars n optional character vector providing the parameter names
 #' (or other quantity names) of interest. If not specified, all parameters
 #' and other quantities are used. The log-posterior with name lp__ is also
 #' included by default.
-#' @param permuted: A logical scalar indicating whether the draws
+#' @param permuted A logical scalar indicating whether the draws
 #' after the warmup period in each chain should be permuted and merged.
 #' If FALSE, the original order is kept. For each stanfit object,
 #' the permutation is fixed (i.e., extracting samples a second time will
 #' give the same sequence of iterations).
-#' @param inc_warmup: A logical scalar indicating whether to include the
+#' @param inc_warmup A logical scalar indicating whether to include the
 #' warmup draws. This argument is only relevant if permuted is FALSE.
-#' @param include:A logical scalar indicating whether the parameters named
+#' @param include A logical scalar indicating whether the parameters named
 #' in pars should be included (TRUE) or excluded (FALSE).
 #'
 #' @author  Asael Alonzo Matamoros
@@ -180,9 +182,9 @@ extract_stan = function(obj,pars,permuted = TRUE, inc_warmup = FALSE,include = T
 }
 #' Get the stanfit object generated by the rstan package
 #'
-#' @usage  get_rstan(obj)
+#' @usage  as.stan(obj)
 #'
-#' @param obj: a varstan object
+#' @param obj a varstan object
 #'
 #' @author  Asael Alonzo Matamoros
 #'
@@ -190,7 +192,7 @@ extract_stan = function(obj,pars,permuted = TRUE, inc_warmup = FALSE,include = T
 #'
 #' @export
 #'
-get_rstan = function(obj){
+as.stan = function(obj){
   if( !is.varstan(obj) )
     stop("The current object is not a varstan class")
 
@@ -198,10 +200,10 @@ get_rstan = function(obj){
 
   return(stanfit)
 }
-#' Extracts all the order coeffients in a list
+#' Extracts all the order coefficients in a list
 #'
-#' @param obj: A varstan object
-#' @export
+#' @param obj A varstan object
+#' @noRd
 #'
 get_order = function(obj){
   if(!is.varstan(obj))
@@ -210,10 +212,12 @@ get_order = function(obj){
   if(is.Sarima(obj$model)) return(get_order_arima(obj$model))
   if(is.garch(obj$model))  return(get_order_garch(obj$model))
   if(is.varma(obj$model))  return(get_order_varma(obj$model))
+  if(is.Bekk(obj$model))   return(get_order_varma(obj$model))
 }
-#' Max order  coeffients in a varma model
+#' Max order  coefficients in a varma model
 #'
-#' @param obj: A varstan object
+#' @param obj A varstan object
+#' @noRd
 #'
 max_order = function(obj){
   if(!is.varstan(obj))
@@ -222,11 +226,12 @@ max_order = function(obj){
   if(is.Sarima(obj$model)) return(max_order_arima(obj$model))
   if(is.garch(obj$model))  return(max_order_garch(obj$model))
   if(is.varma(obj$model))  return(max_order_varma(obj$model))
+  if(is.Bekk(obj$model))   return(get_order_varma(obj$model))
 }
-#' Extracts all the order coeffients in a list
+#' Extracts all the order coefficients in a list
 #'
-#' @param obj: A varstan object
-#' @export
+#' @param obj A varstan object
+#' @noRd
 #'
 Total_order = function(obj){
   if(!is.varstan(obj))

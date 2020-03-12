@@ -10,21 +10,25 @@
 #' observations of predictor variables we can use the posterior predictive
 #' distribution to generate predicted outcomes.
 #'
-#' @usage  posterior_predict(obj)
+#' @usage  posterior_predict(obj,h = 1,xreg = NULL,robust = TRUE,draws = 1000,seed = NULL,...)
 #'
-#' @param obj: a varstan object
-#' @param h: An integer indicating the number of predictions. The default number
+#' @aliases posterior_predict posterior_predict.varstan
+#'
+#' @param obj a varstan object
+#' @param h An integer indicating the number of predictions. The default number
 #'    of predictions is 1.
-#' @param xreg:	Optionally, a numerical matrix of external regressors,
+#' @param xreg	Optionally, a numerical matrix of external regressors,
 #' which must have the same number of rows as ts. It should not be a data frame.
-#' @param robust: A boolean for obtain the robust estimation. The default
-#' @param draws: An integer indicating the number of draws to return. The default
+#' @param robust A boolean for obtain the robust estimation. The default
+#' @param draws An integer indicating the number of draws to return. The default
 #'    number of draws is 1000
-#' @param seed: An optional \code{\link[=set.seed]{seed}} to use.
+#' @param seed An optional \code{\link[=set.seed]{seed}} to use.
 #'
 #' @author  Asael Alonzo Matamoros
 #'
-#'@export
+#' @method posterior_predict varstan
+#' @export posterior_predict
+#' @export
 #'
 #' @return  A \code{draws} by \code{h} data.frame of simulations from the
 #'   posterior predictive distribution. Each row of the data.frame is a vector of
@@ -34,11 +38,17 @@
 posterior_predict = function(obj,...){
   UseMethod("posterior_predict")
 }
+#'
 #' @method posterior_predict varstan
 #' @export posterior_predict
 #' @export
 #'
-posterior_predict.varstan = function(obj,h = 1,xreg = NULL,robust = TRUE,draws = 1000,seed = NULL){
+posterior_predict.varstan = function(obj,h = 1,
+                                     xreg = NULL,
+                                     robust = TRUE,
+                                     draws = 1000,
+                                     seed = NULL,
+                                     ...){
 
   if (! is.varstan(obj))
     stop("The current object is not a varstan class",call. = FALSE)
@@ -49,22 +59,28 @@ posterior_predict.varstan = function(obj,h = 1,xreg = NULL,robust = TRUE,draws =
   if(is.varma(obj$model))
     fc = posterior_predict_varma(obj = obj,h = h,robust = robust,draws = draws,seed = seed)
 
+  if(is.Bekk(obj$model))
+    fc = posterior_predict_varma(obj = obj,h = h,robust = robust,draws = draws,seed = seed)
+
   if(is.Sarima(obj$model))
+    fc = posterior_predict_Sarima(obj = obj,h = h,xreg = xreg,robust = robust,draws = draws,seed = seed)
+
+  if(is.naive(obj$model))
     fc = posterior_predict_Sarima(obj = obj,h = h,xreg = xreg,robust = robust,draws = draws,seed = seed)
 
   return(fc)
 }
 #' Draw from posterior predictive distribution of an arma-garch model
 #'
-#' @usage  posterior_predict_garch(obj)
+#' @usage  posterior_predict_garch(obj,h = 1,robust = TRUE,draws = 1000,seed = NULL)
 #'
-#' @param obj: a varstan object
-#' @param h: An integer indicating the number of predictions. The default number
+#' @param obj a varstan object
+#' @param h An integer indicating the number of predictions. The default number
 #'    of predictions is 1.
-#' @param robust: A boolean for obtain the robust estimation. The default
-#' @param draws: An integer indicating the number of draws to return. The default
+#' @param robust A boolean for obtain the robust estimation. The default
+#' @param draws An integer indicating the number of draws to return. The default
 #'    number of draws is 1000
-#' @param seed: An optional \code{\link[=set.seed]{seed}} to use.
+#' @param seed An optional \code{\link[=set.seed]{seed}} to use.
 #'
 #' @author  Asael Alonzo Matamoros
 #'
@@ -73,6 +89,8 @@ posterior_predict.varstan = function(obj,h = 1,xreg = NULL,robust = TRUE,draws =
 #'   posterior predictive distribution. Each row of the data.frame is a vector of
 #'   predictions generated using a single draw of the model parameters from the
 #'   posterior distribution.
+#'
+#' @noRd
 #'
 posterior_predict_garch = function(obj,h = 1,robust = TRUE,draws = 1000,seed = NULL){
 
@@ -129,15 +147,15 @@ posterior_predict_garch = function(obj,h = 1,robust = TRUE,draws = 1000,seed = N
 }
 #' Draw from posterior predictive distribution of a tvarma model
 #'
-#' @usage  posterior_predict_varma(obj)
+#' @usage  posterior_predict_varma(obj,h = 1,robust = TRUE,draws = 1000,seed = NULL)
 #'
-#' @param obj: a varstan object
-#' @param h: An integer indicating the number of predictions. The default number
+#' @param obj a varstan object
+#' @param h An integer indicating the number of predictions. The default number
 #'    of predictions is 1.
-#' @param robust: A boolean for obtain the robust estimation. The default
-#' @param draws: An integer indicating the number of draws to return. The default
+#' @param robust A boolean for obtain the robust estimation. The default
+#' @param draws An integer indicating the number of draws to return. The default
 #'    number of draws is 1000
-#' @param seed: An optional \code{\link[=set.seed]{seed}} to use.
+#' @param seed An optional \code{\link[=set.seed]{seed}} to use.
 #'
 #' @author  Asael Alonzo Matamoros
 #'
@@ -147,13 +165,16 @@ posterior_predict_garch = function(obj,h = 1,robust = TRUE,draws = 1000,seed = N
 #'   predictions generated using a single draw of the model parameters from the
 #'   posterior distribution.
 #'
+#'
+#' @noRd
+#'
 posterior_predict_varma = function(obj,h = 1,robust = TRUE,draws = 1000,seed = NULL){
 
   if (!is.null(seed))
     set.seed(seed)
 
   order = get_order(obj)
-  d = obj$model$d;n1 = max_order(obj);n = obj$model$n
+  d = obj$model$dimension;n1 = max_order(obj);n = obj$model$n
 
   # Extract the posterior values
   epsilon = extract_mts(obj=obj,par="epsilon",lag=n1,d =d,robust=robust)
@@ -231,19 +252,19 @@ posterior_predict_varma = function(obj,h = 1,robust = TRUE,draws = 1000,seed = N
 
   return(yh);
 }
-#' Draw from posterior predictive distribution of an Sasonal arima model
+#' Draw from posterior predictive distribution of an Seasonal arima model
 #'
-#' @usage  posterior_predict_Sarima(obj)
+#' @usage  posterior_predict_Sarima(obj,h = 1,robust = TRUE,draws = 1000,seed = NULL)
 #'
-#' @param obj: a varstan object
-#' @param h: An integer indicating the number of predictions. The default number
+#' @param obj a varstan object
+#' @param h An integer indicating the number of predictions. The default number
 #'    of predictions is 1.
-#' @param xreg: Optionally, a numerical matrix of external regressors,
+#' @param xreg Optionally, a numerical matrix of external regressors,
 #' which must have the same number of rows as h. It should not be a data frame.
-#' @param robust: A boolean for obtain the robust estimation. The default
-#' @param draws: An integer indicating the number of draws to return. The default
+#' @param robust A boolean for obtain the robust estimation. The default
+#' @param draws An integer indicating the number of draws to return. The default
 #'    number of draws is 1000
-#' @param seed: An optional \code{\link[=set.seed]{seed}} to use.
+#' @param seed An optional \code{\link[=set.seed]{seed}} to use.
 #'
 #' @author  Asael Alonzo Matamoros
 #'
@@ -252,6 +273,8 @@ posterior_predict_varma = function(obj,h = 1,robust = TRUE,draws = 1000,seed = N
 #'   posterior predictive distribution. Each row of the data.frame is a vector of
 #'   predictions generated using a single draw of the model parameters from the
 #'   posterior distribution.
+#'
+#' @noRd
 #'
 posterior_predict_Sarima = function(obj,h = 1,xreg = NULL,robust = TRUE,
                                     draws = 1000,seed = NULL){

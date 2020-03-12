@@ -40,10 +40,10 @@ transformed parameters{
   //             Model Parameters
   //***********************************************
   // coefficient parameters
-  vector<lower=-1,upper=1>[p] phi;     // ar parameters
-  vector<lower=-1,upper=1>[q] theta;   // ma parameters
-  vector<lower=-1,upper=1>[P] sphi;    // ar parameters
-  vector<lower=-1,upper=1>[Q] stheta;  // ma parameters
+  vector[p] phi;     // ar parameters
+  vector[q] theta;   // ma parameters
+  vector[P] sphi;    // ar parameters
+  vector[Q] stheta;  // ma parameters
 
   // Temporal mean and residuals
   vector[n1] mu;           // Mean Parameter
@@ -55,20 +55,20 @@ transformed parameters{
   //***********************************************
 
   for( i in 1:p){
-    if(prior_ar[i,4]== 1) phi[i] = phi0[i];
-    else phi[i] = 2*phi0[i] - 1;
+    if(prior_ar[i,4]== 1) phi[i] = phi0[i]*0.5;
+    else phi[i] = (2*phi0[i] - 1);
   }
   for(i in 1:q){
-    if(prior_ma[i,4] == 1) theta[i] = theta0[i];
-    else theta[i] = 2*theta0[i]-1;
+    if(prior_ma[i,4] == 1) theta[i] = theta0[i]*0.5;
+    else theta[i] = (2*theta0[i]-1);
   }
     for( i in 1:P){
-    if(prior_sar[i,4]== 1) sphi[i] = Phi0[i];
-    else sphi[i] = 2*Phi0[i] - 1;
+    if(prior_sar[i,4]== 1) sphi[i] = Phi0[i]*0.5;
+    else sphi[i] = (2*Phi0[i] - 1);
   }
   for(i in 1:Q){
-    if(prior_sma[i,4] == 1) stheta[i] = Theta0[i];
-    else stheta[i] = 2*Theta0[i]-1;
+    if(prior_sma[i,4] == 1) stheta[i] = Theta0[i]*0.5;
+    else stheta[i] = (2*Theta0[i]-1);
   }
 
   //***********************************************
@@ -95,9 +95,12 @@ transformed parameters{
 model {
 
   //  prior for \mu0
-  if(prior_mu0[4] == 1)      target += normal_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
-  else if(prior_mu0[4] == 4) target += student_t_lpdf(mu0|prior_mu0[3],prior_mu0[1],prior_mu0[2]);
-  else if(prior_mu0[4] == 5) target += cauchy_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  if(prior_mu0[4] == 1)    target += normal_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==2) target += beta_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==3) target += beta_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==4) target += student_t_lpdf(mu0|prior_mu0[3],prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==5) target += cauchy_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==9) target += gamma_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
 
   // Prior sigma
   if(prior_sigma0[4] == 1)      target += normal_lpdf(sigma0|prior_sigma0[1],prior_sigma0[2]);
@@ -110,8 +113,11 @@ model {
   if(d1 > 0){
     for(i in 1:d1){
       if(prior_breg[i,4] == 1)      target += normal_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
+      else if(prior_breg[i,4] == 2) target += beta_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
+      else if(prior_breg[i,4] == 3) target += cauchy_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
       else if(prior_breg[i,4] == 4) target += student_t_lpdf(breg[i]|prior_breg[i,3],prior_breg[i,1],prior_breg[i,2]);
       else if(prior_breg[i,4] == 5) target += cauchy_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
+      else if(prior_breg[i,4] == 9) target += gamma_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
     }
   }
 
@@ -119,28 +125,28 @@ model {
   if(p > 0){
     for(i in 1:p){
      if(prior_ar[i,4]==1) target += normal_lpdf(phi0[i]|prior_ar[i,1],prior_ar[i,2]);
-     else  target += beta_lpdf(phi0[i]|prior_ar[i,1],prior_ar[i,1]);
+     else  target += beta_lpdf(phi0[i]|prior_ar[i,1],prior_ar[i,2]);
     }
   }
   // prior ma
   if(q > 0){
     for(i in 1:q){
       if(prior_ma[i,4]==1) target += normal_lpdf(theta0[i]|prior_ma[i,1],prior_ma[i,2]);
-     else  target += beta_lpdf(theta0[i]|prior_ma[i,1],prior_ma[i,1]);
+     else  target += beta_lpdf(theta0[i]|prior_ma[i,1],prior_ma[i,2]);
     }
   }
   // prior sar
   if(P > 0){
     for(i in 1:P){
      if(prior_sar[i,4]==1) target += normal_lpdf(Phi0[i]|prior_sar[i,1],prior_sar[i,2]);
-     else  target += beta_lpdf(Phi0[i]|prior_sar[i,1],prior_sar[i,1]);
+     else  target += beta_lpdf(Phi0[i]|prior_sar[i,1],prior_sar[i,2]);
     }
   }
   // prior sma
   if(Q > 0){
     for(i in 1:Q){
       if(prior_sma[i,4]==1) target += normal_lpdf(Theta0[i]|prior_sma[i,1],prior_sma[i,2]);
-     else  target += beta_lpdf(Theta0[i]|prior_sma[i,1],prior_sma[i,1]);
+     else  target += beta_lpdf(Theta0[i]|prior_sma[i,1],prior_sma[i,2]);
     }
   }
   // Likelihood
@@ -153,7 +159,7 @@ generated quantities{
   vector[n] residual;
 
   for(i in 1:n){
-    if(i<=dinits) residual[i] = normal_rng(0,1);
+    if(i<=dinits) residual[i] = normal_rng(0,sigma0);
     else residual[i] = normal_rng(epsilon[i-dinits],sigma0);
     fit[i] = yreal[i]-residual[i];
     if(i <=n1){

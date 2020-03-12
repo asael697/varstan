@@ -23,9 +23,6 @@ real Jpv(real v){
     y = (v/(v+3))*y;
     return sqrt(y);
   }
-row_vector multi(row_vector x,matrix y){
-   return x*y;
- }
 }
 data {
   int<lower=0> n;         // number of data items
@@ -44,7 +41,6 @@ data {
   matrix[s,4] prior_arch;    // prior arch hyper parameters
   matrix[k,4] prior_garch;   // prior ma hyper parameters
   matrix[h,4] prior_mgarch;  // prior ma hyper parameters
-  vector[4]   prior_dfv;     // prior defree freedom genT
 }
 transformed data{
   //      Design Matrix VAR coefficients
@@ -61,8 +57,6 @@ parameters{
   matrix[d,d] alpha[s];             // arch coefficients
   matrix[d,d] beta[k];              // garch coefficients
   matrix[m,d] mgarch;               // MGARCH coefficients
-  vector<lower=1>[d] v;             // Degree fredom
-  matrix<lower=0>[n,d] lambda1;     // *freedom degrees Sigma
 }
 transformed parameters {
   //***********************************************
@@ -75,23 +69,22 @@ transformed parameters {
   matrix[n,d] mu;                   // *VAR mean
   matrix[n,d] epsilon;              // *residual mean
   matrix[d,d] sigma0;               // arch constant
-  matrix[d,d] sigma1;               // arch constant
+  cov_matrix[d] sigma1;             // arch constant
   matrix[d,d] sigma[n];             // *covariance matrix sigma
   matrix[d,d] Lsigma[n];            // *Cholesky descomposition sigma
   row_vector[m] vsigma[n];          // *vech sigma
-  matrix<lower=0>[n,d] lambda;      //  Generalized t-student parameter
 
   //***********************************************
   //         Transformation coeficients
   //***********************************************
 
-  for( o in 1:p){
-    if(prior_ar[o,4]== 1) phi[o] = phi0[o];
-    else phi[o] = 2*phi0[o] - 1;
+  for( i in 1:p){
+    if(prior_ar[i,4]== 1) phi[i] = phi0[i];
+    else phi[i] = 2*phi0[i] - 1;
   }
-  for(o in 1:q){
-    if(prior_ma[o,4] == 1) theta[o] = theta0[o];
-    else theta[o] = 2*theta0[o]-rep_matrix(1.0,d,d);
+  for(i in 1:q){
+    if(prior_ma[i,4] == 1) theta[i] = theta0[i];
+    else theta[i] = 2*theta0[i]-rep_matrix(1.0,d,d);
   }
 
   //***********************************************
@@ -106,34 +99,39 @@ transformed parameters {
   //***********************************************
 
   for(i in 1:n){
-    //    Degrees freedom
-    lambda[i]= vecpow(-1.0,lambda1[i],d);
     //  VAR Iteration
     mu[i] = mu0;
     sigma[i] = sigma1;
-    for(j in 1:p) if(i > j) mu[i] += y[i-j]*phi[j];
+    Lsigma[i] = sigma1;
+
+    if(p > 0) for(j in 1:p) if(i > j) mu[i] += y[i-j]*phi[j];
     // ma estimation
     if(q > 0) for(j in 1:q) if(i > j) mu[i] += epsilon[i-j]*theta[j];
     epsilon[i] = y[i] - mu[i];
     //      Bekk Iteration
     if(s >= k){
        // arch estimation
-      if(s > 0) for(j in 1:s)if(i>j) sigma[i] += quad_form(epsilon[i-j]'*epsilon[i-j],alpha[j]);
+      if(s > 0) for(j in 1:s)if(i > s) sigma[i] += quad_form(epsilon[i-j]'*epsilon[i-j],alpha[j]);
        // garch estimation
-      if(k > 0) for(j in 1:k)if(i>j) sigma[i] += quad_form(sigma[i-j],beta[j]);
+      if(k > 0) for(j in 1:k)if(i > k) sigma[i] += quad_form(sigma[i-j],beta[j]);
+
+      Lsigma[i] = cholesky_decompose(sigma[i]);
+      vsigma[i] = vech(d,m,sigma[i]);
+      // mgarch estimation
+      if(h > 0)  mu[i] += vsigma[i]*mgarch;
     }
-    Lsigma[i]=cholesky_decompose(quad_form_diag(sigma[i],vecpow(0.5,lambda1[i],d)));
-    vsigma[i] = vech(d,m,sigma[i]);
-    // mgarch estimation
-     if(h > 0) mu[i] = mu[i] + multi(vsigma[i],mgarch);
   }
 }
 model{
   //      Priors  definition
+
   //  prior for \mu0
-  if(prior_mu0[4] == 1) target += normal_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
-  else if(prior_mu0[4] == 4) target += student_t_lpdf(mu0|prior_mu0[3],prior_mu0[1],prior_mu0[2]);
-  else if(prior_mu0[4] == 5) target += cauchy_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  if(prior_mu0[4]==1)      target += normal_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==2) target += beta_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==3) target += beta_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==4) target += student_t_lpdf(mu0|prior_mu0[3],prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==5) target += cauchy_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==9) target += gamma_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
 
   // Prior sigma0 diagonal vector
   if(prior_sigma0[4] == 1) target += normal_lpdf(vsigma0|prior_sigma0[1],prior_sigma0[2]);
@@ -141,9 +139,8 @@ model{
   else if(prior_sigma0[4] == 5) target += cauchy_lpdf(vsigma0|prior_sigma0[1],prior_sigma0[2]);
   else if(prior_sigma0[4] == 6) target += inv_gamma_lpdf(vsigma0|prior_sigma0[1],prior_sigma0[2]);
   else if(prior_sigma0[4] == 7) target += inv_chi_square_lpdf(vsigma0|prior_sigma0[3]);
-  else if(prior_sigma0[4] == 9) target += gamma_lpdf(vsigma0|prior_sigma0[1],prior_sigma0[2]);
   //   sigma0 constant correlation Matrix
-  target += lkj_corr_cholesky_lpdf(Msigma0|2.0);
+  target += lkj_corr_cholesky_lpdf(Msigma0|7.0);
 
   // prior ar
   if(p > 0){
@@ -176,40 +173,27 @@ model{
    // prior mean_garch
   if(h > 0){
     for(i in 1:h){
-    if(prior_mgarch[i,4]==1) target += normal_lpdf(to_vector(mgarch[i])|prior_mgarch[i,1],prior_mgarch[i,2]);
-    else if(prior_mgarch[i,4]==4) target += student_t_lpdf(to_vector(mgarch[i])|prior_mgarch[i,3],prior_mgarch[i,1],prior_mgarch[i,2]);
-    else if(prior_mgarch[i,4]==5) target += cauchy_lpdf(to_vector(mgarch[i])|prior_mgarch[i,1],prior_mgarch[i,2]);
-    else if(prior_mgarch[i,4]==2) target += beta_lpdf(to_vector(mgarch[i])|prior_mgarch[i,1],prior_mgarch[i,2]);
+      if(prior_mgarch[i,4]==1)      target += normal_lpdf(mgarch[i]|prior_mgarch[i,1],prior_mgarch[i,2]);
+      else if(prior_mgarch[i,4]==2) target += beta_lpdf(mgarch[i]|prior_mgarch[i,1],prior_mgarch[i,2]);
+      else if(prior_mgarch[i,4]==3) target += beta_lpdf(mgarch[i]|prior_mgarch[i,1],prior_mgarch[i,2]);
+      else if(prior_mgarch[i,4]==4) target += student_t_lpdf(mgarch[i]|prior_mgarch[i,3],prior_mgarch[i,1],prior_mgarch[i,2]);
+      else if(prior_mgarch[i,4]==5) target += cauchy_lpdf(mgarch[i]|prior_mgarch[i,1],prior_mgarch[i,2]);
+      else if(prior_mgarch[i,4]==9) target += gamma_lpdf(mgarch[i]|prior_mgarch[i,1],prior_mgarch[i,2]);
     }
   }
-  // Prior dfv
-  for(i in 1:d){
-  if(prior_dfv[4] == 1) target += normal_lpdf(v[i]|prior_dfv[1],prior_dfv[2]);
-  else if(prior_dfv[4] == 9) target += gamma_lpdf(v[i]|prior_dfv[1],prior_dfv[2]);
-  else if(prior_dfv[4] == 8) target += log(Jpv(v[i]));
-  else if(prior_dfv[4] == 6) target += inv_gamma_lpdf(v[i]|prior_dfv[1],prior_dfv[2]);
-   }
   //      Likelihood
-  for(i in 1:n){
-   //    Generalized t-student
-   for(j in 1:d) target+= inv_gamma_lpdf(lambda1[i,j]|v[j]/2,v[j]/2);
-   //    Observations
-   target += multi_normal_cholesky_lpdf(epsilon[i]| zero, Lsigma[i] );
-  }
+  for(i in 1:n)target += multi_normal_cholesky_lpdf(epsilon[i]| zero, Lsigma[i] );
 }
 generated quantities{
   real loglik = 0;
-  vector[m] log_lik;
+  vector[n] log_lik;
   matrix[n,d] fit;
   matrix[n,d] residual;
 
   for(i in 1:n){
     fit[i] = multi_normal_cholesky_rng(mu[i],Lsigma[i])';
-    residual[i] = y[i]-residual[i];
-    fit[i] = y[i]-residual[i];
-    if(i <=m){
-      log_lik[i] = multi_normal_cholesky_lpdf(y[i]|mu[i],Lsigma[i]);
-      loglik += log_lik[i];
-    }
+    residual[i] = y[i]-fit[i];
+    log_lik[i] = multi_normal_cholesky_lpdf(y[i]|mu[i],Lsigma[i]);
+    loglik += log_lik[i];
   }
 }

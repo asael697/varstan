@@ -73,9 +73,12 @@ transformed parameters{
 }
 model {
   //  prior for \mu0
-  if(prior_mu0[4]==1) target += normal_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  if(prior_mu0[4]==1)      target += normal_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==2) target += beta_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==3) target += beta_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
   else if(prior_mu0[4]==4) target += student_t_lpdf(mu0|prior_mu0[3],prior_mu0[1],prior_mu0[2]);
   else if(prior_mu0[4]==5) target += cauchy_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==9) target += gamma_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
 
   // Prior sigma
   if(prior_sigma0[4] == 1) target += normal_lpdf(sigma0|prior_sigma0[1],prior_sigma0[2]);
@@ -83,19 +86,20 @@ model {
   else if(prior_sigma0[4]==5) target += cauchy_lpdf(sigma0|prior_sigma0[1],prior_sigma0[2]);
   else if(prior_sigma0[4]==6) target += inv_gamma_lpdf(sigma0|prior_sigma0[1],prior_sigma0[2]);
   else if(prior_sigma0[4]==7) target += inv_chi_square_lpdf(sigma0|prior_sigma0[3]);
+  else if(prior_sigma0[4]==9) target += gamma_lpdf(sigma0|prior_sigma0[1],prior_sigma0[2]);
 
   // prior ar
   if(p > 0){
     for(i in 1:p){
      if(prior_ar[i,4]==1) target += normal_lpdf(phi0[i]|prior_ar[i,1],prior_ar[i,2]);
-     else  target += beta_lpdf(phi0[i]|prior_ar[i,1],prior_ar[i,1]);
+     else  target += beta_lpdf(phi0[i]|prior_ar[i,1],prior_ar[i,2]);
     }
   }
   // prior ma
   if(q > 0){
     for(i in 1:q){
       if(prior_ma[i,4]==1) target += normal_lpdf(theta0[i]|prior_ma[i,1],prior_ma[i,2]);
-     else  target += beta_lpdf(theta0[i]|prior_ma[i,1],prior_ma[i,1]);
+     else  target += beta_lpdf(theta0[i]|prior_ma[i,1],prior_ma[i,2]);
     }
   }
 
@@ -116,10 +120,12 @@ model {
   // prior mean_garch
   if(h > 0){
     for(i in 1:h){
-    if(prior_mgarch[i,4]==1) target += normal_lpdf(mgarch[i]|prior_mgarch[i,1],prior_mgarch[i,2]);
-    else if(prior_mgarch[i,4]==4) target += student_t_lpdf(mgarch[i]|prior_mgarch[i,3],prior_mgarch[i,1],prior_mgarch[i,2]);
-    else if(prior_mgarch[i,4]==5) target += cauchy_lpdf(mgarch[i]|prior_mgarch[i,1],prior_mgarch[i,2]);
-    else if(prior_mgarch[i,4]==2) target += beta_lpdf(mgarch[i]|prior_mgarch[i,1],prior_mgarch[i,2]);
+      if(prior_mgarch[i,4]==1)      target += normal_lpdf(mgarch[i]|prior_mgarch[i,1],prior_mgarch[i,2]);
+      else if(prior_mgarch[i,4]==2) target += beta_lpdf(mgarch[i]|prior_mgarch[i,1],prior_mgarch[i,2]);
+      else if(prior_mgarch[i,4]==3) target += beta_lpdf(mgarch[i]|prior_mgarch[i,1],prior_mgarch[i,2]);
+      else if(prior_mgarch[i,4]==4) target += student_t_lpdf(mgarch[i]|prior_mgarch[i,3],prior_mgarch[i,1],prior_mgarch[i,2]);
+      else if(prior_mgarch[i,4]==5) target += cauchy_lpdf(mgarch[i]|prior_mgarch[i,1],prior_mgarch[i,2]);
+      else if(prior_mgarch[i,4]==9) target += gamma_lpdf(mgarch[i]|prior_mgarch[i,1],prior_mgarch[i,2]);
     }
   }
   // Likelihood

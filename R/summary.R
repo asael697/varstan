@@ -3,22 +3,21 @@
 #' Summaries of parameter estimates and MCMC convergence diagnostics
 #' (Monte Carlo error, effective sample size, Rhat).
 #'
-#' @usage  summary(obj)
+#' @usage  summary(obj,robust = FALSE,prob = 0.95,...)
 #'
-#' @param obj: a varstan object
+#' @aliases summary summary.varstan
 #'
-#' @param robust: A boolean value, if its \code{TRUE} it returns the median of the posterior distribution,
+#' @param obj a varstan object
+#' @param robust A boolean value, if its \code{TRUE} it returns the median of the posterior distribution,
 #' And if its \code{FALSE} it returns the mean, by default is the \code{FALSE} value
-#'
-#' @param prob: A number \eqn{p \in (0,1)}{p (0 < p < 1)} indicating the desired
+#' @param prob A number \eqn{p \in (0,1)}{p (0 < p < 1)} indicating the desired
 #'   probability mass to include in the intervals. The default is to report
 #'   \eqn{90}\% intervals (\code{prob=0.9}) rather than the traditionally used
 #'   \eqn{95}\%.
-
 #'
 #' @author  Asael Alonzo Matamoros
 #'
-#' @return  A data.frame with the posterior mean, standard error, credible intervals, efective sample
+#' @return  A data.frame with the posterior mean, standard error, credible intervals, effective sample
 #' size (ess),and Rhat for all the model parameters in a varstan model, if \code{robust} is \code{TRUE}
 #' then the posterior mean and standard error, are replaced by the posterior mean and MAD.
 #'

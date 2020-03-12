@@ -5,12 +5,12 @@
 #' intervals, for more details see \pkg{rstanarm}
 #'
 #' @aliases posterior_interval
-#' @export
-#' 
+#'
+#'
 #' @author stan development core team
-#' 
+#'
 #' @param mat a matrix containing the posterior samples of a fitted parameter
-#' 
+#'
 #' @param prob A number \eqn{p \in (0,1)}{p (0 < p < 1)} indicating the desired
 #'   probability mass to include in the intervals. The default is to report
 #'   \eqn{90}\% intervals (\code{prob=0.9}) rather than the traditionally used
@@ -24,7 +24,9 @@
 #'   = 1-p}. For example, if \code{prob=0.9} is specified (a \eqn{90}\%
 #'   interval), then the column names will be \code{"5\%"} and \code{"95\%"},
 #'   respectively.
-#'   
+#'
+#'   @export
+#'
 posterior_interval = function(mat, prob = 0.90, ...){
   rstantools::posterior_interval(object = mat,prob = prob)
 }
