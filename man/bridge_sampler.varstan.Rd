@@ -15,7 +15,7 @@
 }
 \description{
 Computes log marginal likelihood via bridge sampling,
-which can be used in the computation of bayes factors
+which can be used in the computation of Bayes factors
 and posterior model probabilities.
 }
 \details{

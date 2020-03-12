@@ -5,15 +5,15 @@
 \alias{bayes_factor}
 \title{Bayes Factors from Marginal Likelihoods}
 \usage{
-\method{bayes_factor}{varstan}(model1, model2, log = FALSE, ...)
+\method{bayes_factor}{varstan}(x1, x2, log = FALSE, ...)
 }
 \arguments{
-\item{model1}{A \code{varstan} object}
+\item{x1}{A \code{varstan} object}
 
-\item{model2}{Another \code{varstan} object based on the same data.}
+\item{x2}{Another \code{varstan} object based on the same data.}
 
-\item{log}{A boolean parameter for report the bayes_factor in log scale. The defaul
-value is FALSE}
+\item{log}{A boolean parameter for report the Bayes_factor in log scale. The
+default value is FALSE}
 }
 \description{
 Compute Bayes factors from marginal likelihoods.
@@ -25,7 +25,7 @@ The computation of Bayes factors based on bridge sampling requires
   samples may not be enough in many cases). If not enough posterior
   samples are provided, the bridge sampling algorithm tends to be unstable,
   leading to considerably different results each time it is run.
-  We thus recommend running \code{bayes_factor}
+  We thus recommend running \code{Bayes_factor}
   multiple times to check the stability of the results.
 
  For  more details check the \pkg{bridgesampling} package
@@ -49,7 +49,7 @@ fit2 = varstan(mod2,chains = 1)
 fit2
 
 
-# compute the bayes factor
+# compute the Bayes factor
 bayes_factor(fit1, fit2)
 }
 

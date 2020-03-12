@@ -14,6 +14,9 @@ birth
 \description{
 Monthly live births (adjusted) in thousands for the United States, 1948-1979.
 }
+\details{
+@docType data
+}
 \references{
 http://www.stat.pitt.edu/stoffer/tsa4/
 http://www.stat.pitt.edu/stoffer/tsda/

@@ -2,12 +2,12 @@
 % Please edit documentation in R/log_lik.R
 \name{aic}
 \alias{aic}
-\title{Computes posterior sample of the pointwise AIC method from a vartan object}
+\title{Computes posterior sample of the pointwise AIC method from a varstan object}
 \usage{
 aic(obj)
 }
 \arguments{
-\item{obj}{A varstan object of the time seires fitted model.}
+\item{obj}{A varstan object of the time series fitted model.}
 }
 \value{
 A numeric array  of size R, containing the posterior samples of the AICc
@@ -21,7 +21,7 @@ method from a varstan object.
 \examples{
 
 \dontrun{
-library(birth)
+library(astsa)
 model = Sarima(birth,order = c(0,1,2),seasonal = c(1,1,1))
 fit1 = varstan(model,chains = 1)
 
@@ -31,5 +31,5 @@ mean(aic1)
 
 }
 \author{
-Asael ALonzo Matamoros
+Asael Alonzo Matamoros
 }
