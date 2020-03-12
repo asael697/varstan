@@ -7,14 +7,16 @@
 extract_mts(obj, par, d = 1, lag = 1, robust = FALSE)
 }
 \description{
-@param obj: varstan object
- @param par: a string with the desired parameter
- @param d: the dimension of the time series
- @param robust: a boolean value ofr robust estimate
- @param lag: the max lags desired
+@param obj varstan object
+ @param par a string with the desired parameter
+ @param d the dimension of the time series
+ @param robust a boolean value for robust estimate
+ @param lag the max lags desired
 }
 \details{
 @author Asael Alonzo Matamoros
 
- @return
+ @noRd
+
+ @return A multivariate time series as a numeric matrix
 }

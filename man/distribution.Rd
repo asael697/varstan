@@ -2,19 +2,19 @@
 % Please edit documentation in R/Others.R
 \name{distribution}
 \alias{distribution}
-\title{Print the  avaliable prior distribution for the model parameters}
+\title{Print the  available prior distribution for the model parameters}
 \usage{
-distribution(par = "ar")
+distribution(par)
 }
 \arguments{
-\item{par}{a string value with the desyred parameter, if not know the parameter
+\item{par}{a string value with the desired parameter, if not know the parameter
 use the function \code{parameters} with the model class}
 }
 \value{
 a string with the prior distributions for the desired parameter
 }
 \description{
-The functions prints the avaliable distributions for the model
+The functions prints the available distributions for the model
 parameters in varstan
 }
 \examples{

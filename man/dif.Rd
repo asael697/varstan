@@ -7,14 +7,16 @@
 dif(ts, d = 0, D = 0, period = 1)
 }
 \description{
-@param ts: An univariate time series
- @param d: the number of differences
- @param D: the number of seasonal differences
- @param period: the time serie's period
+@param ts An univariate time series
+ @param d the number of differences
+ @param D the number of seasonal differences
+ @param period the time series period
 }
 \details{
 @author Asael Alonzo Matamoros
 
  @return A list with the differenced time series, the initials values
  for inverse differences
+
+ @noRd
 }

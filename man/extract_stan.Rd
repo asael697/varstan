@@ -4,26 +4,26 @@
 \alias{extract_stan}
 \title{Extract chains of an stanfit object implemented in rstan package}
 \usage{
-extract_stan(obj)
+extract_stan(obj,permuted = TRUE,inc_warmup = FALSE,include = TRUE)
 }
 \arguments{
-\item{obj:}{a varstan object}
+\item{obj}{a varstan object}
 
-\item{pars:}{n optional character vector providing the parameter names
+\item{pars}{n optional character vector providing the parameter names
 (or other quantity names) of interest. If not specified, all parameters
 and other quantities are used. The log-posterior with name lp__ is also
 included by default.}
 
-\item{permuted:}{A logical scalar indicating whether the draws
+\item{permuted}{A logical scalar indicating whether the draws
 after the warmup period in each chain should be permuted and merged.
 If FALSE, the original order is kept. For each stanfit object,
 the permutation is fixed (i.e., extracting samples a second time will
 give the same sequence of iterations).}
 
-\item{inc_warmup:}{A logical scalar indicating whether to include the
+\item{inc_warmup}{A logical scalar indicating whether to include the
 warmup draws. This argument is only relevant if permuted is FALSE.}
 
-\item{include:A}{logical scalar indicating whether the parameters named
+\item{include}{A logical scalar indicating whether the parameters named
 in pars should be included (TRUE) or excluded (FALSE).}
 }
 \description{

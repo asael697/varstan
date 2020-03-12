@@ -4,15 +4,15 @@
 \alias{get_df}
 \title{Get the degree freedom values of a varma model}
 \usage{
-get_df.varma(fit)
+get_df(fit,robust = FALSE,...)
 }
 \arguments{
-\item{obj:}{a varstan object}
+\item{obj}{a varstan object}
 
-\item{robust:}{a boolean for obtain the robust estimation}
+\item{robust}{a boolean for obtain the robust estimation}
 }
 \value{
-a data frame with all the important fitted parameters
+a data frame with the degree freedom time series parameter
 }
 \description{
 get the degree freedom values of a varma(p,q) model  in STAN

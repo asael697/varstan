@@ -4,24 +4,24 @@
 \alias{garch}
 \title{A  constructor for a garch(s,k,h) model}
 \usage{
-garch(ts,s,k)
+garch(ts,order = (1,1,0),arma = c(0,0),genT = FALSE)
 }
 \arguments{
-\item{ts}{an univariateivariate time series}
+\item{ts}{an univariate time series}
 
-\item{genT}{a boolean value to specify for a generalized t-student garch model}
-
-\item{order:}{A specification of thegarch  model: thethree components (s, k, h)
+\item{order}{A specification of the garch  model: the three components (s, k, h)
 are the arch order, the garch order, and the mgarch order.}
 
-\item{arma:}{A specification of the  ARMA model,same as order parameter:  the two
+\item{arma}{A specification of the  ARMA model,same as order parameter:  the two
 components (p, q) are the AR order,and the  MA order.}
+
+\item{genT}{a boolean value to specify for a generalized t-student garch model}
 }
 \description{
-Constructor of the garch(s,k,h) object for bayesian estimation in STAN
+Constructor of the garch(s,k,h) object for Bayesian estimation in STAN
 }
 \details{
-The function returns  a list with the data for running stan() function of
+The function returns a list with the data for running stan() function of
  rstan package
 
 The default priors used in Sarima are:
@@ -34,20 +34,21 @@ The default priors used in Sarima are:
  \item{arch ~ normal(0,0.5)}
  \item{garch ~ normal(0,0.5)}
  \item{mgarch ~ normal(0,0.5)}
- \item{dfv ~ gamm(2,0.1)}
+ \item{dfv ~ gamma(2,0.1)}
 }
 
 For changing the default prior use the function \code{set_prior}
 }
 \examples{
 \dontrun{
-dat = garch(ipc,order = c(1,1,0),arma = c(1,1))
+dat = garch(birth,order = c(1,1,0),arma = c(1,1))
+dat
 }
 
 }
 \references{
 Engle, Robert F. (1982). ?Autoregressive Conditional Heteroscedasticity with
-  Estimates of the Variance of United Kingdom Inflation?.
+  Estimates of the Variance of United Kingdom Inflation.
   Econometrica 50 (4): 987-1007. JSTOR 1912773.
 }
 \seealso{
