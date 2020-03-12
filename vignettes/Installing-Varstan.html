@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+<title>Installing-varstan</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Installing-varstan</h1>
+
+
+
+<div id="introduction" class="section level3">
+<h3>Introduction</h3>
+<p>Varstan is a package for analyze time series with common structured models such as arima, garch, var, bekk, SVM, HMM, ETS and others. On this beta version the models varbekk and varbekkM(1) are currently available.</p>
+<p>The dynamic is, first to create the model structure using a constructure, then define the prior parameters, next call the varstan function to estimate the chosen model in a bayesian scheme using STAN. Finally the summary, point_estimate, model_diagnostic, forecast functions are used to evaluate the obtained results.</p>
+<p>The posterior distribution is approimated using a Hamiltonian monte carlo, using the stan using the r package rstan.</p>
+</div>
+<div id="installing-rstan-in-r" class="section level2">
+<h2>Installing Rstan in r</h2>
+<p>To be on the safe side, it is sometimes necessary to remove any existing RStan via</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">remove.packages</span>(<span class="st">&quot;rstan&quot;</span>)</a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="cf">if</span> (<span class="kw">file.exists</span>(<span class="st">&quot;.RData&quot;</span>)) <span class="kw">file.remove</span>(<span class="st">&quot;.RData&quot;</span>)</a></code></pre></div>
+<p>Then, restart R.</p>
+<p>In most cases, you can simply type (exactly like this)</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">install.packages</span>(<span class="st">&quot;rstan&quot;</span>, <span class="dt">repos =</span> <span class="st">&quot;https://cloud.r-project.org/&quot;</span>, <span class="dt">dependencies =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<p>For more details check the next link <a href="https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started">rstan</a></p>
+<div id="checking-the-c-toolchain" class="section level3">
+<h3>Checking the C++ Toolchain</h3>
+<p>In RStudio (preferably) or otherwise in R, execute once</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">pkgbuild<span class="op">::</span><span class="kw">has_build_tools</span>(<span class="dt">debug =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<p>to check your C++ toolchain using the pkgbuild package that gets installed when you install RStan. If this line ultimately returns TRUE, then your C++ toolchain is properly installed. If you get the option <strong>FALSE</strong> then read the section <strong>Checking the C++ Toolchain</strong> in <a href="https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started">rstan</a></p>
+</div>
+<div id="troubleshooting-rstan-rtools-install-for-windows" class="section level3">
+<h3>Troubleshooting Rstan / Rtools install for Windows:</h3>
+<p>Ensure recent version of R and Rtools is installed.</p>
+<p>try including these lines in home/.R/makevars. :</p>
+<pre><code>CXX14 = g++ -std=c++1y
+CXX14FLAGS = -O3 -Wno-unused-variable -Wno-unused-function</code></pre>
+<p>If makevars script does not exist in the .R file or you want to update it, run this code within R:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">dotR &lt;-<span class="st"> </span><span class="kw">file.path</span>(<span class="kw">Sys.getenv</span>(<span class="st">&quot;HOME&quot;</span>), <span class="st">&quot;.R&quot;</span>)</a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="cf">if</span> (<span class="op">!</span><span class="kw">file.exists</span>(dotR)) <span class="kw">dir.create</span>(dotR)</a>
+<a class="sourceLine" id="cb5-3" title="3">M &lt;-<span class="st"> </span><span class="kw">file.path</span>(dotR, <span class="kw">ifelse</span>(.Platform<span class="op">$</span>OS.type <span class="op">==</span><span class="st"> &quot;windows&quot;</span>, <span class="st">&quot;Makevars.win&quot;</span>, <span class="st">&quot;Makevars&quot;</span>))</a>
+<a class="sourceLine" id="cb5-4" title="4"><span class="cf">if</span> (<span class="op">!</span><span class="kw">file.exists</span>(M)){</a>
+<a class="sourceLine" id="cb5-5" title="5">  <span class="kw">file.create</span>(M) </a>
+<a class="sourceLine" id="cb5-6" title="6">    <span class="kw">cat</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">CXX14FLAGS=-O3 -march=native -mtune=native&quot;</span>,</a>
+<a class="sourceLine" id="cb5-7" title="7">    <span class="cf">if</span>( <span class="kw">grepl</span>(<span class="st">&quot;^darwin&quot;</span>, R.version<span class="op">$</span>os)) <span class="st">&quot;CXX14FLAGS += -arch x86_64 -ftemplate-depth-256&quot;</span> <span class="cf">else</span> </a>
+<a class="sourceLine" id="cb5-8" title="8">     <span class="cf">if</span> (.Platform<span class="op">$</span>OS.type <span class="op">==</span><span class="st"> &quot;windows&quot;</span>) <span class="st">&quot;CXX11FLAGS=-O3 -march=native -mtune=native&quot;</span> <span class="cf">else</span> <span class="st">&quot;CXX14FLAGS += -fPIC&quot;</span>,</a>
+<a class="sourceLine" id="cb5-9" title="9">     <span class="cf">if</span> (.Platform<span class="op">$</span>OS.type <span class="op">==</span><span class="st"> &quot;windows&quot;</span>) <span class="st">&quot;CXX11FLAGS=-O3 -mtune=native CXX14 = $(BINPREF)g++ -m$(WIN) -std=c++1y&quot;</span> <span class="cf">else</span> <span class="st">&quot;CXX14FLAGS += -fPIC&quot;</span>,</a>
+<a class="sourceLine" id="cb5-10" title="10">     <span class="cf">if</span> (.Platform<span class="op">$</span>OS.type <span class="op">==</span><span class="st"> &quot;windows&quot;</span>) <span class="st">&quot;CXX14 = g++ -std=c++1y&quot;</span> <span class="cf">else</span> <span class="st">&quot;CXX14FLAGS += -fPIC&quot;</span>,</a>
+<a class="sourceLine" id="cb5-11" title="11">     <span class="cf">if</span> (.Platform<span class="op">$</span>OS.type <span class="op">==</span><span class="st"> &quot;windows&quot;</span>) <span class="st">&quot;CXX14FLAGS = -O3 -Wno-unused-variable -Wno-unused-function&quot;</span> <span class="cf">else</span> <span class="st">&quot;CXX14FLAGS += -fPIC&quot;</span>,</a>
+<a class="sourceLine" id="cb5-12" title="12">    <span class="dt">file =</span> M, <span class="dt">sep =</span> <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>, <span class="dt">append =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb5-13" title="13">} </a>
+<a class="sourceLine" id="cb5-14" title="14"><span class="kw">rm</span>(dotR,M)</a></code></pre></div>
+<p>The makevars script in <em>C:.R</em> looks like this:</p>
+<pre><code>#&gt; CXX14FLAGS=-O3 -march=native -mtune=native
+#&gt; CXX11FLAGS=-O3 -march=native -mtune=native
+#&gt; CXX11FLAGS=-O3 -mtune=native CXX14 = $(BINPREF)g++ -m$(WIN) -std=c++1y
+#&gt; CXX14 = g++ -std=c++1y
+#&gt; CXX14FLAGS = -O3 -Wno-unused-variable -Wno-unused-function</code></pre>
+<p>Make shure your file looks similar to the one above.</p>
+</div>
+<div id="install-varstan-from-git" class="section level3">
+<h3>Install varstan from git</h3>
+<p>For avoiding package installing problems, make shure you have updated the next packages: <strong>devtools,pkgbuild,remotes,StanHeaders,OpenMx</strong>.If you are not shure about it, compile the code bellow</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">packs &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;devtools&#39;</span>,<span class="st">&#39;pkgbuild&#39;</span>,<span class="st">&#39;remotes&#39;</span>,<span class="st">&#39;StanHeaders&#39;</span>,<span class="st">&#39;OpenMx&#39;</span>,<span class="st">&#39;rstantools&#39;</span>)</a>
+<a class="sourceLine" id="cb7-2" title="2"><span class="kw">install.packages</span>(packs,<span class="dt">dependencies =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="kw">rm</span>(packs)</a></code></pre></div>
+<p>Finally installing varstan package for git use the next code:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"></a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="kw">library</span>(devtools)</a>
+<a class="sourceLine" id="cb8-3" title="3"></a>
+<a class="sourceLine" id="cb8-4" title="4"><span class="kw">remove.packages</span>(<span class="st">&quot;varstan&quot;</span>)</a>
+<a class="sourceLine" id="cb8-5" title="5"><span class="cf">if</span> (<span class="kw">file.exists</span>(<span class="st">&quot;.RData&quot;</span>)) <span class="kw">file.remove</span>(<span class="st">&quot;.RData&quot;</span>)</a>
+<a class="sourceLine" id="cb8-6" title="6"></a>
+<a class="sourceLine" id="cb8-7" title="7"><span class="kw">Sys.setenv</span>(<span class="dt">PATH =</span> <span class="kw">paste</span>(<span class="st">&quot;C:/Rtools/bin&quot;</span>, <span class="kw">Sys.getenv</span>(<span class="st">&quot;PATH&quot;</span>), <span class="dt">sep=</span><span class="st">&quot;;&quot;</span>))</a>
+<a class="sourceLine" id="cb8-8" title="8"><span class="kw">Sys.setenv</span>(<span class="dt">PATH =</span> <span class="kw">paste</span>(<span class="st">&quot;C:</span><span class="ch">\\</span><span class="st">Rtools</span><span class="ch">\\</span><span class="st">mingw_64</span><span class="ch">\\</span><span class="st">bin&quot;</span>, <span class="kw">Sys.getenv</span>(<span class="st">&quot;PATH&quot;</span>), <span class="dt">sep=</span><span class="st">&quot;;&quot;</span>))</a>
+<a class="sourceLine" id="cb8-9" title="9"><span class="kw">Sys.setenv</span>(<span class="dt">BINPREF =</span> <span class="st">&quot;C:/Rtools/mingw_$(WIN)/bin/&quot;</span>)</a>
+<a class="sourceLine" id="cb8-10" title="10"></a>
+<a class="sourceLine" id="cb8-11" title="11"><span class="kw">install_github</span>(<span class="st">&quot;asael697/varstan&quot;</span>, <span class="dt">upgrade=</span><span class="st">&#39;never&#39;</span>,<span class="dt">INSTALL_opts =</span> <span class="st">&quot;--no-multiarch&quot;</span>, </a>
+<a class="sourceLine" id="cb8-12" title="12">               <span class="dt">dependencies =</span> <span class="kw">c</span>(<span class="st">&quot;Depends&quot;</span>, <span class="st">&quot;Imports&quot;</span>))</a></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

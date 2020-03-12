@@ -16,11 +16,11 @@ knitr::opts_chunk$set(
 
 ### Introduction
 
-Varstan is a package for analyze time series with common structured models such as arima, garch, var, bekk, SVM, HMM, ETS and others. On this beta version the models varbekk and varbekkM(1) are currently available.
+Varstan is a package for analyze time series with common structured models such as arima, garch, var, bekk, SVM, HMM, ETS and others. On this beta version the models varma, garch, Bekk, Sarima are currently available.
 
-The dynamic is, first to create the model structure using a constructure, then define the prior parameters, next call the varstan function to estimate the chosen model in a bayesian scheme using STAN. Finally the summary, point\_estimate, model\_diagnostic, forecast functions are used to evaluate the obtained results.
+The dynamic is, first to create the model structure using a constructor, then define the prior parameters, next call the varstan function to estimate the chosen model in a Bayesian scheme using STAN. Finally the summary, point_estimate, model_diagnostic, forecast functions are used to evaluate the obtained results.
 
-The posterior distribution is approimated using a Hamiltonian monte carlo, using the stan using the r package rstan.
+The posterior distribution is approximated using a Hamiltonian Monte Carlo, using the stan using the r package rstan.
 
 
 ## Installing Rstan in r
@@ -97,7 +97,7 @@ Make shure your file looks similar to the one above.
 
 ### Install varstan from git
 
-For avoiding package installing problems, make shure you have updated the next packages: **devtools,pkgbuild,remotes,StanHeaders,OpenMx**.If you are not shure about it, compile the code bellow 
+For avoiding package installing problems, make shure you have updated the next packages: **devtools,pkgbuild,remotes,StanHeaders,OpenMx**.If you are not sure about it, compile the code bellow 
 
 ```{r,eval=FALSE}
 packs <- c('devtools','pkgbuild','remotes','StanHeaders','OpenMx','rstantools')
