@@ -3,17 +3,17 @@
 **varstan**
 ===========
 
-Varstan is a a package for bayesian estimation of structured time series
-models,using the Hamiltonian monte carlo method, implemented with
+Varstan is a a package for Bayesian estimation of structured time series
+models,using the Hamiltonian Monte Carlo method, implemented with
 [Stan](http://mc-stan.org/), a probabilistic language model in C++. The
 aim of varstan is to have an interface of the most popular time series
-modeles such as: sarima,garch, stochastic Volatility models (*SVM*),
-Hiden Markov models(*HMM*), Dynamic Harmonic regresion, additive
+models such as: sarima,garch, stochastic Volatility models (*SVM*),
+Hidden Markov models(*HMM*), Dynamic Harmonic regression, additive
 non-linear models (*via*
-[prophet](https://github.com/facebook/prophet)), univariate kalman
-Filters, varma and bekk models.
+[prophet](https://github.com/facebook/prophet)), univariate Kalman
+Filters, varma and Bekk models.
 
-On the beta version 0.5.0.000, the avaliable models are:
+On the beta version 0.5.0.000, the available models are:
 
 -   arima
 -   Seasonal arima
@@ -23,16 +23,16 @@ On the beta version 0.5.0.000, the avaliable models are:
 -   Dynamic regression +Dynamic Harmonic regresion
 
 The dynamic of varstan is to build your own model using one of the
-avaliable model constructor, personalize your own priors (*check the Use
+available model constructor, personalize your own priors (*check the Use
 Priors vignette*), and fit your model using the varstan function. On the
-next example we show you how to create and fit a simple bayesian arima
+next example we show you how to create and fit a simple Bayesian arima
 model.
 
 ### Installing varstan
 
-Varstan is stil a beta version package, so currently installing it could
-be challenging, we recomend to first install the package rstan, you can
-follow the instalation procedure
+Varstan is still a beta version package, so currently installing it could
+be challenging, we recommend to first install the package RStan, you can
+follow the installing procedure
 [here](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started)
 
 ### Troubleshooting Rstan / Rtools install for Windows:
@@ -64,7 +64,7 @@ cat("\nCXX14FLAGS=-O3 -march=native -mtune=native",
 For installing varstan package for git use the code on the next chunk:
 
 ``` r
-install.packages(c("rstan","bridgesampling","loo","Rcpp","rstantools","devtools"))
+install.packages(c("rstan","bridgesampling","loo","Rcpp","rstantools","forecast"))
 
 library(devtools)
 Sys.setenv(PATH = paste("C:/Rtools/bin", Sys.getenv("PATH"), sep=";"))
@@ -95,7 +95,7 @@ version(View = FALSE)
 #> 5 Bekk                        Bekk(s,k,h)                                    TRUE
 #> 6 Dynamic Harmonic Regression DWR(K, order = c(p,d,q),base = "Harmonic" )    FALSE
 #>                                          
-#>  * model column represent the avaliable model 
+#>  * model column represent the available model 
 #>  * functions column represent the function structure 
 #>  * GenT column represent if the model admits a generalized t-student distribution 
 #>  * Report a bug in asael_am@hotmail.com 
@@ -121,13 +121,13 @@ autoplot(y)+labs(x = "time",title = "Simulated ARMA Process")
 
 <img src="man/figures/fig1-1.png" width="60%" style="display: block; margin: auto;" />
 
-Proceding to built the arima model using the varstan constructor:
+Building the arima model using the varstan constructor:
 
 ``` r
 model1 = Sarima(y,order = c(1,0,2))
 ```
 
-Automatically varstan builds a bayesian arima model, with default normal
+Automatically varstan builds a Bayesian arima model, with default normal
 priors, you can check the model using the report function or just
 printing the current model
 
@@ -168,19 +168,19 @@ get_prior(model1,type = "ma")
 #> ma[ 2 ] ~ beta (form1 =  2.5 , form2 =  2.5 )
 ```
 
-To see more details of the avaliable priors and the model structure see
+To see more details of the available priors and the model structure see
 the vignettes *Use\_prior* and *arima\_models*, respectively.
 
-### Estimation and parameter diagnositc
+### Estimation and parameter diagnostic
 
 Fitting the personalized model defined above, is as simple as call the
 varstan function, it will estimate the posterior sample using a
 Hamiltonian montecarlo implemented using the NUTS algorithm in the rstan
 package. In varstan function you can choose the number of chains, the
 total amount of iterations for each chain, the iterations in the warm-up
-face, and the adapt delta of the alogrithm.
+face, and the adapt delta of the algorithm.
 
-In this example a hmc is run with 1 chain of 2000 iterations
+In this example a HMC is run with 1 chain of 2000 iterations
 
 ``` r
 sfit = varstan(model1,chains = 1,iter = 2000)
@@ -189,7 +189,7 @@ sfit = varstan(model1,chains = 1,iter = 2000)
 The function **summary**, provides a a full description of all the
 fitted parameters in the model, the robust option, prints the median,
 mad, and quantiles. If the robust option is false, the mean, se and
-estimated credible intervals are printed. The *Rhat* and efective
+estimated credible intervals are printed. The *Rhat* and effective
 sample size for preliminary diagnostic if the simulated chains have
 converged. More detail for parameter diagnostics could be found
 [here](https://mc-stan.org/bayesplot/articles/visual-mcmc-diagnostics.html).
@@ -246,7 +246,7 @@ post = extract_stan(sfit,pars = "phi",permuted = TRUE,inc_warmup = FALSE,include
 post = as.data.frame(post)
 ```
 
-A simple diagnostic plot for the ar *ϕ* parameter is possible, using the
+A simple diagnostic plot for the ar *$\phi$* parameter is possible, using the
 [bayesplot package](https://mc-stan.org/bayesplot/) that visualize
 posterior distributions and other diagnosis.
 
@@ -266,8 +266,8 @@ posterior distributions and other diagnosis.
 <img src="man/figures/fig3-1.png" width="60%" style="display: block; margin: auto;" />
 
 For further exploration and diagnostic use the **get\_stan** function to
-extract the whole rstan fit object and personalize diagnosis using other
-packages ( [bloo](https://mc-stan.org/loo),
+extract the whole RStan fit object and personalize diagnosis using other
+packages ( [Bayesian loo](https://mc-stan.org/loo),
 [bayesplot](https://mc-stan.org/bayesplot/) ,
 [tidybayes](https://github.com/mjskay/tidybayes),
 [posterior](https://github.com/jgabry/posterior) ).
@@ -285,7 +285,7 @@ class(stanfit)
 For making an h-step ahead forecast, you can use the
 **posterior\_predict** function and you can compare it with the real
 with the predictive\_error function, the last one gives a sample
-distribution of the diference between the real values and the h-step
+distribution of the difference between the real values and the h-step
 ahead predictive distribution of the model. In the next example, a 6
 steps ahead forecast is presented
 
@@ -312,7 +312,7 @@ yh
 ```
 
 As well you can estimate the predictive\_errors, be aware that at the
-begining we extract the last 5 observation of our simulated series, so
+beginning we extract the last 5 observation of our simulated series, so
 we can only compare the first 5 predictive errors as following:
 
 ``` r
@@ -364,7 +364,7 @@ summary(mc$residuals)
 #> -1.1974679 -0.2973318 -0.0104121 -0.0006024  0.2778172  1.5344517
 ```
 
-The posterior mean of the residual statistics of the bayesian model are:
+The posterior mean of the residual statistics of the Bayesian model are:
 
 ``` r
 resid = posterior_residuals(sfit)
