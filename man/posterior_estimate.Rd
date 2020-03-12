@@ -2,14 +2,15 @@
 % Please edit documentation in R/posterior_estimate.R
 \name{posterior_estimate}
 \alias{posterior_estimate}
-\title{Generic function and method for the posteriorpoint estimate of all  parameters in varstan object}
+\alias{posterior_estimate.varstan}
+\title{Generic function and method for the posterior point estimate of all  parameters in varstan object}
 \usage{
-point_estimate(obj)
+posterior_estimate(obj,..)
 }
 \arguments{
-\item{obj:}{a varstan object}
+\item{obj}{a varstan object}
 
-\item{robust:}{A boolean value, if its \code{TRUE} it returns the median of the posterior distribution,
+\item{robust}{A boolean value, if its \code{TRUE} it returns the median of the posterior distribution,
 And if its \code{FALSE} it returns the mean, by default is the \code{FALSE} value}
 }
 \value{

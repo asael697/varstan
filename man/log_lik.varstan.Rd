@@ -3,12 +3,12 @@
 \name{log_lik.varstan}
 \alias{log_lik.varstan}
 \alias{log_lik}
-\title{Extract posterior sample of the pointwise log-likelihood from a vartan object}
+\title{Extract posterior sample of the pointwise log-likelihood from a varstan object}
 \usage{
-\method{log_lik}{varstan}(obj, permuted = TRUE)
+\method{log_lik}{varstan}(obj, permuted = TRUE, ...)
 }
 \arguments{
-\item{obj}{A varstan object of the time seires fitted model.}
+\item{obj}{A varstan object of the time series fitted model.}
 
 \item{permuted}{A logical scalar indicating whether the draws after
 the warmup period in each chain should be permuted and merged.
@@ -26,4 +26,16 @@ Usually, an S x N matrix containing the pointwise log-likelihood
 \description{
 Convenience function for extracting the pointwise log-likelihood
 matrix or array from a fitted Stan model.
+}
+\examples{
+
+\dontrun{
+library(astsa)
+model = Sarima(birth,order = c(0,1,2),seasonal = c(1,1,1))
+fit1 = varstan(model,chains = 1)
+
+log1 <- log_lik(fit1)
+log1
+}
+
 }

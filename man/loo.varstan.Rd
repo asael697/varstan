@@ -5,7 +5,7 @@
 \alias{loo}
 \title{Leave-one-out cross-validation}
 \usage{
-loo.varstan(obj)
+\method{loo}{varstan}(obj, ...)
 }
 \arguments{
 \item{obj}{A varstan object}
@@ -18,7 +18,7 @@ leave-one-out cross-validation using Pareto smoothed importance sampling
 \examples{
 
 \dontrun{
-library(birth)
+library(astsa)
 model = Sarima(birth,order = c(0,1,2),seasonal = c(1,1,1))
 fit1 = varstan(model,chains = 1)
 

@@ -2,25 +2,26 @@
 % Please edit documentation in R/posterior_predict.R
 \name{posterior_predict}
 \alias{posterior_predict}
+\alias{posterior_predict.varstan}
 \title{Draw from posterior predictive h steps ahead distribution}
 \usage{
-posterior_predict(obj)
+posterior_predict(obj,h = 1,xreg = NULL,robust = TRUE,draws = 1000,seed = NULL,...)
 }
 \arguments{
-\item{obj:}{a varstan object}
+\item{obj}{a varstan object}
 
-\item{h:}{An integer indicating the number of predictions. The default number
+\item{h}{An integer indicating the number of predictions. The default number
 of predictions is 1.}
 
-\item{xreg:}{Optionally, a numerical matrix of external regressors,
+\item{xreg}{Optionally, a numerical matrix of external regressors,
 which must have the same number of rows as ts. It should not be a data frame.}
 
-\item{robust:}{A boolean for obtain the robust estimation. The default}
+\item{robust}{A boolean for obtain the robust estimation. The default}
 
-\item{draws:}{An integer indicating the number of draws to return. The default
+\item{draws}{An integer indicating the number of draws to return. The default
 number of draws is 1000}
 
-\item{seed:}{An optional \code{\link[=set.seed]{seed}} to use.}
+\item{seed}{An optional \code{\link[=set.seed]{seed}} to use.}
 }
 \value{
 A \code{draws} by \code{h} data.frame of simulations from the

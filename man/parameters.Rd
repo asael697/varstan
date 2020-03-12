@@ -4,11 +4,11 @@
 \alias{parameters}
 \title{Print the parameters of a model class}
 \usage{
-parameters(classes = "Sarima")
+parameters(classes = NULL)
 }
 \arguments{
-\item{classes}{a string value with the desyred model class (Sarima,garch,varma,ect,...),
-for knowing the current avaliable model classes use the \code{version()} function}
+\item{classes}{a string value with the desyred model class (Sarima,garch,varma,...),
+for knowing the current available model classes use the \code{version()} function}
 }
 \value{
 a string with the prior distributions for the desired parameter

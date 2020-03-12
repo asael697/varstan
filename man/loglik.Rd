@@ -2,12 +2,12 @@
 % Please edit documentation in R/log_lik.R
 \name{loglik}
 \alias{loglik}
-\title{Extract posterior sample of the acumuated log-likelihood from a varstan object}
+\title{Extract posterior sample of the accumulated log-likelihood from a varstan object}
 \usage{
 loglik(obj, permuted = TRUE)
 }
 \arguments{
-\item{obj}{A varstan object of the time seires fitted model.}
+\item{obj}{A varstan object of the time series fitted model.}
 
 \item{permuted}{A logical scalar indicating whether the draws after
 the warmup period in each chain should be permuted and merged.
@@ -16,11 +16,23 @@ the permutation is fixed (i.e., extracting samples a second time
 will give the same sequence of iterations).}
 }
 \value{
-Usually, A nxS array containing the acumulated log-likelihood
+Usually, A nxS array containing the accumulated log-likelihood
  samples, where S is the number of samples. If \code{permuted} is \code{FALSE},
- an Sx R array is returned, where R is the number of fitted chains.
+ an SxR array is returned, where R is the number of fitted chains.
 }
 \description{
-Convenience function for extracting the posterior sample of the acumulated
+Convenience function for extracting the posterior sample of the accumulated
 log-likelihood array from a fitted varstan object.
+}
+\examples{
+
+\dontrun{
+library(astsa)
+model = Sarima(birth,order = c(0,1,2),seasonal = c(1,1,1))
+fit1 = varstan(model,chains = 1)
+
+log1 <- loglik(fit1)
+log1
+}
+
 }

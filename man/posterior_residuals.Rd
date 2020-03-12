@@ -2,14 +2,15 @@
 % Please edit documentation in R/posterior_residuals.R
 \name{posterior_residuals}
 \alias{posterior_residuals}
+\alias{posterior_residuals-varstan}
 \title{Generic function and method for extract the residual of a varstan object}
 \usage{
-posterior_residuals(obj,robust = FALSE)
+posterior_residuals(obj,robust = FALSE,...)
 }
 \arguments{
-\item{obj:}{A varstan object, \code{\link[=varstan]{varstan}}}
+\item{obj}{A varstan object, \code{\link[=varstan]{varstan}}}
 
-\item{robust:}{A boolean value, if its \code{TRUE} it returns the median of the posterior distribution,
+\item{robust}{A boolean value, if its \code{TRUE} it returns the median of the posterior distribution,
 and if its \code{FALSE} it returns the mean, by default is the \code{FALSE} value}
 }
 \value{
@@ -21,6 +22,10 @@ the time series, and rows as the length
 The function returns the posterior estimate of the residuals
 of a varstan model, similar to the residual functions of other
 packages.
+}
+\details{
+This function only extracts the pointwise estimate of the time series resiudals
+for extracting all the data use extract_stan or posterior_intervals function
 }
 \author{
 Asael Alonzo Matamoros

@@ -2,6 +2,7 @@
 % Please edit documentation in R/posterior_fit.R
 \name{posterior_fit}
 \alias{posterior_fit}
+\alias{posterior_fit.varstan}
 \title{Generic function and method for extract the fitted values of a varstan object}
 \usage{
 posterior_fit(obj, robust = FALSE)
@@ -21,6 +22,10 @@ the time series, and rows as the length
 The function returns the posterior estimate of the fitted values
 of a varstan model, similar to the fit_values functions of other
 packages.
+}
+\details{
+This function only extracts the pointwise estimate of the time series fitted values
+for extracting all the data use extract_stan or posterior_intervals function
 }
 \author{
 Asael Alonzo Matamoros

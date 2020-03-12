@@ -2,6 +2,7 @@
 % Please edit documentation in R/predictive_error.R
 \name{predictive_error}
 \alias{predictive_error}
+\alias{predictive_error.varstan}
 \title{Out-of-sample predictive errors}
 \usage{
 predictive_error(obj, ...)
@@ -13,7 +14,7 @@ object}) or, for the \code{"ppd"} method, a matrix of draws from the
 posterior predictive distribution returned by
 \code{\link{posterior_predict}}.}
 
-\item{xreg:}{Optionally, a numerical matrix of external regressors,
+\item{xreg}{Optionally, a numerical matrix of external regressors,
 which must have the same number of rows as ts. It should not be a data frame.}
 
 \item{newdata}{An array with the newdata vector}
@@ -34,7 +35,7 @@ internally, where as the method accepts the data.frame returned by
 }
 \note{
 If \code{obj} is a \strong{varstan} object of a varma model then newdata has to be a matrix
-with number of \strong{cols} as the dimension of the time serie and number of \strong{rows}
+with number of \strong{cols} as the dimension of the time series and number of \strong{rows}
 as the number new elements.
 
 If \code{obj} is a \code{posterior_predict} data.frame, then the
@@ -45,7 +46,7 @@ then the dimension product of \code{newdata} matrix has to be equal to
 the \code{ncol} of \code{obj}.
 }
 \seealso{
-\code{\link[=posterior_predict.stanreg]{posterior_predict}} to draw
+\code{posterior_predict} function from rstanarm package, to draw
   from the posterior predictive distribution without computing predictive
   errors.
 }
