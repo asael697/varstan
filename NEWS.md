@@ -1,6 +1,30 @@
 **VARSTAN NEWS**
 ============
 
+
+**varstan 1.0.1.000 Date: 12/03/2020**
+----------------------------------
+
+### Features:
+
+-   plots methods for Sarima, garch and naive models
+
+-   autoplot methods for plotting time series models
+
+-   Astrovan transformed to a mts object
+
+### Improvements:
+
+-  No current improvements
+
+### Changes:
+
+-   No current changes
+
+### Fixes:
+
+-   No current fixes
+
 **varstan 1.0.0.000 Date: 14/12/2019**
 ----------------------------------
 

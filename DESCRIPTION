@@ -34,6 +34,7 @@ Suggests:
 VignetteBuilder: knitr
 Collate: 
     'Astrovan.R'
+    'autoplot.R'
     'auto_sarima.R'
     'bayes_factor.R'
     'Bekk.R'
