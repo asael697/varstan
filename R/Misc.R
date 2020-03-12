@@ -10,13 +10,15 @@
 #' The function returns a matrix with the extracted coefficients of the stan fit
 #' summary
 #'
-#' @usage  extractm(indx,fit,n,d)
+#' @usage  vector_to_matrix(vect,d = 2,m = d, p = 1)
 #'
 #' @param vect  a vector with the posterior estimate
 #' @param d an integer with the number of columns
 #' @param p   the number of lags to be extracted
 #'
 #' @author  Asael Alonzo Matamoros
+#'
+#' @noRd
 #'
 #' @return  a  list of matrices with the extracted lags
 #'
@@ -33,12 +35,14 @@ vector_to_matrix = function(vect,d = 2,m = d,p = 1){
 #'
 #' The function returns a vector with the fitted parameters
 #'
-#' @usage  point_estimate.arima(model,fit)
+#' @usage  extract_estimate(model,fit)
 #'
-#' @param fit: a stanfit object
-#' @param model: a varbekk model
-#' @param par: the desired parameter
-#' @param robust: a boolean for obtain the robust estimation
+#' @param fit  a stanfit object
+#' @param model a varma, Sarima or garch model
+#' @param par the desired parameter
+#' @param robust a boolean for obtain the robust estimation
+#'
+#' @noRd
 #'
 #' @author  Asael Alonzo Matamoros
 #'
@@ -52,14 +56,16 @@ extract_estimate = function(model,fit,par,robust = FALSE,...){
 }
 #' Extract estimate time series parameters from a stanfit object
 #'
-#'  @param obj: varstan object
-#'  @param par: a string with the desired parameter
-#'  @param robust: a boolean value ofr robust estimate
-#'  @param lag: the max lags desired
+#'  @param obj varstan object
+#'  @param par a string with the desired parameter
+#'  @param robust a boolean value for robust estimate
+#'  @param lag the max lags desired
 #'
 #'  @author Asael Alonzo Matamoros
 #'
-#'  @return
+#'  @noRd
+#'
+#'  @return An univariate time series as a numeric vector
 #'
 extract_ts = function(obj,par,lag=1,robust=FALSE){
   if (is.varstan(obj)){
@@ -75,15 +81,17 @@ extract_ts = function(obj,par,lag=1,robust=FALSE){
 }
 #' Extract estimate of multivariate time series parameters from a stanfit object
 #'
-#'  @param obj: varstan object
-#'  @param par: a string with the desired parameter
-#'  @param d: the dimension of the time series
-#'  @param robust: a boolean value ofr robust estimate
-#'  @param lag: the max lags desired
+#'  @param obj varstan object
+#'  @param par a string with the desired parameter
+#'  @param d the dimension of the time series
+#'  @param robust a boolean value for robust estimate
+#'  @param lag the max lags desired
 #'
 #'  @author Asael Alonzo Matamoros
 #'
-#'  @return
+#'  @noRd
+#'
+#'  @return A multivariate time series as a numeric matrix
 #'
 extract_mts = function(obj,par,d=1,lag=1,robust=FALSE){
 
@@ -111,16 +119,17 @@ extract_mts = function(obj,par,d=1,lag=1,robust=FALSE){
 }
 #' Extract the initial values of a differenced time series
 #'
-#'  @param ts: An univariate time series
-#'  @param d: the number of differences
-#'  @param D: the number of seasonal differences
-#'  @param period: the time serie's period
+#'  @param ts An univariate time series
+#'  @param d the number of differences
+#'  @param D the number of seasonal differences
+#'  @param period the time series period
 #'
 #'  @author Asael Alonzo Matamoros
 #'
 #'  @return A list with the differenced time series, the initials values
 #'  for inverse differences
 #'
+#'  @noRd
 #'
 dif = function(ts,d = 0,D = 0,period = 1){
 
@@ -144,14 +153,15 @@ dif = function(ts,d = 0,D = 0,period = 1){
 }
 #' Inverse difference time series to forecasted values
 #'
-#'  @param ts: An univariate time series
-#'  @param init: the initial values for normal difference
-#'  @param inits: the initial values for seasonal difference
+#' @param ts An univariate time series
+#' @param init the initial values for normal difference
+#' @param inits the initial values for seasonal difference
 #'
-#'  @author Asael Alonzo Matamoros
+#' @author Asael Alonzo Matamoros
 #'
-#'  @return A vector with the inverse difference time series
+#' @return A vector with the inverse difference time series
 #'
+#' @noRd
 #'
 inv_dif = function(ts,init,inits){
   y = ts; n = length(ts);d = 0;D = 0; period = 0
@@ -185,12 +195,14 @@ inv_dif = function(ts,init,inits){
 #' @usage  repeat_value(x,d,x0)
 #'
 #' @param x is a vector with the hyper-parameter coefficients
-#' @param d an integer with the vector dimention
+#' @param d an integer with the vector dimension
 #' @param x0 a real value to replace in a non positive value
 #'
 #' @author  Asael Alonzo Matamoros
 #'
 #' @return  a vector with repeated values
+#'
+#' @noRd
 #'
 repeat_value = function(x,d,x0){
   if(length(x) == 1 && x != x0){
@@ -201,7 +213,6 @@ repeat_value = function(x,d,x0){
   }
   return(y)
 }
-#'
 #' Complete vector
 #'
 #' Completes the prior vector hiper parameters to their default value
@@ -209,13 +220,14 @@ repeat_value = function(x,d,x0){
 #' @usage  complete(x,d,x0)
 #'
 #' @param x is a vector with the hyper-parameter coefficients
-#' @param d an integer with the vector dimention
-#' @param x0 a real with the preliminar value for the hyper-parameter
+#' @param d an integer with the vector dimension
+#' @param x0 a real with the preliminary value for the hyper-parameter
 #'
 #' @author  Asael Alonzo Matamoros
 #'
 #' @return  a vector with the hyper-parameter value
 #'
+#' @noRd
 #'
 complete = function(x,d,x0){
   if(d > 0){
@@ -238,8 +250,10 @@ complete = function(x,d,x0){
   return(y);
 }
 #' Checks if is a model object
-#' @param obj: a  model object
 #'
+#' @param obj a  model object
+#'
+#' @noRd
 #'
 is.model = function(obj){
   y = FALSE
@@ -249,10 +263,16 @@ is.model = function(obj){
   if(is(obj,"varma"))  y = TRUE
   if(is(obj,"Bekk"))   y = TRUE
   if(is(obj,"DWR"))    y = TRUE
+  if(is(obj,"naive"))  y = TRUE
   return (y)
 }
-#'  summary function
-#'  A report of the desired modelt
+#' A function with all the desired indicators in summary function
+#'
+#' @param x a numeric vector
+#' @param robust a boolean value for robust indicators
+#' @param conf the confidence level
+#'
+#' @noRd
 #'
 my_sum = function(x,robust = FALSE,conf){
   if(robust){
@@ -276,9 +296,13 @@ my_sum = function(x,robust = FALSE,conf){
   }
   return( round(sum,4) )
 }
-
-#'  summary function
-#'  A report of the desired model
+#' Alternative function with all the desired indicators in summary function
+#'
+#' @param x a numeric vector
+#' @param robust a boolean value for robust indicators
+#' @param conf the confidence level
+#'
+#' @noRd
 #'
 my_sum1 = function(x,robust = FALSE,conf){
   if(robust){
@@ -301,21 +325,23 @@ my_sum1 = function(x,robust = FALSE,conf){
 #                  Check functions
 ################################################################################################
 #
-#'
+
+
 #' Positive values in vector
 #'
-#' checks for positive values in a vector (x_i > 0) usefull for
+#' checks for positive values in a vector (x_i > 0) useful for
 #' checking scale parameters
 #'
 #' @usage  positive_check(x,x0)
 #'
 #' @param x is a vector with the hyper-parameter coefficients
-#' @param d an integer with the vector dimention
 #' @param x0 a real value to replace in a non positive value
 #'
 #' @author  Asael Alonzo Matamoros
 #'
 #' @return  a vector with the checked values
+#'
+#' @noRd
 #'
 positive_check = function(x,x0 = 1){
   y = x
@@ -331,21 +357,21 @@ positive_check = function(x,x0 = 1){
   }
   return(y)
 }
-#'
 #' No negative values in vector
 #'
-#' checks for no negative values in a vector (x_i >= 0 ) usefull for checking
+#' checks for no negative values in a vector (x_i >= 0 ) useful for checking
 #' lags in models
 #'
 #' @usage  no_negative_check(x,x0)
 #'
 #' @param x is a vector with the hyper-parameter coefficients
-#' @param d an integer with the vector dimention
 #' @param x0 a real value to replace in a non positive value
 #'
 #' @author  Asael Alonzo Matamoros
 #'
 #' @return  a vector with the checked values
+#'
+#' @noRd
 #'
 no_negative_check = function(x,x0 = 0){
   y = x
@@ -374,6 +400,8 @@ no_negative_check = function(x,x0 = 0){
 #'
 #' @return  a vector with the checked values
 #'
+#' @noRd
+#'
 arma_check = function(x){
   y = x
   d = length(x)
@@ -385,13 +413,18 @@ arma_check = function(x){
   }
   return(y)
 }
-#'  Check if the value is in the domain of a location parameter
+#' Check if the value is in the domain of a location parameter
+#'
+#' @param x a location parameter
+#' @noRd
 #'
 check_loc <- function(x) {
   return(x)
 }
-#'  Check if the value is in the domain of a scale parameter
+#' Check if the value is in the domain of a scale parameter
 #'
+#' @param x an scale parameter
+#' @noRd
 #'
 check_scl <- function(x) {
   if(x > 0 ){
@@ -401,8 +434,10 @@ check_scl <- function(x) {
     return(1)
   }
 }
-#'  Check if the value is in the domain of a form parameter
+#' Check if the value is in the domain of a form parameter
 #'
+#' @param x a form parameter
+#' @noRd
 #'
 check_form <- function(x) {
   if(x > 0 ){
@@ -412,8 +447,10 @@ check_form <- function(x) {
     return(1)
   }
 }
-#'  Check if the value is in the domain of a degree freedom parameter
+#' Check if the value is in the domain of a degree freedom parameter
 #'
+#' @param x a degree freedom parameter
+#' @noRd
 #'
 check_df <- function(x) {
   if(x >= 1 ){
@@ -423,7 +460,12 @@ check_df <- function(x) {
     return(1)
   }
 }
-#'  Check if the value is in the domain of a scale parameter
+#' Check if the value is in the domain of a scale parameter
+#'
+#' @param  x the distribution
+#' @param  par the parameter
+#'
+#' @noRd
 #'
 check_dist <- function(x,par) {
   y = FALSE
@@ -432,25 +474,37 @@ check_dist <- function(x,par) {
     if(identical(x,"beta"))    y = TRUE
     if(identical(x,"uniform")) y = TRUE
   }
-  if(par == "sar"){
-    if(identical(x,"normal"))  y = TRUE
-    if(identical(x,"beta"))    y = TRUE
-    if(identical(x,"uniform")) y = TRUE
-  }
   if(par == "breg"){
     if(identical(x,"normal"))  y = TRUE
     if(identical(x,"student")) y = TRUE
     if(identical(x,"cauchy"))  y = TRUE
-    }
+    if(identical(x,"gamma"))   y = TRUE
+    if(identical(x,"beta"))    y = TRUE
+    if(identical(x,"uniform")) y = TRUE
+  }
+  if(par == "mgarch"){
+    if(identical(x,"normal"))  y = TRUE
+    if(identical(x,"student")) y = TRUE
+    if(identical(x,"cauchy"))  y = TRUE
+    if(identical(x,"gamma"))   y = TRUE
+    if(identical(x,"beta"))    y = TRUE
+    if(identical(x,"uniform")) y = TRUE
+  }
   if(par == "mu"){
     if(identical(x,"normal"))  y = TRUE
     if(identical(x,"student")) y = TRUE
     if(identical(x,"cauchy"))  y = TRUE
+    if(identical(x,"gamma"))   y = TRUE
+    if(identical(x,"beta"))    y = TRUE
+    if(identical(x,"uniform")) y = TRUE
   }
   if(par == "mu0"){
     if(identical(x,"normal"))  y = TRUE
     if(identical(x,"student")) y = TRUE
     if(identical(x,"cauchy"))  y = TRUE
+    if(identical(x,"gamma"))   y = TRUE
+    if(identical(x,"beta"))    y = TRUE
+    if(identical(x,"uniform")) y = TRUE
   }
   if(par == "sigma0"){
     if(identical(x,"normal"))      y = TRUE
@@ -468,7 +522,10 @@ check_dist <- function(x,par) {
   }
   return(y)
 }
-#'  Check if the value is a type of parameter
+#' Check if the value is a type of parameter
+#'
+#' @param x a parameter
+#' @noRd
 #'
 check_type <- function(x) {
   y = FALSE

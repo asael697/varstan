@@ -88,7 +88,7 @@ version(View = FALSE)
 #>                         model                                      functions  GenT
 #> 1              Seasonal arima Sarima(order = c(p,d,q), seasonal = c(P,D,Q) )  FALSE
 #> 2          Dynamic regression        Sarima(order = c(p,d,q), xreg != NULL )  FALSE
-#> 3                 arma-mgarch           garch(order=c(s,k,h),arma = c(p,q) )  TRUE  
+#> 3                 arma-mgarch           garch(order=c(s,k,h),arma = c(p,q) )  TRUE
 #> 4                 varma-mbekk           varma(order=c(p,q),bekk = c(s,k,h) )  TRUE
 #> 5                        Bekk           Bekk(order=c(s,k,h),varma = c(p,q) )  TRUE
 #> 6 Dynamic Harmonic Regression Sarima(order = c(p,d,q), xreg= fourier(ts,K) )  FALSE

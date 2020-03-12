@@ -18,8 +18,6 @@ list.files(all.files = TRUE)
 
 # Show the description file
 file.show("DESCRIPTION")
-
-
 file.show("Read-and-delete-me")
 file.remove('Read-and-delete-me')
 
@@ -34,6 +32,7 @@ pkgbuild::compile_dll() # see note below
 roxygen2::roxygenize()
 
 devtools::missing_s3()
+usethis::use_data( )
 
 install.packages("../varstan", repos = NULL, type = "source")
 

@@ -1,7 +1,7 @@
 #' Log Marginal Likelihood via Bridge Sampling
 #'
 #' Computes log marginal likelihood via bridge sampling,
-#' which can be used in the computation of bayes factors
+#' which can be used in the computation of Bayes factors
 #' and posterior model probabilities.
 #'
 #' The \code{varstan} class is just a thin wrapper that
@@ -65,10 +65,10 @@ bridge_sampler.varstan <- function(samples, ...) {
 #'
 #' @aliases bayes_factor
 #'
-#' @param model1 A \code{varstan} object
-#' @param model2 Another \code{varstan} object based on the same data.
-#' @param log A boolean parameter for report the bayes_factor in log scale. The defaul
-#' value is FALSE
+#' @param x1 A \code{varstan} object
+#' @param x2 Another \code{varstan} object based on the same data.
+#' @param log A boolean parameter for report the Bayes_factor in log scale. The
+#' default value is FALSE
 #'
 #' @details The computation of Bayes factors based on bridge sampling requires
 #'   a lot more posterior samples than usual. A good conservative
@@ -76,7 +76,7 @@ bridge_sampler.varstan <- function(samples, ...) {
 #'   samples may not be enough in many cases). If not enough posterior
 #'   samples are provided, the bridge sampling algorithm tends to be unstable,
 #'   leading to considerably different results each time it is run.
-#'   We thus recommend running \code{bayes_factor}
+#'   We thus recommend running \code{Bayes_factor}
 #'   multiple times to check the stability of the results.
 #'
 #'  For  more details check the \pkg{bridgesampling} package
@@ -101,7 +101,7 @@ bridge_sampler.varstan <- function(samples, ...) {
 #' fit2
 #'
 #'
-#' # compute the bayes factor
+#' # compute the Bayes factor
 #' bayes_factor(fit1, fit2)
 #' }
 #'
@@ -110,9 +110,9 @@ bridge_sampler.varstan <- function(samples, ...) {
 #' @export bayes_factor
 #' @export
 #'
-bayes_factor.varstan <- function(model1, model2, log = FALSE, ...) {
-  bridge1 <- bridge_sampler(model1, ...)
-  bridge2 <- bridge_sampler(model2, ...)
+bayes_factor.varstan <- function(x1, x2, log = FALSE, ...) {
+  bridge1 <- bridge_sampler(x1, ...)
+  bridge2 <- bridge_sampler(x2, ...)
   out <- bayes_factor(bridge1, bridge2, log = log)
   attr(out, "model_names") <- c("model1", "model2")
   return(out)

@@ -1,26 +1,25 @@
 Package: varstan
 Title: An r package for fitting structured time series models with STAN
 Version: 1.0.0.000
-Authors@R: 
-  person(given = "Asael",
-           family = "Alonzo Matamoros",
-           role = c("aut", "cre"),
-           email = "asael.alonzo@gmail.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: The goal of this package is analyze time series with structured models such as arima, m-garch, Varma, m-Bekk, SVD, HMM and state space models. So far a arima, garch and varma models are aviable for use. See the Use_Prior vignette to personalize you own prior
-License: What license it uses
+Authors@R: c(
+  person("Asael","Alonzo Matamoros", role = c("aut", "cre"),email = "asael.alonzo@gmail.com"),
+  person("Cristian","Cruz Torres", role = 'aut', email = "cristian.cruz@unah.edu.hn")
+  )
+Description: The goal of this package is analyze time series with structured models such as seasonal ARIMA, GARCh and its variants, VARMA, Bekk, Stochastic Volatility Models, Hidden Markov Models and univariate state space models. So far a Sarima, GARCH, dynamic regression, and varma models are available for the users.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Biarch: true
 Depends: 
-    R (>= 3.4.0)
+    R (>= 3.5.0)
 Imports: 
     methods,
+    forecast,
     loo (>= 2.2.0),
-    bridgesampling,
     Rcpp (>= 0.12.0),
     rstan (>= 2.18.1),
-    rstantools (>= 2.0.0)
+    rstantools (>= 2.0.0),
+    bridgesampling (>= 0.3-0)
 LinkingTo: 
     BH (>= 1.66.0),
     Rcpp (>= 0.12.0),
@@ -35,17 +34,18 @@ Suggests:
 VignetteBuilder: knitr
 Collate: 
     'Astrovan.R'
+    'auto_sarima.R'
     'bayes_factor.R'
-    'Bvar.R'
+    'Bekk.R'
     'Birth.R'
     'Fit.R'
-    'gbp.R'
     'garch.R'
     'get_params.R'
     'ipc.R'
     'log_lik.R'
     'Misc.R'
     'model.R'
+    'naive.R'
     'Others.R'
     'posterior_residuals.R'
     'posterior_fit.R'
@@ -53,13 +53,13 @@ Collate:
     'posterior_intervals.R'
     'posterior_predict.R'
     'predictive_error.R'
+    'plot.R'
     'print.R'
     'prior.R'
     'report.R'
     'Sarima.R'
     'summary.R'
     'stanmodels.R'
-    'Sunspots.R'
     'varma.R'
     'varstan-package.R'
     'varstan.R'

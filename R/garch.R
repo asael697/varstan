@@ -1,16 +1,16 @@
 #' A  constructor for a garch(s,k,h) model
 #'
-#' Constructor of the garch(s,k,h) object for bayesian estimation in STAN
+#' Constructor of the garch(s,k,h) object for Bayesian estimation in STAN
 #'
-#' The function returns  a list with the data for running stan() function of
+#' The function returns a list with the data for running stan() function of
 #'  rstan package
 #'
-#' @usage garch(ts,s,k)
+#' @usage garch(ts,order = (1,1,0),arma = c(0,0),genT = FALSE)
 #'
-#' @param ts an univariateivariate time series
-#' @param order: A specification of thegarch  model: thethree components (s, k, h)
+#' @param ts an univariate time series
+#' @param order A specification of the garch  model: the three components (s, k, h)
 #' are the arch order, the garch order, and the mgarch order.
-#' @param arma: A specification of the  ARMA model,same as order parameter:  the two
+#' @param arma A specification of the  ARMA model,same as order parameter:  the two
 #' components (p, q) are the AR order,and the  MA order.
 #' @param genT a boolean value to specify for a generalized t-student garch model
 #'
@@ -25,7 +25,7 @@
 #'  \item{arch ~ normal(0,0.5)}
 #'  \item{garch ~ normal(0,0.5)}
 #'  \item{mgarch ~ normal(0,0.5)}
-#'  \item{dfv ~ gamm(2,0.1)}
+#'  \item{dfv ~ gamma(2,0.1)}
 #' }
 #'
 #' For changing the default prior use the function \code{set_prior}
@@ -36,20 +36,21 @@
 #'
 #' @references
 #'   Engle, Robert F. (1982). ?Autoregressive Conditional Heteroscedasticity with
-#'   Estimates of the Variance of United Kingdom Inflation?.
+#'   Estimates of the Variance of United Kingdom Inflation.
 #'   Econometrica 50 (4): 987-1007. JSTOR 1912773.
 #'
 #' @seealso \code{\link{Sarima}} \code{\link{auto.arima}} \code{\link{set_prior}}
 #'
 #' @examples
 #' \dontrun{
-#' dat = garch(ipc,order = c(1,1,0),arma = c(1,1))
+#' dat = garch(birth,order = c(1,1,0),arma = c(1,1))
+#' dat
 #' }
 #'
-garch = function(ts,order = c(1,1,0),arma = c(0,0),genT = FALSE,aysm = FALSE){
+garch = function(ts,order = c(1,1,0),arma = c(0,0),genT = FALSE){
   n = length(as.numeric(ts))
   y = as.numeric(ts)
-  m1 = list(n = n,
+  m1 = list(n = n,dimension = 1,time = as.numeric(time(ts)),
             s = no_negative_check(order[1] ),
             k = no_negative_check(order[2]),
             h = no_negative_check(order[3]),
@@ -76,20 +77,27 @@ garch = function(ts,order = c(1,1,0),arma = c(0,0),genT = FALSE,aysm = FALSE){
   return(m1)
 }
 #' Checks if is a garch object
-#' @param obj: a  garch object
 #'
+#' @param obj a  garch object
+#' @noRd
 #'
 is.garch = function(obj){
   y = FALSE
   if(is(obj,"garch")) y = TRUE
   return (y)
 }
-#' Extracts all the order coeffients in a list
+#' Extracts all the order coefficients in a list
+#'
+#' @param dat A garch model
+#' @noRd
 #'
 get_order_garch= function(dat){
     return(list(p = dat$p,q=dat$q,s=dat$s,k=dat$k,h=dat$h))
 }
-#' Max order  coeffients in a garch model
+#' Max order  coefficients in a garch model
+#'
+#' @param dat A garch model
+#' @noRd
 #'
 max_order_garch= function(dat){
 

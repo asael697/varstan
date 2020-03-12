@@ -1,23 +1,23 @@
 #' Constructor Seasonal arima model
 #'
-#' Constructor of the Sarima model  for bayesian estimation in STAN
+#' Constructor of the Sarima model  for Bayesian estimation in STAN
 #'
 #' The function returns  a list with  all the neccesary data for running a
 #' Seasonal arima model in stan
 #'
-#' @usage Sarima(ts,order = c(0,0,0),seasonal = c(0,0,0),xreg = NULL,period = 0)
+#' @usage Sarima(ts,order = c(1,0,0),seasonal = c(0,0),xreg = NULL,period = 0)
 #'
 #' @param ts a univariate time series
-#' @param order: A specification of the non-seasonal part of the ARIMA model: the
-#' three components (p, d, q) are the AR order, the degree of differencing, and the
+#' @param order A specification of the non-seasonal part of the ARIMA model: the
+#' three components (p, d, q) are the AR order, the number of differences, and the
 #' MA order.
-#' @param seasonal: A specification of the seasonal part of the ARIMA model,same as
+#' @param seasonal A specification of the seasonal part of the ARIMA model,same as
 #' order parameter:  the three components (p, d, q) are the seasonal AR order,
 #' the degree of seasonal differencing, and the seasonal MA order.
-#' @param xreg:	Optionally, a numerical matrix of external regressors,
+#' @param xreg	Optionally, a numerical matrix of external regressors,
 #' which must have the same number of rows as ts. It should not be a data frame.
-#' @param period: an integer specifying the periodicity of the time series by
-#' deafault the value frequency(ts) is used.
+#' @param period an integer specifying the periodicity of the time series by
+#' default the value frequency(ts) is used.
 #'
 #' @details If \code{xreg} option is used, the model by default will cancel the
 #' seasonal differences adjusted (D = 0). If a value \code{d} > 0 is used, all
@@ -29,7 +29,7 @@
 #'  \item{ar ~ normal(0,0.5)}
 #'  \item{ma ~ normal(0,0.5)}
 #'  \item{mu0 ~ t-student(0,2.5,6)}
-#'  \item{{sigma0 ~ t-student(0,1,7)}
+#'  \item{sigma0 ~ t-student(0,1,7)}
 #'  \item{sar ~ normal(0,0.5)}
 #'  \item{sma ~ normal(0,0.5)}
 #'  \item{breg ~ t-student(0,2.5,6)}
@@ -45,19 +45,19 @@
 #'  Box, George; Jenkins, Gwilym (1970).
 #'  Time Series Analysis: Forecasting and Control. San Francisco: Holden-Day.
 #'
-#' @seealso \code{\link{garch}} \code{\link{auto.arima}} \code{\link{set_prior}}
+#' @seealso \code{\link{garch}} \code{\link{set_prior}}
 #'
 #' @examples
 #' # Declare a seasonal arima model for the birth data of asta package
 #'
-#' model = Sarima(bth,order = c(0,1,2),seasonal = c(1,1,1))
+#' model = Sarima(birth,order = c(0,1,2),seasonal = c(1,1,1))
 #' model
 #'
 #'
 Sarima = function(ts,order = c(1,0,0),seasonal = c(0,0,0),xreg = NULL,period = 0){
   n = length(as.numeric(ts))
   y = as.numeric(ts)
-  m1 = list(n = n,
+  m1 = list(n = n,dimension = 1,time = as.numeric(time(ts)),
             p = no_negative_check(order[1]),
             d = no_negative_check(order[2]),
             q = no_negative_check(order[3]),
@@ -131,15 +131,18 @@ Sarima = function(ts,order = c(1,0,0),seasonal = c(0,0,0),xreg = NULL,period = 0
 }
 #' Checks if is a Sarima object
 #'
-#' @param obj: an arima object
-#'
+#' @param obj an arima object
+#' @noRd
 #'
 is.Sarima = function(obj){
   y = FALSE
   if(is(obj,"Sarima")) y = TRUE
   return (y)
 }
-#' Extracts all the order coeffients in a list
+#' Extracts all the order coefficients in a list
+#'
+#' @param dat a Sarima model
+#' @noRd
 #'
 get_order_arima= function(dat){
   return(list(p = dat$p,d =dat$d,q=dat$q,
@@ -148,7 +151,10 @@ get_order_arima= function(dat){
               period = dat$period))
 
 }
-#' Max order  coeffients in an Sarima model
+#' Max order  coefficients in an Sarima model
+#'
+#' @param dat a Sarima model
+#' @noRd
 #'
 max_order_arima= function(dat){
   return(max(c(dat$p,dat$q,dat$period*dat$P,dat$period*dat$Q)))

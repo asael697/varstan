@@ -6,16 +6,14 @@
 
 ### Features:
 
--   The object DWR is implemented for Dynamic Harmonic Regression
-
--   The object Bekk is implemented for Bekk models, and not just be
-    accesed in varma class
+-   The object Bekk is implemented for Bekk models, and not just limited
+    to varma class
 
 -   The object Sarima is implemented for seasonal arima with regression
 
--   auto.sarima function for automatic fitting a bayesian Sarima model
+-   auto.sarima function for automatic fitting a Bayesian Sarima model
 
--   Implementation of brige\_sampler, bayes\_factor, loo, waic, aic,
+-   Implementation of bridge_sampler, bayes_factor, loo, waic, aic,
     bic, AICc methods for varstan objects
 
 -   gps, sunspots, ipc, Bvar and birth data is added to the package
@@ -45,7 +43,7 @@
 -   The method posterior\_predict and predictive\_error are implemented
     for the varstan class
 
--   The objets VarBekk and Varbekkm are replaced for the object varma
+-   The objets VarBekk and VarBekkm are replaced for the object varma
 
 ### Improvements:
 
@@ -74,11 +72,11 @@
 
 ### Improvements:
 
--   A general classs for ausing varma, varmabekk and varmabekkm models
+-   A general class for using varma, varmabekk and varmabekkm models
 
 ### Changes:
 
--   The clases varbekk and varbekkm are replace for the general class
+-   The classes VarBekk and VarBekkm are replace for the general class
     varma, with a mbekk extension
 
 ### Fixes:
@@ -92,13 +90,13 @@
 
 ### Features:
 
--   The objets VarBekk and Varbekk model implemented for define the
+-   The objects VarBekk and Varbekk model implemented for define the
     current model for the time series
 
 -   The object varstan object implemented for estimating a one of the
     current available models
 
--   Precomplied stan code and ready for use
+-   Pre-complied stan code and ready for use
 
 -   summary and point\_estimate functions overloaded for varstan
     objects.

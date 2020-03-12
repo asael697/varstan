@@ -18,6 +18,8 @@
 #'
 #' @author  Asael Alonzo Matamoros
 #'
+#' @noRd
+#'
 #' @return  a stanfit object
 #'
 fit_Sarima = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta = 0.90,tree.depth,...){
@@ -50,6 +52,7 @@ fit_Sarima = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta 
 #'
 #' @author  Asael Alonzo Matamoros
 #'
+#' @noRd
 #'
 #' @return  a stanfit object
 #'
@@ -77,13 +80,13 @@ fit_garch = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta =
 
   return(stanfit)
 }
-#' Fit a  varma model
+#' Fit a  varma-Bekk model
 #'
-#' Fit a var(p)-ma(q) model  in STAN
+#' Fit a varma(p,q)-Bekk(s,k,m) model  in STAN
 #'
 #' The function returns a list with the fitted model in stan
 #'
-#' @usage  fit.varma(model)
+#' @usage  fit_Bekk(model)
 #'
 #' @param model A time series object for the varstan models
 #' @param t.student  a boolean if the model has generalized t-student distribution
@@ -96,11 +99,13 @@ fit_garch = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta =
 #'
 #' @import rstan
 #'
+#' @noRd
+#'
 #' @author  Asael Alonzo Matamoros
 #'
 #' @return  a stanfit object
 #'
-fit_varma = function(model,
+fit_Bekk = function(model,
                      chains=4,
                      iter=2000,
                      warmup=floor(iter/2),
@@ -110,7 +115,7 @@ fit_varma = function(model,
 
   if(model$genT == FALSE){
 
-    stanfit = rstan::sampling(stanmodels$varma,
+    stanfit = rstan::sampling(stanmodels$Bekk,
                               data = model,
                               chains = chains,
                               iter = iter,
@@ -118,12 +123,54 @@ fit_varma = function(model,
                               control = list(adapt_delta = adapt.delta,max_treedepth = tree.depth))
   }
   else{
-    stanfit = rstan::sampling(stanmodels$tvarma,
+    stanfit = rstan::sampling(stanmodels$tBekk,
                               data = model,
                               chains = chains,
                               iter = iter,
                               warmup = warmup,
                               control = list(adapt_delta = adapt.delta,max_treedepth = tree.depth))
   }
+  return(stanfit)
+}
+#' Fit a  varma model
+#'
+#' Fit a varma(p,q) model  in STAN
+#'
+#' The function returns a list with the fitted model in stan
+#'
+#' @usage  fit_varma(model)
+#'
+#' @param model A time series object for the varstan models
+#' @param t.student  a boolean if the model has generalized t-student distribution
+#' @param chains the number of chains to be run
+#' @param iter the number of iteration per chain
+#' @param warmup the number of initial iteration to be burned
+#' @param adapt.delta the thin of the jumps in a HMC method
+#' @param  tree.depth maximum  depth of the trees  evaluated
+#' during each iteration
+#'
+#' @import rstan
+#'
+#' @noRd
+#'
+#' @author  Asael Alonzo Matamoros
+#'
+#' @return  a stanfit object
+#'
+fit_varma = function(model,
+                    chains=4,
+                    iter=2000,
+                    warmup=floor(iter/2),
+                    adapt.delta = 0.90,tree.depth,...){
+
+  pars = get_params_varma(model)$exclude
+
+  stanfit = rstan::sampling(stanmodels$varma,
+                              data = model,
+                              chains = chains,
+                              iter = iter,
+                              warmup = warmup,
+                              control = list(adapt_delta = adapt.delta,max_treedepth = tree.depth))
+
   return(stanfit)
 }
