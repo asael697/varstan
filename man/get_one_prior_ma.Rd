@@ -4,12 +4,12 @@
 \alias{get_one_prior_ma}
 \title{Get one Prior distribution for a ma model}
 \usage{
-get_one_prior(dat,lag = 1)
+get_one_prior_ma(dat,lag = 1)
 }
 \arguments{
-\item{dat:}{an arima model speficied in varstan.}
+\item{dat}{an arima model specified in varstan.}
 
-\item{lag:}{the lag of the parameter which the prior is defined if lag = 0, then the prior will be applied
+\item{lag}{the lag of the parameter which the prior is defined if lag = 0, then the prior will be applied
 for all the lags.}
 }
 \description{
@@ -17,4 +17,6 @@ Get one Prior distribution for a ma model
 }
 \author{
 Asael Alonzo Matamoros
+
+ @noRd
 }

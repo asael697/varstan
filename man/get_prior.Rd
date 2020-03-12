@@ -4,22 +4,22 @@
 \alias{get_prior}
 \title{Generic function for setting a prior to an specify parameter}
 \usage{
-set_prior(type,lag,par1,par2,dist)
+get_prior(dat,type,lag = 0)
 }
 \arguments{
-\item{dat:}{an arima model speficied in varstan.}
+\item{dat}{a model specified in varstan.}
 
-\item{type:}{the type of parameter wich a prior is defined could be mu, sigma0, ar, ma, arch, garch, mgarch}
+\item{type}{the type of parameter which a prior is defined could be mu, sigma0, ar, ma, arch, garch, mgarch}
 
-\item{lag:}{the lag of the parameter which the prior is defined if lag = 0, then the prior will be applied
-for all the lags.}
+\item{lag}{an optional integer value indicated thedesired lag of the parameter which the prior is defined
+if lag = 0, then the prior will be applied for all the lags.}
 }
 \description{
 Generic function for setting a prior to an specify parameter
 }
 \examples{
 
-dat = Sarima(ipc,order = c(1,1,2))
+dat = Sarima(birth,order = c(1,1,2))
 dat = set_prior(dat,type = "ar",par1 =0,par2 = 1,dist = "normal")
 get_prior(dat,type = "ar")
 
