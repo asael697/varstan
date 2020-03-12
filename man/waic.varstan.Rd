@@ -5,7 +5,7 @@
 \alias{waic}
 \title{Widely Applicable Information Criterion (WAIC)}
 \usage{
-\method{waic}{varstan}(obj)
+\method{waic}{varstan}(obj, ...)
 }
 \arguments{
 \item{obj:}{A varstan object}
@@ -25,7 +25,7 @@ for more details on model comparisons.
 \examples{
 
 \dontrun{
-library(birth)
+library(astsa)
 model = Sarima(birth,order = c(0,1,2),seasonal = c(1,1,1))
 fit1 = varstan(model,chains = 1)
 

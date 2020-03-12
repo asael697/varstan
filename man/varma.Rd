@@ -2,43 +2,27 @@
 % Please edit documentation in R/varma.R
 \name{varma}
 \alias{varma}
-\title{Constructor var(p)-bekk(s,k) object}
+\title{Constructor varma(p,q) object}
 \usage{
-varma(ts,p,q,sd = mbekk(s,k,h))
+varma(ts,order = c(1,1))
 }
 \arguments{
 \item{ts}{an multivariate time series}
 
-\item{p}{an integer with the order of the var(p) part}
-
-\item{q}{an integer with the order of the vma(1) part}
-
-\item{sd}{an optional value for specify the Bekk  part for variance, using the
-\code{mbekk} function}
-
-\item{genT}{a boolean value to specify a Generalized a t-student model Cruz (2015)}
-
-\item{s}{an integer with the order of the arch(s) part}
-
-\item{k}{an integer with the order of the arch(k) part}
+\item{order}{A specification of the  VARMA model,same as order parameter:  the two
+components (p, q) are the AR order,and the  MA order.}
 }
 \description{
-Constructor of the var(p)-bekk(s,k) object for bayesian estimation in STAN
+Constructor of the varma(p,q) model for Bayesian estimation in STAN
 }
 \details{
 The function returns  a list with the data for running stan() function of
  rstan package
 
-If \code{sd} option can only be used with the mbekk function, and it  adds
-a m-Bekk model for volatility.
+If \code{sd} option is used to specify an arma model for the mean parameter,
+if a varma option is used then the model is equivalent to the varma model class
 
-If a mbekk model is not considerated, then sigma0 represents the covariance matrix
-of the model.
-
-If a bekk model is specified, then sigma0 represents the triangular inferior matrix
-alpha0 of a bekk model
-
-The default priors used in varma are:
+The default priors used in Bekk are:
 
 \itemize{
  \item{"ar"}{ar ~ normal(0,0.5)}
@@ -48,28 +32,28 @@ The default priors used in varma are:
  \item{"arch"}{arch ~ normal(0,0.5)}
  \item{"garch"}{garch ~ normal(0,0.5)}
  \item{"mgarch"}{mgarch ~ normal(0,0.5)}
- \item{"dfv"}{dfv ~ gamm(2,0.1)}
+ \item{"dfv"}{dfv ~ gamma(2,0.1)}
 }
 
 For changing the default prior use the function \code{set_prior}
 }
 \examples{
-# Declare a varma model for the Astrovan data
+# Declares a varma model for the Astrovan data
 
-model = varma(Astrovan,p=1,q=1,sd=mbekk(1,1,0))
+model = varma(Astrovan,order = c(1,1))
 model
 
 
 }
 \references{
 Polasek, Ren(1999).
- A mulltivariate GARCH-M model for exchange rates in the US,Germany and Japan
+ A multivariate GARCH-M model for exchange rates in the US,Germany and Japan
 
  Fonseca,Ferreira, Migon (2008)
  Objective Bayesian analysis for the Student-t regression model
 }
 \seealso{
-\code{\link{garch}} \code{\link{Sarima}} \code{\link{set_prior}}
+\code{\link{garch}} \code{\link{varma}} \code{\link{set_prior}}
 }
 \author{
 Asael Alonzo Matamoros

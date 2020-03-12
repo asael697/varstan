@@ -2,12 +2,18 @@
 % Please edit documentation in R/report.R
 \name{report}
 \alias{report}
+\alias{report.varstan}
+\alias{report.Sarima}
+\alias{report.garch}
+\alias{report.varma}
+\alias{report.Bekk}
+\alias{report.naive}
 \title{Print a full report of the time series model in a  varstan object}
 \usage{
-report(obj)
+report(obj,...)
 }
 \arguments{
-\item{obj:}{a varstan object or one of the defined current defined reports in varstan package}
+\item{obj}{an object varstan object or one of the defined current defined reports in varstan package}
 }
 \value{
 a  string with the defined time series report
@@ -19,12 +25,9 @@ and all the current defined priors of the model
 \details{
 if \code{obj} is a varstan object the function will print the information of the
 defined model inside of the object. If \code{obj} is one of the model classes (like Sarima or garch)
-then it will print the report information aswell.
+then it will print the report information as well.
 }
 \examples{
-
-dat = Sarima(ipc,order = c(1,1,2))
-report(dat)
 
 dat2 = garch(birth,order = c(1,1,0))
 report(dat2)

@@ -2,13 +2,13 @@
 % Please edit documentation in R/Others.R
 \name{version}
 \alias{version}
-\title{print the current avaliable models in the varstan package version}
+\title{print the current available models in the varstan package version}
 \usage{
 version(View = FALSE)
 }
 \arguments{
 \item{View}{a boolean value, by default is False, if \code{View} is TRUE then
-a data frame with the current models will visualize in the Rstudio console}
+a data frame with the current models will visualize in the RStudio console}
 }
 \value{
 a string

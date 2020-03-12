@@ -4,7 +4,8 @@
 \alias{varstan}
 \title{Constructor varstan object}
 \usage{
-varstan(model)
+varstan(model,chains=4,iter=2000,warmup=floor(iter/2),
+adapt.delta = 0.90,tree.depth =10,...)
 }
 \arguments{
 \item{model}{One of the varstan model classes defined in the package}
@@ -12,10 +13,10 @@ varstan(model)
 \item{chains}{An integer of the number of Markov Chains chains to be run,
 by default 4 chains are run}
 
-\item{iter}{An integer of total iterations per chain including the warm up,
+\item{iter}{An integer of total iterations per chain including the warm-up,
 by default  the number of iterations are 2000}
 
-\item{warmup}{A positive integer specifying number of warmup (aka burnin)
+\item{warmup}{A positive integer specifying number of warm-up (aka burn-in)
 iterations. This also specifies the number of iterations used for stepsize
 adaptation, so warmup samples should not be used for inference. The number
 of warmup should not be larger than \code{iter} and the default is
@@ -30,26 +31,25 @@ during each iteration. By default is 10}
 \value{
 a list with the components
 \itemize{
- \item stanfit: An stanfit object returned by rstan
- \item model: the current fitted model
- \item stanparams: The stan parameters used in the HMC NUTS algorithm
+ \item stanfit An stanfit object returned by rstan
+ \item model the current fitted model
+ \item stanparams The stan parameters used in the HMC NUTS algorithm
 }
 }
 \description{
-Constructor of the varstan object for bayesian estimation in STAN
+Constructor of the varstan object for Bayesian estimation in STAN
 }
 \details{
 The function returns  a list with the data for running stan() function of
  rstan package
 
-If \code{xreg} option is used, the model by default will cancel the
-seasonal differences adjusted (D = 0). If a value \code{d} > 0 is used, all
-the regressor variables in xreg will be differenced aswell
+This is the principal package's function and the link with Stan,
+this function fits the posterior distribution of every
 
   Default priors are chosen to be non or very weakly informative so that their
   influence on the results will. However, after getting more familiar with Bayesian
   statistics, I recommend you to start thinking about reasonable informative priors
-  for your model parameters. For mor information see \code{set_prior}
+  for your model parameters. For more information see \code{set_prior}
 
   \bold{Adjusting the sampling behavior of \pkg{Stan}}
 

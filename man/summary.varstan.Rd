@@ -2,23 +2,24 @@
 % Please edit documentation in R/summary.R
 \name{summary.varstan}
 \alias{summary.varstan}
+\alias{summary}
 \title{Summary method for a varstan object}
 \usage{
-summary(obj)
+summary(obj,robust = FALSE,prob = 0.95,...)
 }
 \arguments{
-\item{obj:}{a varstan object}
+\item{obj}{a varstan object}
 
-\item{robust:}{A boolean value, if its \code{TRUE} it returns the median of the posterior distribution,
+\item{robust}{A boolean value, if its \code{TRUE} it returns the median of the posterior distribution,
 And if its \code{FALSE} it returns the mean, by default is the \code{FALSE} value}
 
-\item{prob:}{A number \eqn{p \in (0,1)}{p (0 < p < 1)} indicating the desired
+\item{prob}{A number \eqn{p \in (0,1)}{p (0 < p < 1)} indicating the desired
 probability mass to include in the intervals. The default is to report
 \eqn{90}\% intervals (\code{prob=0.9}) rather than the traditionally used
 \eqn{95}\%.}
 }
 \value{
-A data.frame with the posterior mean, standard error, credible intervals, efective sample
+A data.frame with the posterior mean, standard error, credible intervals, effective sample
 size (ess),and Rhat for all the model parameters in a varstan model, if \code{robust} is \code{TRUE}
 then the posterior mean and standard error, are replaced by the posterior mean and MAD.
 }

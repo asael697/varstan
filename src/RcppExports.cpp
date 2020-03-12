@@ -7,15 +7,17 @@
 using namespace Rcpp;
 
 
+RcppExport SEXP _rcpp_module_boot_stan_fit4Bekk_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4Sarima_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4garch_mod();
-RcppExport SEXP _rcpp_module_boot_stan_fit4tvarma_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4tBekk_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4varma_mod();
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_rcpp_module_boot_stan_fit4Bekk_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4Bekk_mod, 0},
     {"_rcpp_module_boot_stan_fit4Sarima_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4Sarima_mod, 0},
     {"_rcpp_module_boot_stan_fit4garch_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4garch_mod, 0},
-    {"_rcpp_module_boot_stan_fit4tvarma_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4tvarma_mod, 0},
+    {"_rcpp_module_boot_stan_fit4tBekk_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4tBekk_mod, 0},
     {"_rcpp_module_boot_stan_fit4varma_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4varma_mod, 0},
     {NULL, NULL, 0}
 };

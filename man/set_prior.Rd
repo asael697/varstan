@@ -2,32 +2,34 @@
 % Please edit documentation in R/prior.R
 \name{set_prior}
 \alias{set_prior}
-\title{Prior objects for arima models}
+\title{Prior objects for time series models}
 \usage{
 set_prior(type,lag,par1,par2,dist)
 }
 \arguments{
+\item{dat}{an arima model specified in varstan.}
+
+\item{type}{the type of parameter which a prior is defined could be mu,
+sigma0, ar, ma, arch, garch, mgarch}
+
+\item{lag}{an optional integer value indicated thedesired lag of the parameter which the prior
+is defined if lag = 0, then the prior will be applied for all the lags.}
+
 \item{par1}{The first hyper-parameter of the prior distribution}
 
 \item{par2}{The second hyper-parameter of the prior distribution}
 
-\item{dat:}{an arima model speficied in varstan.}
+\item{dist}{the distribution of the prior distribution}
 
-\item{type:}{the type of parameter wich a prior is defined could be mu, sigma0, ar, ma, arch, garch, mgarch}
-
-\item{lag:}{the lag of the parameter which the prior is defined if lag = 0, then the prior will be applied
-for all the lags.}
-
-\item{dist:}{the distribution of the prior distribution, could be: a normal,beta, and uniform}
-
-\item{df:}{The parameter for the degree freedom only for t-student and chi-square}
+\item{df}{The parameter for the degree freedom only for t-student and
+chi-square}
 }
 \description{
 Generic function for setting a prior to an specify parameter
 }
 \examples{
 
-dat = Sarima(ipc,order = c(1,1,2))
+dat = Sarima(birth,order = c(1,1,2))
 dat = set_prior(dat,type = "ar",par1 =0,par2 = 1,dist = "normal")
 get_prior(dat,type = "ar")
 
