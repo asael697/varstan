@@ -100,7 +100,7 @@ version(View = FALSE)
 #> 
 ```
 
-### Case suty: Analyzing the monthly live birth in U.S. an example
+### Case study: Analyzing the monthly live birth in U.S. an example
 
 As an example, we provide a time series modeling for the monthly live
 births in the United States 1948-1979, published by *Stoffer2019*. In
