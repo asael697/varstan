@@ -104,7 +104,7 @@ The package offers an S3 object for the basic models implemented, for simplicity
 version(View = FALSE)
 ```
 
-### Case suty: Analyzing the monthly live birth in U.S. an example
+### Case study: Analyzing the monthly live birth in U.S. an example
 
 As an example, we provide a time series modeling for the monthly live births in the United States 1948-1979, published by *Stoffer2019*. In *figure 1* , the data has a seasonal behavior that repeats every year. The series *waves* in the whole 40 years period (*superior part*). In addition, the partial (*pacf*) and auto-correlation (*acf*) functions  are far from zero (*middle part*), and have the same wave pastern as birth series. Indicating non stationary and a strong cyclical behavior. After applying a difference to the data, the acf and pacf plots still have some non-zero values every 12 lags (*inferior part*).
 
