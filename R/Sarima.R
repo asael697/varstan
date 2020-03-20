@@ -56,12 +56,11 @@
 #'
 Sarima = function(ts,order = c(1,0,0),seasonal = c(0,0,0),xreg = NULL,period = 0){
   n = length(as.numeric(ts))
-  y = as.numeric(ts)
   m1 = list(n = n,dimension = 1,time = as.numeric(time(ts)),
             p = no_negative_check(order[1]),
             d = no_negative_check(order[2]),
             q = no_negative_check(order[3]),
-            yreal = as.numeric(ts),y = as.numeric(ts))
+            yreal = ts,y = as.numeric(ts))
 
   m1$prior_mu0 = c(0,2.5,6,4)
   m1$prior_sigma0 = c(0,1,7,4)
