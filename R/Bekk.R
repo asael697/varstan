@@ -64,36 +64,36 @@ Bekk = function(ts,order = c(1,1,0),varma = c(0,0),genT = FALSE){
   d = dim(ts)[1]
   y = matrix(ts,nrow = d)
   time = as.numeric(time(t(ts)))
+  yreal = ts
 
   if(n < d){
     n = d
     d = dim(ts)[2]
     y = t(y)
+    yreal = t(ts)
     time = as.numeric(time(ts))
   }
   m1 = list(n = n,dimension = d,time = time,d = d,
             p = no_negative_check(varma[1]),
             q = no_negative_check(varma[2]),m = d*(d+1)/2,
-            y = t(y))
+            y = t(y),yreal = yreal)
   m1$prior_mu0 = c(0,1,0,1)
   m1$prior_sigma0 = c(0,1,7,4)
-  m1$prior_ar  = matrix(rep(c(0,10,1,1),varma[1]),ncol = 4,byrow = TRUE)
-  m1$prior_ma  = matrix(rep(c(0,10,1,1),varma[2]),ncol = 4,byrow = TRUE)
+  m1$prior_ar  = matrix(rep(c(0,1,1,1),varma[1]),ncol = 4,byrow = TRUE)
+  m1$prior_ma  = matrix(rep(c(0,1,1,1),varma[2]),ncol = 4,byrow = TRUE)
 
   m1$s = no_negative_check(order[1])
   m1$k = no_negative_check(order[2])
   m1$h = no_negative_check(order[3])
-  m1$prior_arch =  matrix(rep(c(0,10,1,1),m1$s),ncol = 4,byrow = TRUE)
-  m1$prior_garch = matrix(rep(c(0,10,1,1),m1$k),ncol = 4,byrow = TRUE)
-  m1$prior_mgarch =matrix(rep(c(0,10,1,1),m1$h),ncol = 4,byrow = TRUE)
+  m1$prior_arch =  matrix(rep(c(0,1,1,1),m1$s),ncol = 4,byrow = TRUE)
+  m1$prior_garch = matrix(rep(c(0,1,1,1),m1$k),ncol = 4,byrow = TRUE)
+  m1$prior_mgarch =matrix(rep(c(0,1,1,1),m1$h),ncol = 4,byrow = TRUE)
   m1$prior_lkj = c(7,1,1,1)
 
 
-  if(genT == TRUE){
-    m1$genT = TRUE
-    m1$prior_dfv = c(2,0.1,1,9)
-  }
-  else m1$genT = FALSE
+  m1$genT = genT
+  m1$prior_dfv = c(2,0.1,1,9)
+
   attr(m1,"class") = "Bekk"
   return(m1)
 }
@@ -127,8 +127,12 @@ is.Bekk = function(obj){
 #'
 get_df_varma = function(fit,model,robust = FALSE,...){
     post = as.data.frame(rstan::extract(fit,"lambda", permuted = TRUE) )
-    if(robust) sum1 = t(matrix(apply(post,2,median),nrow = model$d,byrow = TRUE))
-    else sum1 = t(matrix(apply(post,2,mean),nrow = model$d,byrow = TRUE))
+    # Dimension extraction
+    if(is.garch(model)) d1 = 1
+    else d1 = model$d
+    # Estimation
+    if(robust) sum1 = t(matrix(apply(post,2,median),nrow = d1,byrow = TRUE))
+    else sum1 = t(matrix(apply(post,2,mean),nrow = d1,byrow = TRUE))
     return(sum1)
 }
 #' Get the lag parameters of a varma model
