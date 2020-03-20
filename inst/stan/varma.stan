@@ -10,10 +10,6 @@ data {
   matrix[p,4] prior_ar;   // ar location hyper parameters
   matrix[q,4] prior_ma;   // ma location hyper parameters
 }
-transformed data{
-  //      Design Matrix VAR coefficients
-  vector[d] zero = rep_vector(0.0,d);
-}
 parameters{
   //      Parameter VAR Bekk Model
   row_vector[d]mu0;                         // Var constant
@@ -92,7 +88,7 @@ model{
     }
   }
   //      Likelihood
-  for(i in 1:n)target += multi_normal_cholesky_lpdf(epsilon[i]| zero, sigma );
+  for(i in 1:n)target += multi_normal_cholesky_lpdf(epsilon[i]|rep_vector(0,d), sigma );
 }
 generated quantities{
   real loglik = 0;

@@ -30,21 +30,19 @@ data {
   int<lower=0> p;         // number of predictors var
   int<lower=0> q;         // number of predictors var
   int<lower=1> m;         // number of dimensions vech
-  matrix[n,d] y;          // outcome matrix time series
-  vector[4] prior_mu0;    // prior location parameter
-  vector[4] prior_sigma0; // prior scale parameter
-  matrix[p,4] prior_ar;   // ar location hyper parameters
-  matrix[q,4] prior_ma;   // ma location hyper parameters
   int<lower=0> s;         // number of predictors  arch
   int<lower=0> k;         // number of predictions garch
   int<lower=0> h;         // number of predictions mgarch
+  // prior data
+  matrix[n,d] y;          // outcome matrix time series
+  vector[4] prior_mu0;    // prior location parameter
+  vector[4] prior_sigma0; // prior scale parameter
+  vector[4] prior_lkj;    // prior scale parameter
+  matrix[p,4] prior_ar;   // ar location hyper parameters
+  matrix[q,4] prior_ma;   // ma location hyper parameters
   matrix[s,4] prior_arch;    // prior arch hyper parameters
   matrix[k,4] prior_garch;   // prior ma hyper parameters
   matrix[h,4] prior_mgarch;  // prior ma hyper parameters
-}
-transformed data{
-  //      Design Matrix VAR coefficients
-  vector[d] zero = rep_vector(0.0,d);
 }
 parameters{
   //      Parameter VAR Bekk Model
@@ -68,7 +66,6 @@ transformed parameters {
   cov_matrix[d] sigma1;             // arch constant
   matrix[d,d] sigma[n];             // *covariance matrix sigma
   matrix[d,d] Lsigma[n];            // *Cholesky descomposition sigma
-  row_vector[m] vsigma[n];          // *vech sigma
 
 
   //***********************************************
@@ -100,9 +97,8 @@ transformed parameters {
       if(k > 0) for(j in 1:k)if(i > k) sigma[i] += quad_form(sigma[i-j],beta[j]);
 
       Lsigma[i] = cholesky_decompose(sigma[i]);
-      vsigma[i] = vech(d,m,sigma[i]);
       // mgarch estimation
-      if(h > 0)  mu[i] += vsigma[i]*mgarch;
+      if(h > 0)  mu[i] += vech(d,m,sigma[i])*mgarch;
     }
   }
 }
@@ -124,7 +120,7 @@ model{
   else if(prior_sigma0[4] == 6) target += inv_gamma_lpdf(vsigma0|prior_sigma0[1],prior_sigma0[2]);
   else if(prior_sigma0[4] == 7) target += inv_chi_square_lpdf(vsigma0|prior_sigma0[3]);
   //   sigma0 constant correlation Matrix
-  target += lkj_corr_cholesky_lpdf(Msigma0|7.0);
+  target += lkj_corr_cholesky_lpdf(Msigma0|prior_lkj[1]);
 
   // prior ar
   if(p > 0){
@@ -166,7 +162,7 @@ model{
     }
   }
   //      Likelihood
-  for(i in 1:n)target += multi_normal_cholesky_lpdf(epsilon[i]| zero, Lsigma[i] );
+  for(i in 1:n)target += multi_normal_cholesky_lpdf(epsilon[i]| rep_vector(0,d), Lsigma[i]);
 }
 generated quantities{
   real loglik = 0;

@@ -33,14 +33,16 @@ data {
   int<lower=0> p;         // number of predictors var
   int<lower=0> q;         // number of predictors var
   int<lower=1> m;         // number of dimensions vech
-  matrix[n,d] y;          // outcome matrix time series
-  vector[4] prior_mu0;    // prior location parameter
-  vector[4] prior_sigma0; // prior scale parameter
-  matrix[p,4] prior_ar;   // ar location hyper parameters
-  matrix[q,4] prior_ma;   // ma location hyper parameters
   int<lower=0> s;         // number of predictors  arch
   int<lower=0> k;         // number of predictions garch
   int<lower=0> h;         // number of predictions mgarch
+  matrix[n,d] y;          // outcome matrix time series
+  // Prior data
+  vector[4] prior_mu0;    // prior location parameter
+  vector[4] prior_sigma0; // prior scale parameter
+  vector[4] prior_lkj;    // prior scale parameter
+  matrix[p,4] prior_ar;   // ar location hyper parameters
+  matrix[q,4] prior_ma;   // ma location hyper parameters
   matrix[s,4] prior_arch;    // prior arch hyper parameters
   matrix[k,4] prior_garch;   // prior ma hyper parameters
   matrix[h,4] prior_mgarch;  // prior ma hyper parameters
@@ -76,7 +78,6 @@ transformed parameters {
   matrix[d,d] sigma1;               // arch constant
   matrix[d,d] sigma[n];             // *covariance matrix sigma
   matrix[d,d] Lsigma[n];            // *Cholesky descomposition sigma
-  row_vector[m] vsigma[n];          // *vech sigma
   matrix<lower=0>[n,d] lambda;      //  Generalized t-student parameter
 
 
@@ -111,9 +112,8 @@ transformed parameters {
       if(k > 0) for(j in 1:k)if(i>j) sigma[i] += quad_form(sigma[i-j],beta[j]);
 
       Lsigma[i]=cholesky_decompose(quad_form_diag(sigma[i],vecpow(0.5,lambda1[i],d)));
-      vsigma[i] = vech(d,m,sigma[i]);
       // mgarch estimation
-      if(h > 0) mu[i] = mu[i] + multi(vsigma[i],mgarch);
+      if(h > 0) mu[i] += vech(d,m,sigma[i])*mgarch;
     }
   }
 }
@@ -135,7 +135,7 @@ model{
   else if(prior_sigma0[4] == 7) target += inv_chi_square_lpdf(vsigma0|prior_sigma0[3]);
   else if(prior_sigma0[4] == 9) target += gamma_lpdf(vsigma0|prior_sigma0[1],prior_sigma0[2]);
   //   sigma0 constant correlation Matrix
-  target += lkj_corr_cholesky_lpdf(Msigma0|2.0);
+  target += lkj_corr_cholesky_lpdf(Msigma0|prior_lkj[1]);
 
   // prior ar
   if(p > 0){
@@ -188,7 +188,7 @@ model{
    //    Generalized t-student
    for(j in 1:d) target+= inv_gamma_lpdf(lambda1[i,j]|v[j]/2,v[j]/2);
    //    Observations
-   target += multi_normal_cholesky_lpdf(epsilon[i]| zero, Lsigma[i] );
+   target += multi_normal_cholesky_lpdf(epsilon[i]| rep_vector(0,d), Lsigma[i] );
   }
 }
 generated quantities{
