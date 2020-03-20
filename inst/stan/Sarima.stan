@@ -30,10 +30,10 @@ parameters{
   real<lower=0> sigma0;    // Variance parameter
   real mu0;                // location parameter
   vector[d1] breg;         // regression parameters
-  vector[p] phi0;          // ar parameters
-  vector[q] theta0;        // ma parameters
-  vector[P] Phi0;          // sar parameters
-  vector[Q] Theta0;        // sma parameters
+  vector <lower=-1,upper=1>[p] phi0;   // ar parameters
+  vector <lower=-1,upper=1>[q] theta0; // ma parameters
+  vector <lower=-1,upper=1>[P] Phi0;   // sar parameters
+  vector <lower=-1,upper=1>[Q] Theta0; // sma parameters
 }
 transformed parameters{
   //***********************************************
@@ -55,20 +55,20 @@ transformed parameters{
   //***********************************************
 
   for( i in 1:p){
-    if(prior_ar[i,4]== 1) phi[i] = phi0[i]*0.5;
-    else phi[i] = (2*phi0[i] - 1);
+    if(prior_ar[i,4]== 1) phi[i] = phi0[i];
+    else phi[i] = (2*fabs(phi0[i]) - 1);
   }
   for(i in 1:q){
-    if(prior_ma[i,4] == 1) theta[i] = theta0[i]*0.5;
-    else theta[i] = (2*theta0[i]-1);
+    if(prior_ma[i,4] == 1) theta[i] = theta0[i];
+    else theta[i] = (2*fabs(theta0[i])-1);
   }
     for( i in 1:P){
-    if(prior_sar[i,4]== 1) sphi[i] = Phi0[i]*0.5;
-    else sphi[i] = (2*Phi0[i] - 1);
+    if(prior_sar[i,4]== 1) sphi[i] = Phi0[i];
+    else sphi[i] = (2*fabs(Phi0[i]) - 1);
   }
   for(i in 1:Q){
-    if(prior_sma[i,4] == 1) stheta[i] = Theta0[i]*0.5;
-    else stheta[i] = (2*Theta0[i]-1);
+    if(prior_sma[i,4] == 1) stheta[i] = Theta0[i];
+    else stheta[i] = (2*fabs(Theta0[i])-1);
   }
 
   //***********************************************
@@ -84,11 +84,11 @@ transformed parameters{
     //  ar Estimation
     if(p > 0) for(j in 1:p) if(i > j) mu[i] +=  y[i-j]*phi[j];
     // ma estimation
-    if(q > 0) for(j in 1:q) if(i > j) mu[i] += -epsilon[i-j]*theta[j];
+    if(q > 0) for(j in 1:q) if(i > j) mu[i] += epsilon[i-j]*theta[j];
     //  sar Estimation
     if(P > 0) for(j in 1:P) if(i >(period*j)) mu[i] +=  y[i-(period*j)]*sphi[j];
     // ma estimation
-    if(Q > 0) for(j in 1:Q) if(i >(period*j)) mu[i] += -epsilon[i-(period*j)]*stheta[j];
+    if(Q > 0) for(j in 1:Q) if(i >(period*j)) mu[i] += epsilon[i-(period*j)]*stheta[j];
     epsilon[i] = y[i] - mu[i];
   }
 }
@@ -125,28 +125,28 @@ model {
   if(p > 0){
     for(i in 1:p){
      if(prior_ar[i,4]==1) target += normal_lpdf(phi0[i]|prior_ar[i,1],prior_ar[i,2]);
-     else  target += beta_lpdf(phi0[i]|prior_ar[i,1],prior_ar[i,2]);
+     else  target += beta_lpdf(fabs(phi0[i])|prior_ar[i,1],prior_ar[i,2]);
     }
   }
   // prior ma
   if(q > 0){
     for(i in 1:q){
       if(prior_ma[i,4]==1) target += normal_lpdf(theta0[i]|prior_ma[i,1],prior_ma[i,2]);
-     else  target += beta_lpdf(theta0[i]|prior_ma[i,1],prior_ma[i,2]);
+     else  target += beta_lpdf(fabs(theta0[i])|prior_ma[i,1],prior_ma[i,2]);
     }
   }
   // prior sar
   if(P > 0){
     for(i in 1:P){
      if(prior_sar[i,4]==1) target += normal_lpdf(Phi0[i]|prior_sar[i,1],prior_sar[i,2]);
-     else  target += beta_lpdf(Phi0[i]|prior_sar[i,1],prior_sar[i,2]);
+     else  target += beta_lpdf(fabs(Phi0[i])|prior_sar[i,1],prior_sar[i,2]);
     }
   }
   // prior sma
   if(Q > 0){
     for(i in 1:Q){
       if(prior_sma[i,4]==1) target += normal_lpdf(Theta0[i]|prior_sma[i,1],prior_sma[i,2]);
-     else  target += beta_lpdf(Theta0[i]|prior_sma[i,1],prior_sma[i,2]);
+     else  target += beta_lpdf(fabs(Theta0[i])|prior_sma[i,1],prior_sma[i,2]);
     }
   }
   // Likelihood
