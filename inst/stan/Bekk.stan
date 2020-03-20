@@ -44,14 +44,13 @@ data {
 }
 transformed data{
   //      Design Matrix VAR coefficients
-  matrix[d,d] Id = diag_matrix(rep_vector(1.0,d));
   vector[d] zero = rep_vector(0.0,d);
 }
 parameters{
   //      Parameter VAR Bekk Model
   row_vector[d]mu0;                 // Var constant
-  matrix[d,d] phi0[p];              // *temp coefficients VAR
-  matrix[d,d] theta0[q];            // *temp coefficients VMA
+  matrix <lower=-1,upper=1>[d,d] phi[p];   // *temp coefficients VAR
+  matrix <lower=-1,upper=1>[d,d] theta[q]; // *temp coefficients VMA
   cholesky_factor_corr[d] Msigma0;  // *arch constant correlation
   vector<lower=0>[d] vsigma0;       // *arch constant scale
   matrix[d,d] alpha[s];             // arch coefficients
@@ -62,9 +61,6 @@ transformed parameters {
   //***********************************************
   //             Model Parameters
   //***********************************************
-  // coefficient parameters
-  matrix[d,d] phi[p];               // coefficients VAR
-  matrix[d,d] theta[q];             // coefficients VMA
   // Temporal mean and residuals
   matrix[n,d] mu;                   // *VAR mean
   matrix[n,d] epsilon;              // *residual mean
@@ -74,18 +70,6 @@ transformed parameters {
   matrix[d,d] Lsigma[n];            // *Cholesky descomposition sigma
   row_vector[m] vsigma[n];          // *vech sigma
 
-  //***********************************************
-  //         Transformation coeficients
-  //***********************************************
-
-  for( i in 1:p){
-    if(prior_ar[i,4]== 1) phi[i] = phi0[i];
-    else phi[i] = 2*phi0[i] - 1;
-  }
-  for(i in 1:q){
-    if(prior_ma[i,4] == 1) theta[i] = theta0[i];
-    else theta[i] = 2*theta0[i]-rep_matrix(1.0,d,d);
-  }
 
   //***********************************************
   //      Sigma0 transformation
@@ -126,7 +110,7 @@ model{
   //      Priors  definition
 
   //  prior for \mu0
-  if(prior_mu0[4]==1)      target += normal_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  if( prior_mu0[4] == 1 )  target += normal_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
   else if(prior_mu0[4]==2) target += beta_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
   else if(prior_mu0[4]==3) target += beta_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
   else if(prior_mu0[4]==4) target += student_t_lpdf(mu0|prior_mu0[3],prior_mu0[1],prior_mu0[2]);
@@ -146,14 +130,14 @@ model{
   if(p > 0){
     for(i in 1:p){
      if(prior_ar[i,4]==1) target += normal_lpdf(to_vector(phi[i])|prior_ar[i,1],prior_ar[i,2]);
-     else  target += beta_lpdf(to_vector(phi[i])|prior_ar[i,1],prior_ar[i,1]);
+     else  target += normal_lpdf(to_vector(phi[i])|0,1);
     }
   }
   // prior ma
   if(q > 0){
     for(i in 1:q){
      if(prior_ma[i,4]==1) target += normal_lpdf(to_vector(theta[i])|prior_ma[i,1],prior_ma[i,2]);
-     else  target += beta_lpdf(to_vector(theta[i])|prior_ma[i,1],prior_ma[i,1]);
+     else  target += normal_lpdf(to_vector(theta[i])|0,1);
     }
   }
   // prior arch
