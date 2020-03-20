@@ -54,12 +54,12 @@ garch = function(ts,order = c(1,1,0),arma = c(0,0),genT = FALSE){
             s = no_negative_check(order[1] ),
             k = no_negative_check(order[2]),
             h = no_negative_check(order[3]),
-            y = y)
+            y = y,yreal = ts)
   m1$prior_mu0 = c(0,1,0,1)
   m1$prior_sigma0 = c(0,1,7,4)
   m1$prior_arch    = matrix(rep(c(3,3,1,2),order[1]),ncol = 4,byrow = TRUE)
   m1$prior_garch   = matrix(rep(c(3,3,1,2),order[2]),ncol = 4,byrow = TRUE)
-  m1$prior_mgarch  = matrix(rep(c(3,3,1,2),order[3]),ncol = 4,byrow = TRUE)
+  m1$prior_mgarch  = matrix(rep(c(0,0.5,1,1),order[3]),ncol = 4,byrow = TRUE)
 
   # arma representation
   m1$p = arma[1]
@@ -68,11 +68,9 @@ garch = function(ts,order = c(1,1,0),arma = c(0,0),genT = FALSE){
   m1$prior_ma =  matrix(rep(c(3,3,1,2),arma[2]),ncol = 4,byrow = TRUE)
 
   # Generalized t distribution
-  if(genT == TRUE){
-    m1$genT = TRUE
-    m1$prior_dfv = c(2,0.1,1,9)
-  }
-  else m1$genT = FALSE
+  m1$genT = genT
+  m1$prior_dfv = c(2,0.1,1,9)
+
   attr(m1,"class") = "garch"
   return(m1)
 }
