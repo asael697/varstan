@@ -81,6 +81,7 @@ mod_parameter = function(model){
     if(model$s > 0) par_ret = c(par_ret,paste0("alpha[",1:model$s,"]"))
     if(model$k > 0) par_ret = c(par_ret,paste0("beta[",1:model$k,"]"))
     if(model$h > 0) par_ret = c(par_ret,paste0("mgarch[",1:model$h,"]"))
+    if(model$genT > 0) par_ret = c(par_ret,"v")
   }
   return(par_ret)
 }

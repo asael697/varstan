@@ -389,7 +389,7 @@ public:
             phi0(j_1__) = vals_r__[pos__++];
         }
         try {
-            writer__.vector_unconstrain(phi0);
+            writer__.vector_lub_unconstrain(-(1), 1, phi0);
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable phi0: ") + e.what()), current_statement_begin__, prog_reader__());
         }
@@ -406,7 +406,7 @@ public:
             theta0(j_1__) = vals_r__[pos__++];
         }
         try {
-            writer__.vector_unconstrain(theta0);
+            writer__.vector_lub_unconstrain(-(1), 1, theta0);
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable theta0: ") + e.what()), current_statement_begin__, prog_reader__());
         }
@@ -423,7 +423,7 @@ public:
             Phi0(j_1__) = vals_r__[pos__++];
         }
         try {
-            writer__.vector_unconstrain(Phi0);
+            writer__.vector_lub_unconstrain(-(1), 1, Phi0);
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable Phi0: ") + e.what()), current_statement_begin__, prog_reader__());
         }
@@ -440,7 +440,7 @@ public:
             Theta0(j_1__) = vals_r__[pos__++];
         }
         try {
-            writer__.vector_unconstrain(Theta0);
+            writer__.vector_lub_unconstrain(-(1), 1, Theta0);
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable Theta0: ") + e.what()), current_statement_begin__, prog_reader__());
         }
@@ -494,30 +494,30 @@ public:
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> phi0;
             (void) phi0;  // dummy to suppress unused var warning
             if (jacobian__)
-                phi0 = in__.vector_constrain(p, lp__);
+                phi0 = in__.vector_lub_constrain(-(1), 1, p, lp__);
             else
-                phi0 = in__.vector_constrain(p);
+                phi0 = in__.vector_lub_constrain(-(1), 1, p);
             current_statement_begin__ = 34;
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> theta0;
             (void) theta0;  // dummy to suppress unused var warning
             if (jacobian__)
-                theta0 = in__.vector_constrain(q, lp__);
+                theta0 = in__.vector_lub_constrain(-(1), 1, q, lp__);
             else
-                theta0 = in__.vector_constrain(q);
+                theta0 = in__.vector_lub_constrain(-(1), 1, q);
             current_statement_begin__ = 35;
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> Phi0;
             (void) Phi0;  // dummy to suppress unused var warning
             if (jacobian__)
-                Phi0 = in__.vector_constrain(P, lp__);
+                Phi0 = in__.vector_lub_constrain(-(1), 1, P, lp__);
             else
-                Phi0 = in__.vector_constrain(P);
+                Phi0 = in__.vector_lub_constrain(-(1), 1, P);
             current_statement_begin__ = 36;
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> Theta0;
             (void) Theta0;  // dummy to suppress unused var warning
             if (jacobian__)
-                Theta0 = in__.vector_constrain(Q, lp__);
+                Theta0 = in__.vector_lub_constrain(-(1), 1, Q, lp__);
             else
-                Theta0 = in__.vector_constrain(Q);
+                Theta0 = in__.vector_lub_constrain(-(1), 1, Q);
             // transformed parameters
             current_statement_begin__ = 43;
             validate_non_negative_index("phi", "p", p);
@@ -557,13 +557,13 @@ public:
                     current_statement_begin__ = 58;
                     stan::model::assign(phi, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                (get_base1(phi0, i, "phi0", 1) * 0.5), 
+                                get_base1(phi0, i, "phi0", 1), 
                                 "assigning variable phi");
                 } else {
                     current_statement_begin__ = 59;
                     stan::model::assign(phi, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                ((2 * get_base1(phi0, i, "phi0", 1)) - 1), 
+                                ((2 * stan::math::fabs(get_base1(phi0, i, "phi0", 1))) - 1), 
                                 "assigning variable phi");
                 }
             }
@@ -574,13 +574,13 @@ public:
                     current_statement_begin__ = 62;
                     stan::model::assign(theta, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                (get_base1(theta0, i, "theta0", 1) * 0.5), 
+                                get_base1(theta0, i, "theta0", 1), 
                                 "assigning variable theta");
                 } else {
                     current_statement_begin__ = 63;
                     stan::model::assign(theta, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                ((2 * get_base1(theta0, i, "theta0", 1)) - 1), 
+                                ((2 * stan::math::fabs(get_base1(theta0, i, "theta0", 1))) - 1), 
                                 "assigning variable theta");
                 }
             }
@@ -591,13 +591,13 @@ public:
                     current_statement_begin__ = 66;
                     stan::model::assign(sphi, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                (get_base1(Phi0, i, "Phi0", 1) * 0.5), 
+                                get_base1(Phi0, i, "Phi0", 1), 
                                 "assigning variable sphi");
                 } else {
                     current_statement_begin__ = 67;
                     stan::model::assign(sphi, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                ((2 * get_base1(Phi0, i, "Phi0", 1)) - 1), 
+                                ((2 * stan::math::fabs(get_base1(Phi0, i, "Phi0", 1))) - 1), 
                                 "assigning variable sphi");
                 }
             }
@@ -608,13 +608,13 @@ public:
                     current_statement_begin__ = 70;
                     stan::model::assign(stheta, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                (get_base1(Theta0, i, "Theta0", 1) * 0.5), 
+                                get_base1(Theta0, i, "Theta0", 1), 
                                 "assigning variable stheta");
                 } else {
                     current_statement_begin__ = 71;
                     stan::model::assign(stheta, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                ((2 * get_base1(Theta0, i, "Theta0", 1)) - 1), 
+                                ((2 * stan::math::fabs(get_base1(Theta0, i, "Theta0", 1))) - 1), 
                                 "assigning variable stheta");
                 }
             }
@@ -656,7 +656,7 @@ public:
                             current_statement_begin__ = 87;
                             stan::model::assign(mu, 
                                         stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                        (stan::model::rvalue(mu, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "mu") + (-(get_base1(epsilon, (i - j), "epsilon", 1)) * get_base1(theta, j, "theta", 1))), 
+                                        (stan::model::rvalue(mu, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "mu") + (get_base1(epsilon, (i - j), "epsilon", 1) * get_base1(theta, j, "theta", 1))), 
                                         "assigning variable mu");
                         }
                     }
@@ -684,7 +684,7 @@ public:
                             current_statement_begin__ = 91;
                             stan::model::assign(mu, 
                                         stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                        (stan::model::rvalue(mu, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "mu") + (-(get_base1(epsilon, (i - (period * j)), "epsilon", 1)) * get_base1(stheta, j, "stheta", 1))), 
+                                        (stan::model::rvalue(mu, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "mu") + (get_base1(epsilon, (i - (period * j)), "epsilon", 1) * get_base1(stheta, j, "stheta", 1))), 
                                         "assigning variable mu");
                         }
                     }
@@ -826,7 +826,7 @@ public:
                         lp_accum__.add(normal_log(get_base1(phi0, i, "phi0", 1), get_base1(prior_ar, i, 1, "prior_ar", 1), get_base1(prior_ar, i, 2, "prior_ar", 1)));
                     } else {
                         current_statement_begin__ = 128;
-                        lp_accum__.add(beta_log(get_base1(phi0, i, "phi0", 1), get_base1(prior_ar, i, 1, "prior_ar", 1), get_base1(prior_ar, i, 2, "prior_ar", 1)));
+                        lp_accum__.add(beta_log(stan::math::fabs(get_base1(phi0, i, "phi0", 1)), get_base1(prior_ar, i, 1, "prior_ar", 1), get_base1(prior_ar, i, 2, "prior_ar", 1)));
                     }
                 }
             }
@@ -840,7 +840,7 @@ public:
                         lp_accum__.add(normal_log(get_base1(theta0, i, "theta0", 1), get_base1(prior_ma, i, 1, "prior_ma", 1), get_base1(prior_ma, i, 2, "prior_ma", 1)));
                     } else {
                         current_statement_begin__ = 135;
-                        lp_accum__.add(beta_log(get_base1(theta0, i, "theta0", 1), get_base1(prior_ma, i, 1, "prior_ma", 1), get_base1(prior_ma, i, 2, "prior_ma", 1)));
+                        lp_accum__.add(beta_log(stan::math::fabs(get_base1(theta0, i, "theta0", 1)), get_base1(prior_ma, i, 1, "prior_ma", 1), get_base1(prior_ma, i, 2, "prior_ma", 1)));
                     }
                 }
             }
@@ -854,7 +854,7 @@ public:
                         lp_accum__.add(normal_log(get_base1(Phi0, i, "Phi0", 1), get_base1(prior_sar, i, 1, "prior_sar", 1), get_base1(prior_sar, i, 2, "prior_sar", 1)));
                     } else {
                         current_statement_begin__ = 142;
-                        lp_accum__.add(beta_log(get_base1(Phi0, i, "Phi0", 1), get_base1(prior_sar, i, 1, "prior_sar", 1), get_base1(prior_sar, i, 2, "prior_sar", 1)));
+                        lp_accum__.add(beta_log(stan::math::fabs(get_base1(Phi0, i, "Phi0", 1)), get_base1(prior_sar, i, 1, "prior_sar", 1), get_base1(prior_sar, i, 2, "prior_sar", 1)));
                     }
                 }
             }
@@ -868,7 +868,7 @@ public:
                         lp_accum__.add(normal_log(get_base1(Theta0, i, "Theta0", 1), get_base1(prior_sma, i, 1, "prior_sma", 1), get_base1(prior_sma, i, 2, "prior_sma", 1)));
                     } else {
                         current_statement_begin__ = 149;
-                        lp_accum__.add(beta_log(get_base1(Theta0, i, "Theta0", 1), get_base1(prior_sma, i, 1, "prior_sma", 1), get_base1(prior_sma, i, 2, "prior_sma", 1)));
+                        lp_accum__.add(beta_log(stan::math::fabs(get_base1(Theta0, i, "Theta0", 1)), get_base1(prior_sma, i, 1, "prior_sma", 1), get_base1(prior_sma, i, 2, "prior_sma", 1)));
                     }
                 }
             }
@@ -987,22 +987,22 @@ public:
         for (size_t j_1__ = 0; j_1__ < breg_j_1_max__; ++j_1__) {
             vars__.push_back(breg(j_1__));
         }
-        Eigen::Matrix<double, Eigen::Dynamic, 1> phi0 = in__.vector_constrain(p);
+        Eigen::Matrix<double, Eigen::Dynamic, 1> phi0 = in__.vector_lub_constrain(-(1), 1, p);
         size_t phi0_j_1_max__ = p;
         for (size_t j_1__ = 0; j_1__ < phi0_j_1_max__; ++j_1__) {
             vars__.push_back(phi0(j_1__));
         }
-        Eigen::Matrix<double, Eigen::Dynamic, 1> theta0 = in__.vector_constrain(q);
+        Eigen::Matrix<double, Eigen::Dynamic, 1> theta0 = in__.vector_lub_constrain(-(1), 1, q);
         size_t theta0_j_1_max__ = q;
         for (size_t j_1__ = 0; j_1__ < theta0_j_1_max__; ++j_1__) {
             vars__.push_back(theta0(j_1__));
         }
-        Eigen::Matrix<double, Eigen::Dynamic, 1> Phi0 = in__.vector_constrain(P);
+        Eigen::Matrix<double, Eigen::Dynamic, 1> Phi0 = in__.vector_lub_constrain(-(1), 1, P);
         size_t Phi0_j_1_max__ = P;
         for (size_t j_1__ = 0; j_1__ < Phi0_j_1_max__; ++j_1__) {
             vars__.push_back(Phi0(j_1__));
         }
-        Eigen::Matrix<double, Eigen::Dynamic, 1> Theta0 = in__.vector_constrain(Q);
+        Eigen::Matrix<double, Eigen::Dynamic, 1> Theta0 = in__.vector_lub_constrain(-(1), 1, Q);
         size_t Theta0_j_1_max__ = Q;
         for (size_t j_1__ = 0; j_1__ < Theta0_j_1_max__; ++j_1__) {
             vars__.push_back(Theta0(j_1__));
@@ -1053,13 +1053,13 @@ public:
                     current_statement_begin__ = 58;
                     stan::model::assign(phi, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                (get_base1(phi0, i, "phi0", 1) * 0.5), 
+                                get_base1(phi0, i, "phi0", 1), 
                                 "assigning variable phi");
                 } else {
                     current_statement_begin__ = 59;
                     stan::model::assign(phi, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                ((2 * get_base1(phi0, i, "phi0", 1)) - 1), 
+                                ((2 * stan::math::fabs(get_base1(phi0, i, "phi0", 1))) - 1), 
                                 "assigning variable phi");
                 }
             }
@@ -1070,13 +1070,13 @@ public:
                     current_statement_begin__ = 62;
                     stan::model::assign(theta, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                (get_base1(theta0, i, "theta0", 1) * 0.5), 
+                                get_base1(theta0, i, "theta0", 1), 
                                 "assigning variable theta");
                 } else {
                     current_statement_begin__ = 63;
                     stan::model::assign(theta, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                ((2 * get_base1(theta0, i, "theta0", 1)) - 1), 
+                                ((2 * stan::math::fabs(get_base1(theta0, i, "theta0", 1))) - 1), 
                                 "assigning variable theta");
                 }
             }
@@ -1087,13 +1087,13 @@ public:
                     current_statement_begin__ = 66;
                     stan::model::assign(sphi, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                (get_base1(Phi0, i, "Phi0", 1) * 0.5), 
+                                get_base1(Phi0, i, "Phi0", 1), 
                                 "assigning variable sphi");
                 } else {
                     current_statement_begin__ = 67;
                     stan::model::assign(sphi, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                ((2 * get_base1(Phi0, i, "Phi0", 1)) - 1), 
+                                ((2 * stan::math::fabs(get_base1(Phi0, i, "Phi0", 1))) - 1), 
                                 "assigning variable sphi");
                 }
             }
@@ -1104,13 +1104,13 @@ public:
                     current_statement_begin__ = 70;
                     stan::model::assign(stheta, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                (get_base1(Theta0, i, "Theta0", 1) * 0.5), 
+                                get_base1(Theta0, i, "Theta0", 1), 
                                 "assigning variable stheta");
                 } else {
                     current_statement_begin__ = 71;
                     stan::model::assign(stheta, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                ((2 * get_base1(Theta0, i, "Theta0", 1)) - 1), 
+                                ((2 * stan::math::fabs(get_base1(Theta0, i, "Theta0", 1))) - 1), 
                                 "assigning variable stheta");
                 }
             }
@@ -1152,7 +1152,7 @@ public:
                             current_statement_begin__ = 87;
                             stan::model::assign(mu, 
                                         stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                        (stan::model::rvalue(mu, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "mu") + (-(get_base1(epsilon, (i - j), "epsilon", 1)) * get_base1(theta, j, "theta", 1))), 
+                                        (stan::model::rvalue(mu, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "mu") + (get_base1(epsilon, (i - j), "epsilon", 1) * get_base1(theta, j, "theta", 1))), 
                                         "assigning variable mu");
                         }
                     }
@@ -1180,7 +1180,7 @@ public:
                             current_statement_begin__ = 91;
                             stan::model::assign(mu, 
                                         stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                        (stan::model::rvalue(mu, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "mu") + (-(get_base1(epsilon, (i - (period * j)), "epsilon", 1)) * get_base1(stheta, j, "stheta", 1))), 
+                                        (stan::model::rvalue(mu, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "mu") + (get_base1(epsilon, (i - (period * j)), "epsilon", 1) * get_base1(stheta, j, "stheta", 1))), 
                                         "assigning variable mu");
                         }
                     }
