@@ -85,14 +85,14 @@ version(View = FALSE)
 #> Algorithm: Stan-NUTS 
 #> Current classes: varstan, Sarima, garch, varma, Bekk,DWR 
 #> Current models: 
-#>                         model                                      functions  GenT
-#> 1              Seasonal arima Sarima(order = c(p,d,q), seasonal = c(P,D,Q) )  FALSE
-#> 2          Dynamic regression        Sarima(order = c(p,d,q), xreg != NULL )  FALSE
-#> 3                 arma-mgarch           garch(order=c(s,k,h),arma = c(p,q) )  TRUE
-#> 4                 varma-mbekk           varma(order=c(p,q),bekk = c(s,k,h) )  TRUE
-#> 5                        Bekk           Bekk(order=c(s,k,h),varma = c(p,q) )  TRUE
-#> 6 Dynamic Harmonic Regression Sarima(order = c(p,d,q), xreg= fourier(ts,K) )  FALSE
-#> 7                 Random-walk                        naive(seasonal = FALSE)  FALSE
+#>        model                         functions                                GenT
+#> 1 Seasonal- ARIMA             Sarima(order = c(p,d,q), seasonal = c(P,D,Q) )  FALSE
+#> 2 Dynamic-Regression          Sarima(order = c(p,d,q), xreg != NULL )         FALSE
+#> 3 arma-mgarch                 garch(order=c(s,k,h),arma = c(p,q) )            TRUE
+#> 4 varma-mbekk                 varma(order=c(p,q),bekk = c(s,k,h) )            TRUE
+#> 5 Bekk                        Bekk(order=c(s,k,h),varma = c(p,q) )            TRUE
+#> 6 Dynamic-Harmonic-Regression Sarima(order = c(p,d,q), xreg= fourier(ts,K) )  FALSE
+#> 7 Random-walk                 naive(seasonal = FALSE)                         FALSE
 #>  * model column represent the available model 
 #>  * functions column represent the function structure 
 #>  * GenT column represent if the model admits a generalized t-student distribution 
