@@ -82,10 +82,12 @@ garch = function(ts,order = c(1,1,0),arma = c(0,0),xreg = NULL,genT = FALSE){
 
     if(nrow(xreg) != n)
       stop("The length of xreg don't match with the length of the time serie")
-  }
 
-  m1$d1 = ncol(xreg)
-  m1$xreg = xreg
+    m1$d1 = ncol(xreg)
+    m1$xreg = xreg
+  }
+  else m1$d1 = 0
+
   m1$prior_breg  = matrix(rep(c(0,2.5,6,4),m1$d1),ncol = 4,byrow = TRUE)
 
   attr(m1,"class") = "garch"
