@@ -14,7 +14,7 @@
 #' order parameter:  the three components (s, k, h) are the arch order,
 #' the garch order and the garch on the mean (mgarch) order.
 #' @param genT a boolean value to specify a Generalized a t-student model Cruz (2015)
-#'
+#' @param series.name an optional string vector with the series names.
 #' @details If \code{sd} option can only be used with the mbekk function, and it  adds
 #' a m-Bekk model for volatility.
 #'
@@ -59,24 +59,34 @@
 #' model
 #'
 #'
-Bekk = function(ts,order = c(1,1,0),varma = c(0,0),genT = FALSE){
+Bekk = function(ts,order = c(1,1,0),varma = c(0,0),genT = FALSE,series.name = NULL){
   n = dim(ts)[1]
   d = dim(ts)[2]
   y = matrix(ts,nrow = n)
   time = as.numeric(time(ts))
-  yreal = ts
+  yreal = as.ts(ts)
 
   if(n < d){
     n = d
     d = dim(ts)[2]
     y = t(y)
-    yreal = t(ts)
+    yreal = t( as.ts(ts) )
     time = as.numeric(time(ts))
   }
+  if(!is.null(series.name)){
+    if(length(series.name) == d){
+      sn = series.name
+      colnames(yreal) = as.character(series.name)
+    }
+    else
+      sn = colnames(yreal)
+  }
+  else sn = colnames(yreal)
+
   m1 = list(n = n,dimension = d,time = time,d = d,
             p = no_negative_check(varma[1]),
             q = no_negative_check(varma[2]),m = d*(d+1)/2,
-            y = y,yreal = yreal)
+            y = y,yreal = yreal,series.name = sn)
   m1$prior_mu0 = c(0,1,0,1)
   m1$prior_sigma0 = c(0,1,7,4)
   m1$prior_ar  = matrix(rep(c(0,1,1,1),varma[1]),ncol = 4,byrow = TRUE)

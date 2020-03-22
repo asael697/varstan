@@ -18,6 +18,7 @@
 #' which must have the same number of rows as ts. It should not be a data frame.
 #' @param period an integer specifying the periodicity of the time series by
 #' default the value frequency(ts) is used.
+#' @param series.name an optional string vector with the series names.
 #'
 #' @details If \code{xreg} option is used, the model by default will cancel the
 #' seasonal differences adjusted (D = 0). If a value \code{d} > 0 is used, all
@@ -54,13 +55,22 @@
 #' model
 #'
 #'
-Sarima = function(ts,order = c(1,0,0),seasonal = c(0,0,0),xreg = NULL,period = 0){
+Sarima = function(ts,order = c(1,0,0),seasonal = c(0,0,0),xreg = NULL,
+                  period = 0,series.name = NULL){
+
   n = length(as.numeric(ts))
+
+  # series name
+  if(is.null(series.name))
+    sn = deparse(substitute(ts))
+  else
+    sn = as.character(series.name)
+
   m1 = list(n = n,dimension = 1,time = as.numeric(time(ts)),
             p = no_negative_check(order[1]),
             d = no_negative_check(order[2]),
             q = no_negative_check(order[3]),
-            yreal = ts,y = as.numeric(ts))
+            yreal = as.ts(ts),y = as.numeric(ts),series.name = sn)
 
   m1$prior_mu0 = c(0,2.5,6,4)
   m1$prior_sigma0 = c(0,1,7,4)

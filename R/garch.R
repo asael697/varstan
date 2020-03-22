@@ -15,7 +15,7 @@
 #' @param xreg	Optionally, a numerical matrix of external regressors,
 #' which must have the same number of rows as ts. It should not be a data frame.
 #' @param genT a boolean value to specify for a generalized t-student garch model
-#'
+#' @param series.name an optional string vector with the series names.
 #'
 #' @details The default priors used in Sarima are:
 #'
@@ -50,14 +50,24 @@
 #' dat
 #' }
 #'
-garch = function(ts,order = c(1,1,0),arma = c(0,0),xreg = NULL,genT = FALSE){
+garch = function(ts,order = c(1,1,0),arma = c(0,0),xreg = NULL,
+                 genT = FALSE,series.name = NULL){
+
   n = length(as.numeric(ts))
   y = as.numeric(ts)
+
+  # series name
+  if(is.null(series.name))
+    sn = deparse(substitute(ts))
+  else
+    sn = as.character(series.name)
+
   m1 = list(n = n,dimension = 1,time = as.numeric(time(ts)),
             s = no_negative_check(order[1] ),
             k = no_negative_check(order[2]),
             h = no_negative_check(order[3]),
-            y = y,yreal = ts)
+            y = y,yreal = as.ts(ts),series.name = sn)
+
   m1$prior_mu0 = c(0,1,0,1)
   m1$prior_sigma0 = c(0,1,7,4)
   m1$prior_arch    = matrix(rep(c(3,3,1,2),order[1]),ncol = 4,byrow = TRUE)
