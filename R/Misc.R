@@ -264,6 +264,7 @@ is.model = function(obj){
   if(is(obj,"Bekk"))   y = TRUE
   if(is(obj,"DWR"))    y = TRUE
   if(is(obj,"naive"))  y = TRUE
+  if(is(obj,"SVM"))    y = TRUE
   return (y)
 }
 #' A function with all the desired indicators in summary function
