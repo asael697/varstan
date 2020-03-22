@@ -86,7 +86,10 @@ garch = function(ts,order = c(1,1,0),arma = c(0,0),xreg = NULL,genT = FALSE){
     m1$d1 = ncol(xreg)
     m1$xreg = xreg
   }
-  else m1$d1 = 0
+  else{
+    m1$d1 = 0
+    m1$xreg = matrix(rep(0,m1$d1*n ),ncol = m1$d1,nrow = n)
+  }
 
   m1$prior_breg  = matrix(rep(c(0,2.5,6,4),m1$d1),ncol = 4,byrow = TRUE)
 
