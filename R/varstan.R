@@ -103,6 +103,7 @@ varstan = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta = 0
   m = list(stanfit = sft,model = model,stan_parmas = sp,
            time = model$time,
            period = frequency(model$yreal),
+           dimension = model$dimension,
            ts = model$yreal)
 
   attr(m,"class") = "varstan"

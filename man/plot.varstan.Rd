@@ -4,10 +4,10 @@
 \alias{plot.varstan}
 \title{plot methods for varstan models}
 \usage{
-\method{plot}{varstan}(object, type = "fit", ...)
+\method{plot}{varstan}(object, par = "fit", ...)
 }
 \arguments{
-\item{type}{a character string with the desired plot. Valid values are \code{"fit"} for the
+\item{par}{a character string with the desired plot. Valid values are \code{"fit"} for the
 model's fitted values plot, \code{"residuals"} for the residuals posterior mean plot,
 and \code{"parameters"} for density and trace plots for the sampled model parameter.
 The default value is \code{"fit"}.}
