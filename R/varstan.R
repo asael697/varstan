@@ -100,15 +100,20 @@ varstan = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta = 0
 
   sp = list(Algorithm = "HMC NUTS",chains = chains,iter = iter,warmup = warmup,
             adapt.delta =adapt.delta,max_treedepth = tree.depth)
-  m = list(stanfit = sft,model = model,stan_parmas = sp,
-           time = model$time,
-           period = frequency(model$yreal),
+
+  m = list(stanfit = sft,
+           stan.parmaters = sp,
+           model = model,
+           model.parameters = NULL,
+           time = model$time,period = frequency(model$yreal),
            dimension = model$dimension,
-           ts = model$yreal)
+           series.name = model$series.name,
+           series.length = model$n,
+           ts = model$yreal,)
 
   attr(m,"class") = "varstan"
 
-  m$model.parameters = c(get_params(m)$include,"log_lik","fit","residuals")
+  m$model.parameters = c(get_params(m)$include,"fit","residuals")
 
   return(m)
 }
@@ -150,6 +155,7 @@ get_df = function(obj,robust = FALSE,...){
     stop("The current model is not a Generalized t-student varma model")
 
   resd = get_df_varma(model = obj$model,fit = obj$stanfit,robust)
+  resd =ts(resd,start =  min(obj$time),frequency = obj$period)
 
   return(resd)
 }
