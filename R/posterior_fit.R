@@ -41,6 +41,8 @@ posterior_fit.varstan = function(obj,robust = FALSE,...){
   if(is.varma(obj$model))  fit = get_fit_varma(model = obj$model,fit = obj$stanfit,robust)
   if(is.Bekk(obj$model))   fit = get_fit_varma(model = obj$model,fit = obj$stanfit,robust)
 
+  fit =ts(fit,start =  min(obj$time),frequency = obj$period)
+
   return(fit)
 }
 #' Get the fitted values of an garch model

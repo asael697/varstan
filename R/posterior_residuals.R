@@ -31,17 +31,18 @@ posterior_residuals <- function(obj,...) {
 #' @export
 #'
 posterior_residuals.varstan = function(obj,robust = FALSE,...){
-  if(is.varstan(obj) ){
-    if(is.Sarima(obj$model)) resd = get_residuals_arima(fit = obj$stanfit,robust)
-    if(is.naive(obj$model)) resd = get_residuals_arima(fit = obj$stanfit,robust)
-    if(is.garch(obj$model))  resd = get_residuals_garch(fit = obj$stanfit,robust)
-    if(is.varma(obj$model))  resd = get_residuals_varma(fit = obj$stanfit,d = obj$model$dimension,robust)
-    if(is.Bekk(obj$model))  resd = get_residuals_varma(fit = obj$stanfit,d = obj$model$dimension,robust)
-  }
-  else{
-    resd = NULL
-    print("The current object is not a varstan object")
-  }
+  if( !is.varstan(obj) )
+    stop("The current object is not a varstan class")
+
+  if(is.Sarima(obj$model))resd = get_residuals_arima(fit = obj$stanfit,robust)
+  if(is.naive(obj$model)) resd = get_residuals_arima(fit = obj$stanfit,robust)
+  if(is.garch(obj$model)) resd = get_residuals_garch(fit = obj$stanfit,robust)
+  if(is.varma(obj$model)) resd = get_residuals_varma(fit = obj$stanfit,d = obj$model$dimension,robust)
+  if(is.Bekk(obj$model))  resd = get_residuals_varma(fit = obj$stanfit,d = obj$model$dimension,robust)
+
+  resd =ts(resd,start =  min(obj$time),frequency = obj$period)
+
+
   return(resd)
 }
 
