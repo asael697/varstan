@@ -54,7 +54,7 @@ posterior_predict.varstan = function(obj,h = 1,
     stop("The current object is not a varstan class",call. = FALSE)
 
   if(is.garch(obj$model))
-    fc = posterior_predict_garch(obj = obj,h = h,robust = robust,draws = draws,seed = seed)
+    fc = posterior_predict_garch(obj = obj,h = h,xreg = xreg,robust = robust,draws = draws,seed = seed)
 
   if(is.varma(obj$model))
     fc = posterior_predict_varma(obj = obj,h = h,robust = robust,draws = draws,seed = seed)
@@ -76,7 +76,9 @@ posterior_predict.varstan = function(obj,h = 1,
 #'
 #' @param obj a varstan object
 #' @param h An integer indicating the number of predictions. The default number
-#'    of predictions is 1.
+#'    of predictions is 1
+#' @param xreg Optionally, a numerical matrix of external regressors,
+#' which must have the same number of rows as h. It should not be a data frame.
 #' @param robust A boolean for obtain the robust estimation. The default
 #' @param draws An integer indicating the number of draws to return. The default
 #'    number of draws is 1000
@@ -92,7 +94,8 @@ posterior_predict.varstan = function(obj,h = 1,
 #'
 #' @noRd
 #'
-posterior_predict_garch = function(obj,h = 1,robust = TRUE,draws = 1000,seed = NULL){
+posterior_predict_garch = function(obj,h = 1,xreg = NULL,robust = TRUE,
+                                     draws = 1000,seed = NULL){
 
   if (!is.null(seed))
     set.seed(seed)
@@ -106,6 +109,22 @@ posterior_predict_garch = function(obj,h = 1,robust = TRUE,draws = 1000,seed = N
 
   # point etimate of the model parameters
   pe = posterior_estimate(obj,robust = robust)
+
+  #preliminary checks
+  if( order$d1 > 0){
+    # Check xreg
+    if(is.null(xreg)){
+      warning("No xreg specified, the forecast wont be accurate \n")
+      xh = rep(0,h)
+    }
+    else if( dim(xreg)[1] != h ||  dim(xreg)[2] != order$d1){
+      # Check xreg dimensions
+      warning("The dimension of xreg are not correct, the forecast wont be accurate \n")
+      xh = rep(0,h)
+    }
+    else xh = xreg%*%pe$breg
+  }
+
   # The previous data
   y1 = obj$model$y[(n-n1+1):n];
   yh = matrix(,nrow = draws,ncol = h)
@@ -114,6 +133,9 @@ posterior_predict_garch = function(obj,h = 1,robust = TRUE,draws = 1000,seed = N
 
     mu = pe$mu0;
     sigma[n1+i] = pe$sigma0;
+
+    # regression factor
+    if(i <= h ) if(order$d1 > 0 ) mu = mu +xh[i];
 
     #  ar factor
     if(order$p > 0) for(j in 1:order$p) mu=mu+y1[n1+i-j]*pe$phi[j];
@@ -132,6 +154,7 @@ posterior_predict_garch = function(obj,h = 1,robust = TRUE,draws = 1000,seed = N
 
     # mgarch factor
     if(order$h > 0) for(j in 1:order$h)mu=mu+pe$mgarch[n1+i]*sigma[n1+i-j];
+
 
     # posterior predict draws
     yh[,i] =rnorm(draws,mu,sigma[n1+i]);
@@ -205,6 +228,9 @@ posterior_predict_varma = function(obj,h = 1,robust = TRUE,draws = 1000,seed = N
     # mu asignation
     mu = pe$mu0
     sigma[n1+i] = pe$sigma0;
+
+    # regression factor
+    if(i <= h ) if(order$d1 > 0 ) mu = mu +xh[i];
 
     #  ar factor
     if(order$p > 0) for(j in 1:order$p) mu=mu+y1[,n1+i-j]%*%pe$phi[[j]];
@@ -292,26 +318,22 @@ posterior_predict_Sarima = function(obj,h = 1,xreg = NULL,robust = TRUE,
 
   # point etimate of the model parameters
   pe = posterior_estimate(obj,robust = robust)
+
   # The previous data
   y1 = obj$model$y[(n-n1+1):n];
   yh = matrix(,nrow = draws,ncol = h1)
 
   #preliminary checks
   if( order$d1 > 0){
-
     # Check xreg
-    if(is.null(xreg))
-      stop("No xreg specified, the forecast wont be done \n")
-
-    # Check xreg dimensions
-    if( dim(xreg)[1] != h ||  dim(xreg)[2] != order$d1)
-      stop("The dimension of xreg are not correct, the forecast wont be done \n")
-
-    # Get diferenced xreg values
-    if(order$d > 0 ){
-      x = diff(rbind(obj$model$xlast[1,],xreg))
-      if(order$d > 1) for(i in 2:order$d ) x = diff(rbind(obj$model$xlast[i,],x))
-      xh = x%*%pe$breg
+    if(is.null(xreg)){
+      warning("No xreg specified, the forecast wont be accurate \n")
+      xh = rep(0,h)
+    }
+    else if( dim(xreg)[1] != h ||  dim(xreg)[2] != order$d1){
+      # Check xreg dimensions
+      warning("The dimension of xreg are not correct, the forecast wont be accurate \n")
+      xh = rep(0,h)
     }
     else xh = xreg%*%pe$breg
   }

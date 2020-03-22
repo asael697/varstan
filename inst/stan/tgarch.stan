@@ -27,7 +27,7 @@ data {
   matrix[h,4] prior_mgarch;  // prior ma hyper parameters
 }
 parameters{
-  real mu0; 
+  real mu0;
   real<lower=0> sigma0;               // Variance parameter
   vector<lower=-1,upper=1>[p] phi0;   // ar parameters
   vector<lower=-1,upper=1>[q] theta0; // ma parameters
@@ -50,7 +50,7 @@ transformed parameters{
   //***********************************************
   //         Transformation coeficients
   //***********************************************
-  
+
 
   for( i in 1:p){
     if(prior_ar[i,4]== 1) phi[i] = phi0[i];
@@ -151,10 +151,10 @@ model {
     else if(prior_dfv[4] == 8) target += log(Jpv(v));
     else if(prior_dfv[4] == 6) target += inv_gamma_lpdf(v|prior_dfv[1],prior_dfv[2]);
   }
-  
+
   // Likelihood
   if(genT == 1)  target+= inv_gamma_lpdf(lambda|v/2,v/2);
-  target += normal_lpdf(y|mu,sigma);
+  target += normal_lpdf(epsilon|0,sigma);
 }
 generated quantities{
   real loglik = 0;

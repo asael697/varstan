@@ -15,6 +15,9 @@ are the arch order, the garch order, and the mgarch order.}
 \item{arma}{A specification of the  ARMA model,same as order parameter:  the two
 components (p, q) are the AR order,and the  MA order.}
 
+\item{xreg}{Optionally, a numerical matrix of external regressors,
+which must have the same number of rows as ts. It should not be a data frame.}
+
 \item{genT}{a boolean value to specify for a generalized t-student garch model}
 }
 \description{
@@ -35,6 +38,7 @@ The default priors used in Sarima are:
  \item{garch ~ normal(0,0.5)}
  \item{mgarch ~ normal(0,0.5)}
  \item{dfv ~ gamma(2,0.1)}
+ \item{breg ~ t-student(0,2.5,6)}
 }
 
 For changing the default prior use the function \code{set_prior}

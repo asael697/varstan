@@ -105,6 +105,7 @@ model.garch = function(obj,...){
     else{
       log = paste0("y ~ garch(",obj$s,",",obj$k,",",obj$h,")")
     }
+    if(obj$d1 > 0) log = paste0(log,".reg[",obj$d1,"]")
     cat(log,"\n")
     if(obj$genT) cat("Generalized t-student model \n")
     cat(obj$n,"observations and 1 dimension \n \n")

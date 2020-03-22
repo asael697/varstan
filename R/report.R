@@ -112,6 +112,10 @@ report.garch = function(obj,...){
       if(obj$p  > 0 )get_prior(dat = obj,type = "ar")
       if(obj$q  > 0 )get_prior(dat = obj,type = "ma")
     }
+    if(obj$d1 > 0 ){
+      cat("\n Regression Parameters: \n")
+      get_prior(dat = obj,type = "breg")
+    }
     if(obj$genT == TRUE){
       cat("\n Generalized t-student \n")
       cat("\n lambda ~ G(v/2,v/2) \n")

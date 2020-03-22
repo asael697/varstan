@@ -71,6 +71,10 @@ point_estimate_garch = function(model,fit,robust = FALSE,...){
   if(model$h > 0 ){
     l1$mgarch = extract_estimate(fit = fit,model = model,par = "mgarch",robust)
   }
+  # bregParameter
+  if(model$d1 > 0 ){
+    l1$breg = extract_estimate(fit = fit,model = model,par = "breg",robust)
+  }
   return(l1)
 }
 #' posterior estimate method for Sarima models

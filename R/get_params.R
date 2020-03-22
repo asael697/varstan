@@ -45,6 +45,7 @@ get_params_garch = function(dat,...){
   if(dat$h > 0) include = c(include,"mgarch")
   if(dat$p > 0) include = c(include,"phi")
   if(dat$q > 0) include = c(include,"theta")
+  if(dat$d1 >0) include = c(include,"breg")
   if(dat$genT == TRUE) include = c(include,"v")
 
   exclude = c("phi0","theta0")
