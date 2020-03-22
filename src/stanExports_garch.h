@@ -1288,10 +1288,10 @@ public:
             current_statement_begin__ = 167;
             for (int i = 1; i <= n; ++i) {
                 current_statement_begin__ = 168;
-                stan::model::assign(fit, 
+                stan::model::assign(residual, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                            normal_rng(get_base1(mu, i, "mu", 1), get_base1(sigma, i, "sigma", 1), base_rng__), 
-                            "assigning variable fit");
+                            normal_rng(get_base1(epsilon, i, "epsilon", 1), get_base1(sigma, i, "sigma", 1), base_rng__), 
+                            "assigning variable residual");
                 current_statement_begin__ = 169;
                 stan::model::assign(log_lik, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
@@ -1301,7 +1301,7 @@ public:
                 stan::math::assign(loglik, (loglik + get_base1(log_lik, i, "log_lik", 1)));
             }
             current_statement_begin__ = 172;
-            stan::math::assign(residual, subtract(y, fit));
+            stan::math::assign(fit, subtract(y, residual));
             // validate, write generated quantities
             current_statement_begin__ = 162;
             vars__.push_back(loglik);

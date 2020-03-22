@@ -165,9 +165,9 @@ generated quantities{
   vector[n] residual;
 
   for(i in 1:n){
-     fit[i] = normal_rng(mu[i],sigma[i]);
+     residual[i] = normal_rng(epsilon[i],sigma[i]);
      log_lik[i] = normal_lpdf(y[i]|mu[i],sigma[i]);
      loglik += log_lik[i];
   }
-  residual = y - fit;
+  fit = y - residual;
 }

@@ -171,8 +171,8 @@ generated quantities{
   matrix[n,d] residual;
 
   for(i in 1:n){
-    fit[i] = multi_normal_cholesky_rng(mu[i],Lsigma[i])';
-    residual[i] = y[i]-fit[i];
+    residual[i] = multi_normal_cholesky_rng(epsilon[i],Lsigma[i])';
+    fit[i] = y[i]-residual[i];
     log_lik[i] = multi_normal_cholesky_lpdf(y[i]|mu[i],Lsigma[i]);
     loglik += log_lik[i];
   }

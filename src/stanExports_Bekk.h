@@ -1534,15 +1534,15 @@ public:
             current_statement_begin__ = 173;
             for (int i = 1; i <= n; ++i) {
                 current_statement_begin__ = 174;
-                stan::model::assign(fit, 
-                            stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                            transpose(multi_normal_cholesky_rng(get_base1(mu, i, "mu", 1), get_base1(Lsigma, i, "Lsigma", 1), base_rng__)), 
-                            "assigning variable fit");
-                current_statement_begin__ = 175;
                 stan::model::assign(residual, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                            subtract(get_base1(y, i, "y", 1), get_base1(fit, i, "fit", 1)), 
+                            transpose(multi_normal_cholesky_rng(get_base1(epsilon, i, "epsilon", 1), get_base1(Lsigma, i, "Lsigma", 1), base_rng__)), 
                             "assigning variable residual");
+                current_statement_begin__ = 175;
+                stan::model::assign(fit, 
+                            stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
+                            subtract(get_base1(y, i, "y", 1), get_base1(residual, i, "residual", 1)), 
+                            "assigning variable fit");
                 current_statement_begin__ = 176;
                 stan::model::assign(log_lik, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
