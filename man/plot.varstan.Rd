@@ -4,7 +4,7 @@
 \alias{plot.varstan}
 \title{plot methods for varstan models}
 \usage{
-\method{plot}{varstan}(object, par = "fit", ...)
+\method{plot}{varstan}(object, par = "fit", probs = 0.9, ...)
 }
 \arguments{
 \item{par}{a character string with the desired plot. Valid values are \code{"fit"} for the

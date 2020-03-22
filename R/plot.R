@@ -5,7 +5,7 @@
 #' sampled model parameters, or the residuals' posterior mean time series.
 #'
 #' @param x An object of class \code{varstan}.
-#' @param type a character string with the desired plot. Valid values are \code{"fit"} for the
+#' @param par a character string with the desired plot. Valid values are \code{"fit"} for the
 #'  model's fitted values plot, \code{"residuals"} for the residuals posterior mean plot,
 #'  and \code{"parameters"} for density and trace plots for the sampled model parameter.
 #'  The default value is \code{"fit"}.
@@ -31,35 +31,92 @@
 #' @importFrom bayesplot mcmc_combo
 #' @export
 #'
-plot.varstan = function(object,type = "fit",...){
+plot.varstan = function(object,par = "fit",probs = 0.9,...){
 
-  if(object$model$dimension > 1)
-    stop("Only valid for univariate time series")
+  if( !is.varstan(object))
+    stop("The current object is not a varstan class")
 
-  if( !(type %in% c("fit","parameter","residuals") ))
-    stop("par argument is not valid, please enter a valid argument: parameter, residuals or fit")
+  if(par == "parameter"){
+    if(object$dimension > 1)
+      stop("Only valid for univariate time series")
 
-  if(type == "parameter"){
     par_ret = mod_parameter(object$model)
     stanfit2 = as.stan(object)
     p = bayesplot::mcmc_combo(stanfit2,pars = par_ret,combo = c("dens","trace"))
   }
-  else if(type == "fit"){
-    dat_temp = data.frame(time =object$model$time,ts = object$model$yreal)
-    preds <-  data.frame(extract_stan(obj = object,pars = "fit"))
-    dat_temp$Estimate = colMeans(preds)
-    dat_temp$Q5 = apply(preds, 2, quantile, probs = 0.05)
-    dat_temp$Q95 = apply(preds, 2, quantile, probs = 0.95)
-    p = ggplot2::ggplot(dat_temp, aes(x = time, y = Estimate)) +
-      ggplot2::geom_smooth(aes(ymin = Q5, ymax = Q95), stat = "identity", size = 0.5) +
-      ggplot2::geom_point(aes(y = ts)) + ggplot2::labs(x = "time",y = "series",title = "model fit")+
-      ggplot2::theme_classic()
+  else if(par == "fit"){
+    p = plot_ts(obj = object,par = "fit",prob = probs,real = TRUE)
   }
-  else if(type == "residuals"){
-    dat_temp = data.frame(time =object$model$time,residuals = posterior_residuals(object))
-    p = ggplot2::ggplot(dat_temp, aes(x = time, y = residuals)) +
-      ggplot2::geom_line() + ggplot2::labs(x = "time",y = "residuals",title = "residuals posterior mean")+
-      ggplot2::theme_classic()
+  else if(par == "residuals"){
+    p = plot_ts(obj = object,par = "residual",prob =  probs,real = TRUE)
+  }
+  else if(par %in% get_params(object)$include){
+    md = data.frame(extract_stan(object,pars = par))
+    p = bayesplot::mcmc_combo(x = md,combo = c("dens","trace"))
+  }
+  else{
+    stop("par argument is not valid, please enter a models valid argument")
+  }
+  return(p)
+}
+#' autoplot methods for varstan models
+#'
+#' Preliminar autoplot methods for varstan models only valid for univariate time series models.
+#' The function prints the fitted values time series, the trace and density plots for the
+#' sampled model parameters, or the residuals' posterior mean time series.
+#'
+#' @param x An object of class \code{varstan}.
+#' @param par a character string with the desired plot. Valid values are \code{"fit"} for the
+#'  model's fitted values plot, \code{"residuals"} for the residuals posterior mean plot,
+#'  and \code{"parameters"} for density and trace plots for the sampled model parameter.
+#'  The default value is \code{"fit"}.
+#' @param ... Further arguments passed to  \code{mcmc_combo}.
+#'
+#' @return An autoplot object from ggplot2 class.
+#'
+#' @examples
+#' \dontrun{
+#'  sf1 = auto.sarima(ts = birth)
+#'  # fitted model
+#'  autoplot(sf1)
+#'
+#'  # residuals
+#'  autoplot(sf1,type = "residuals)
+#'
+#'  # parameters
+#'  autoplot(sf1,type = "parameter)
+#' }
+#'
+#' @method autoplot varstan
+#' @import ggplot2
+#' @importFrom bayesplot mcmc_combo
+#' @export
+#'
+autoplot.varstan = function(object,par = "fit",probs = 0.9,...){
+
+  if( !is.varstan(object))
+    stop("The current object is not a varstan class")
+
+  if(par == "parameter"){
+    if(object$dimension > 1)
+      stop("Only valid for univariate time series")
+
+    par_ret = mod_parameter(object$model)
+    stanfit2 = as.stan(object)
+    p = bayesplot::mcmc_combo(stanfit2,pars = par_ret,combo = c("dens","trace"))
+  }
+  else if(par == "fit"){
+    p = plot_ts(obj = object,par = "fit",prob = probs,real = TRUE)
+  }
+  else if(par == "residuals"){
+    p = plot_ts(obj = object,par = "residual",prob =  probs,real = TRUE)
+  }
+  else if(par %in% get_params(object)$include){
+    md = data.frame(extract_stan(object,pars = par))
+    p = bayesplot::mcmc_combo(x = md,combo = c("dens","trace"))
+  }
+  else{
+    stop("par argument is not valid, please enter a models valid argument")
   }
   return(p)
 }
@@ -81,7 +138,41 @@ mod_parameter = function(model){
     if(model$s > 0) par_ret = c(par_ret,paste0("alpha[",1:model$s,"]"))
     if(model$k > 0) par_ret = c(par_ret,paste0("beta[",1:model$k,"]"))
     if(model$h > 0) par_ret = c(par_ret,paste0("mgarch[",1:model$h,"]"))
+    if(model$d1> 0) par_ret = c(par_ret,paste0("breg[",1:model$d1,"]"))
     if(model$genT > 0) par_ret = c(par_ret,"v")
   }
   return(par_ret)
 }
+
+#'  Internal function for plot fit and residuals
+#' @import ggplot2
+#' @noRd
+#'
+plot_ts = function(obj,par = "fit",prob = 0.90,real = FALSE){
+
+  p1 = (1-prob)/2;s1 = obj$series.name;s = NULL;
+
+  f2 = data.frame(extract_stan(obj = obj,pars = par))
+  f2mean = apply(f2,2,mean)
+  f21 = apply(f2,2,quantile, probs = p1)
+  f22 = apply(f2,2,quantile, probs =1 - p1)
+  for(i in s1)  s = c(s,rep(i,obj$model$n))
+  time1 = rep(obj$time,obj$dimension)
+  yreal = matrix(obj$ts,ncol = 1)
+
+  dat_temp = data.frame(fit = f2mean,q1 = as.numeric(f21),q2 = as.numeric(f22),time = time1,type = s)
+
+  if(real == TRUE) dat_temp$yreal = yreal
+
+  g = ggplot2::ggplot(aes(x = time1,y = fit),data = dat_temp)+
+    ggplot2::geom_smooth(aes(ymin = q1, ymax = q2),fill="#333333", color="#0000CC",
+                       stat = "identity",size = 0.8) +ggplot2::labs(x = "time",y = " ")
+
+  if(obj$dimension > 1) g = g + ggplot2::facet_grid(type~.)
+
+  if(real == TRUE) g = g+ggplot2::geom_line(aes(y = yreal),size = 0.8,color = "#000000")
+
+  return(g)
+}
+
+
