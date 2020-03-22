@@ -16,6 +16,8 @@ data {
   int<lower=0> q;     // number of predictions ma
   vector[n] y;               // outcome time series
   int<lower=0,upper=1> genT; // Generalized t-student
+  int<lower=0>d1;     // number of independent variables
+  matrix[n,d1] xreg;  // matrix with independent variables
   // prior data
   vector[4] prior_mu0;       // prior location parameter
   vector[4] prior_sigma0;    // prior scale parameter
@@ -25,10 +27,12 @@ data {
   matrix[s,4] prior_arch;    // prior arch hyper parameters
   matrix[k,4] prior_garch;   // prior ma hyper parameters
   matrix[h,4] prior_mgarch;  // prior ma hyper parameters
+  matrix[d1,4] prior_breg; // prior ma hyper parameters
 }
 parameters{
   real mu0;
   real<lower=0> sigma0;               // Variance parameter
+  vector[d1] breg;                    // regression parameters
   vector<lower=-1,upper=1>[p] phi0;   // ar parameters
   vector<lower=-1,upper=1>[q] theta0; // ma parameters
   vector<lower=0,upper=1>[s] alpha;   // arch parameters
@@ -60,13 +64,16 @@ transformed parameters{
     if(prior_ma[i,4] == 1) theta[i] = theta0[i];
     else theta[i] = 2*theta0[i]-1;
   }
+  // regression estimation
+  if(d1 > 0) mu = xreg*breg;
+  else mu = rep_vector(0,n);
 
   //***********************************************
   //         ARMA estimations
   //***********************************************
 
   for(i in 1:n){
-     mu[i] = mu0;
+     mu[i] += mu0;
      sigma[i] = sigma0;
     //  ar Estimation
     if(p > 0) for(j in 1:p) if(i > j) mu[i] += y[i-j]*phi[j];
@@ -103,6 +110,18 @@ model {
   else if(prior_sigma0[4]==6) target += inv_gamma_lpdf(sigma0|prior_sigma0[1],prior_sigma0[2]);
   else if(prior_sigma0[4]==7) target += inv_chi_square_lpdf(sigma0|prior_sigma0[3]);
   else if(prior_sigma0[4]==9) target += gamma_lpdf(sigma0|prior_sigma0[1],prior_sigma0[2]);
+
+  // prior breg
+  if(d1 > 0){
+    for(i in 1:d1){
+      if(prior_breg[i,4] == 1)      target += normal_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
+      else if(prior_breg[i,4] == 2) target += beta_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
+      else if(prior_breg[i,4] == 3) target += cauchy_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
+      else if(prior_breg[i,4] == 4) target += student_t_lpdf(breg[i]|prior_breg[i,3],prior_breg[i,1],prior_breg[i,2]);
+      else if(prior_breg[i,4] == 5) target += cauchy_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
+      else if(prior_breg[i,4] == 9) target += gamma_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
+    }
+  }
 
   // prior ar
   if(p > 0){
