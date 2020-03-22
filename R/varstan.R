@@ -100,8 +100,14 @@ varstan = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta = 0
 
   sp = list(Algorithm = "HMC NUTS",chains = chains,iter = iter,warmup = warmup,
             adapt.delta =adapt.delta,max_treedepth = tree.depth)
-  m = list(stanfit = sft,model = model,stan_parmas = sp)
+  m = list(stanfit = sft,model = model,stan_parmas = sp,
+           time = model$time,
+           period = frequency(model$yreal),
+           ts = model$yreal)
+
   attr(m,"class") = "varstan"
+
+  m$model.parameters = c(get_params(m)$include,"log_lik","fit","residuals")
 
   return(m)
 }
