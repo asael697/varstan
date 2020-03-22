@@ -63,7 +63,7 @@ Bekk = function(ts,order = c(1,1,0),varma = c(0,0),genT = FALSE){
   n = dim(ts)[1]
   d = dim(ts)[2]
   y = matrix(ts,nrow = n)
-  time = as.numeric(time(t(ts)))
+  time = as.numeric(time(ts))
   yreal = ts
 
   if(n < d){
