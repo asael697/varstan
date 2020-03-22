@@ -19,6 +19,8 @@ components (p, q) are the AR order,and the  MA order.}
 which must have the same number of rows as ts. It should not be a data frame.}
 
 \item{genT}{a boolean value to specify for a generalized t-student garch model}
+
+\item{series.name}{an optional string vector with the series names.}
 }
 \description{
 Constructor of the garch(s,k,h) object for Bayesian estimation in STAN

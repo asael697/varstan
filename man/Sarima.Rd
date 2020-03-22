@@ -22,6 +22,8 @@ which must have the same number of rows as ts. It should not be a data frame.}
 
 \item{period}{an integer specifying the periodicity of the time series by
 default the value frequency(ts) is used.}
+
+\item{series.name}{an optional string vector with the series names.}
 }
 \description{
 Constructor of the Sarima model  for Bayesian estimation in STAN

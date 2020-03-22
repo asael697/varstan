@@ -11,6 +11,8 @@ varma(ts,order = c(1,1))
 
 \item{order}{A specification of the  VARMA model,same as order parameter:  the two
 components (p, q) are the AR order,and the  MA order.}
+
+\item{series.name}{an optional string vector with the series names.}
 }
 \description{
 Constructor of the varma(p,q) model for Bayesian estimation in STAN

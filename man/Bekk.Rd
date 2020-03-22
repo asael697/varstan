@@ -17,6 +17,8 @@ the garch order and the garch on the mean (mgarch) order.}
 order, the number of differences, and the MA order.}
 
 \item{genT}{a boolean value to specify a Generalized a t-student model Cruz (2015)}
+
+\item{series.name}{an optional string vector with the series names.}
 }
 \description{
 Constructor of the varma(p,q)-Bekk(s,k) object for Bayesian estimation in STAN

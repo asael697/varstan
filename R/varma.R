@@ -10,6 +10,7 @@
 #' @param ts an multivariate time series
 #' @param order A specification of the  VARMA model,same as order parameter:  the two
 #' components (p, q) are the AR order,and the  MA order.
+#' @param series.name an optional string vector with the series names.
 #'
 #' @details If \code{sd} option is used to specify an arma model for the mean parameter,
 #' if a varma option is used then the model is equivalent to the varma model class
@@ -49,9 +50,9 @@
 #' model
 #'
 #'
-varma = function(ts,order = c(1,1)){
+varma = function(ts,order = c(1,1),series.name = NULL){
 
-  m1 = Bekk(ts = ts,varma = order,order = c(0,0,0),genT = FALSE)
+  m1 = Bekk(ts = ts,varma = order,order = c(0,0,0),genT = FALSE,series.name = series.name)
   attr(m1,"class") = "varma"
   return(m1)
 }
