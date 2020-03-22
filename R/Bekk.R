@@ -60,9 +60,9 @@
 #'
 #'
 Bekk = function(ts,order = c(1,1,0),varma = c(0,0),genT = FALSE){
-  n = dim(ts)[2]
-  d = dim(ts)[1]
-  y = matrix(ts,nrow = d)
+  n = dim(ts)[1]
+  d = dim(ts)[2]
+  y = matrix(ts,nrow = n)
   time = as.numeric(time(t(ts)))
   yreal = ts
 
@@ -76,7 +76,7 @@ Bekk = function(ts,order = c(1,1,0),varma = c(0,0),genT = FALSE){
   m1 = list(n = n,dimension = d,time = time,d = d,
             p = no_negative_check(varma[1]),
             q = no_negative_check(varma[2]),m = d*(d+1)/2,
-            y = t(y),yreal = yreal)
+            y = y,yreal = yreal)
   m1$prior_mu0 = c(0,1,0,1)
   m1$prior_sigma0 = c(0,1,7,4)
   m1$prior_ar  = matrix(rep(c(0,1,1,1),varma[1]),ncol = 4,byrow = TRUE)
