@@ -5,7 +5,7 @@
 #' The function returns  a list with the data for running stan() function of
 #'  rstan package
 #'
-#' @usage varma(ts,order = c(1,1))
+#' @usage varma(ts,order = c(1,0))
 #'
 #' @param ts an multivariate time series
 #' @param order A specification of the  VARMA model,same as order parameter:  the two
@@ -50,7 +50,7 @@
 #' model
 #'
 #'
-varma = function(ts,order = c(1,1),series.name = NULL){
+varma = function(ts,order = c(1,0),series.name = NULL){
 
   m1 = Bekk(ts = ts,varma = order,order = c(0,0,0),genT = FALSE,series.name = series.name)
   attr(m1,"class") = "varma"
