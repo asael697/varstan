@@ -28,7 +28,7 @@
 
 ### Fixes:
 
--   No current fixes
+-   Fix bug in t student innovations in garch stan models
 
 **varstan 1.0.1.000 Date: 12/03/2020**
 ----------------------------------
