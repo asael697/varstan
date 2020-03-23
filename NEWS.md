@@ -1,6 +1,34 @@
 **VARSTAN NEWS**
 ============
 
+**varstan 1.0.1.500 Date: 12/03/2020**
+----------------------------------
+
+### Features:
+
+-   plot methods for varstan objects
+
+-   autoplot methods for varstan objects
+
+-   time, model.parameters, ts, period, dimension, series.length features added to varstan objects
+
+-  regression suported un  garch models
+
+
+### Improvements:
+
+-  plot methods suport parameter inference diagnostic
+
+-  optional time series names values in models
+
+
+### Changes:
+
+-   No current changes
+
+### Fixes:
+
+-   No current fixes
 
 **varstan 1.0.1.000 Date: 12/03/2020**
 ----------------------------------

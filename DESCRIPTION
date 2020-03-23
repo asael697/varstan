@@ -1,6 +1,6 @@
 Package: varstan
 Title: An r package for fitting structured time series models with STAN
-Version: 1.0.0.000
+Version: 1.0.1.000
 Authors@R: c(
   person("Asael","Alonzo Matamoros", role = c("aut", "cre"),email = "asael.alonzo@gmail.com"),
   person("Cristian","Cruz Torres", role = 'aut', email = "cristian.cruz@unah.edu.hn")
