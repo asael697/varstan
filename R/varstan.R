@@ -95,6 +95,7 @@ varstan = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta = 0
   if(is.Sarima(model)) sft = fit_Sarima(model,chains,iter,warmup,adapt.delta,tree.depth)
   if(is.naive(model))  sft = fit_Sarima(model,chains,iter,warmup,adapt.delta,tree.depth)
   if(is.garch(model))  sft = fit_garch(model,chains,iter,warmup,adapt.delta,tree.depth)
+  if(is.SVM(model))    sft = fit_SVM(model,chains,iter,warmup,adapt.delta,tree.depth)
   if(is.varma(model))  sft = fit_varma(model,chains,iter,warmup,adapt.delta,tree.depth)
   if(is.Bekk(model))   sft = fit_Bekk(model,chains,iter,warmup,adapt.delta,tree.depth)
 
@@ -224,6 +225,7 @@ get_order = function(obj){
 
   if(is.Sarima(obj$model)) return(get_order_arima(obj$model))
   if(is.garch(obj$model))  return(get_order_garch(obj$model))
+  if(is.SVM(obj$model))    return(get_order_garch(obj$model))
   if(is.varma(obj$model))  return(get_order_varma(obj$model))
   if(is.Bekk(obj$model))   return(get_order_varma(obj$model))
 }
@@ -238,6 +240,7 @@ max_order = function(obj){
 
   if(is.Sarima(obj$model)) return(max_order_arima(obj$model))
   if(is.garch(obj$model))  return(max_order_garch(obj$model))
+  if(is.SVM(obj$model))    return(max_order_garch(obj$model))
   if(is.varma(obj$model))  return(max_order_varma(obj$model))
   if(is.Bekk(obj$model))   return(get_order_varma(obj$model))
 }
