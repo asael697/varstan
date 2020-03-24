@@ -4,17 +4,25 @@
 \alias{plot.varstan}
 \title{plot methods for varstan models}
 \usage{
-\method{plot}{varstan}(object, par = "fit", probs = 0.9, ...)
+\method{plot}{varstan}(object, par = "fit", prob = 0.9, combo = c("dens", "trace"), ...)
 }
 \arguments{
+\item{object}{An object of class \code{varstan}.}
+
 \item{par}{a character string with the desired plot. Valid values are \code{"fit"} for the
 model's fitted values plot, \code{"residuals"} for the residuals posterior mean plot,
 and \code{"parameters"} for density and trace plots for the sampled model parameter.
 The default value is \code{"fit"}.}
 
-\item{...}{Further arguments passed to  \code{mcmc_combo}.}
+\item{prob}{A number \eqn{p \in (0,1)}{p (0 < p < 1)} indicating the desired
+probability mass to include in the intervals. The default is to report
+\eqn{90}\% intervals (\code{prob=0.9}) rather than the traditionally used
+\eqn{95}\%.}
 
-\item{x}{An object of class \code{varstan}.}
+\item{combo}{A character vector with at least two elements. Each element of combo corresponds
+to a column in the resulting graphic and should be the name of one of the available MCMC functions.}
+
+\item{...}{Further arguments passed to  \code{mcmc_combo}.}
 }
 \value{
 A plot object from ggplot2 class.

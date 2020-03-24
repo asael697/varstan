@@ -7,6 +7,7 @@
 \alias{model.garch}
 \alias{model.varma}
 \alias{model.Bekk}
+\alias{model.SVM}
 \title{Print the defined model of a varstan object}
 \usage{
 model(obj)

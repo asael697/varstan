@@ -1060,7 +1060,7 @@ public:
         names__.push_back("loglik");
         names__.push_back("log_lik");
         names__.push_back("fit");
-        names__.push_back("residual");
+        names__.push_back("residuals");
     }
     void get_dims(std::vector<std::vector<size_t> >& dimss__) const {
         dimss__.resize(0);
@@ -1403,18 +1403,18 @@ public:
             stan::math::initialize(fit, DUMMY_VAR__);
             stan::math::fill(fit, DUMMY_VAR__);
             current_statement_begin__ = 182;
-            validate_non_negative_index("residual", "n", n);
-            Eigen::Matrix<double, Eigen::Dynamic, 1> residual(n);
-            stan::math::initialize(residual, DUMMY_VAR__);
-            stan::math::fill(residual, DUMMY_VAR__);
+            validate_non_negative_index("residuals", "n", n);
+            Eigen::Matrix<double, Eigen::Dynamic, 1> residuals(n);
+            stan::math::initialize(residuals, DUMMY_VAR__);
+            stan::math::fill(residuals, DUMMY_VAR__);
             // generated quantities statements
             current_statement_begin__ = 184;
             for (int i = 1; i <= n; ++i) {
                 current_statement_begin__ = 185;
-                stan::model::assign(residual, 
+                stan::model::assign(residuals, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             normal_rng(get_base1(epsilon, i, "epsilon", 1), get_base1(sigma, i, "sigma", 1), base_rng__), 
-                            "assigning variable residual");
+                            "assigning variable residuals");
                 current_statement_begin__ = 186;
                 stan::model::assign(log_lik, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
@@ -1424,7 +1424,7 @@ public:
                 stan::math::assign(loglik, (loglik + get_base1(log_lik, i, "log_lik", 1)));
             }
             current_statement_begin__ = 189;
-            stan::math::assign(fit, subtract(y, residual));
+            stan::math::assign(fit, subtract(y, residuals));
             // validate, write generated quantities
             current_statement_begin__ = 179;
             vars__.push_back(loglik);
@@ -1439,9 +1439,9 @@ public:
                 vars__.push_back(fit(j_1__));
             }
             current_statement_begin__ = 182;
-            size_t residual_j_1_max__ = n;
-            for (size_t j_1__ = 0; j_1__ < residual_j_1_max__; ++j_1__) {
-                vars__.push_back(residual(j_1__));
+            size_t residuals_j_1_max__ = n;
+            for (size_t j_1__ = 0; j_1__ < residuals_j_1_max__; ++j_1__) {
+                vars__.push_back(residuals(j_1__));
             }
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
@@ -1573,10 +1573,10 @@ public:
             param_name_stream__ << "fit" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t residual_j_1_max__ = n;
-        for (size_t j_1__ = 0; j_1__ < residual_j_1_max__; ++j_1__) {
+        size_t residuals_j_1_max__ = n;
+        for (size_t j_1__ = 0; j_1__ < residuals_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
-            param_name_stream__ << "residual" << '.' << j_1__ + 1;
+            param_name_stream__ << "residuals" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
     }
@@ -1684,10 +1684,10 @@ public:
             param_name_stream__ << "fit" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t residual_j_1_max__ = n;
-        for (size_t j_1__ = 0; j_1__ < residual_j_1_max__; ++j_1__) {
+        size_t residuals_j_1_max__ = n;
+        for (size_t j_1__ = 0; j_1__ < residuals_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
-            param_name_stream__ << "residual" << '.' << j_1__ + 1;
+            param_name_stream__ << "residuals" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
     }

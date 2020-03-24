@@ -47,7 +47,7 @@ For changing the default prior use the function \code{set_prior}
 }
 \examples{
 \dontrun{
-dat = garch(birth,order = c(1,1,0),arma = c(1,1))
+dat = garch(ipc,order = c(1,1,0),arma = c(1,1),genT = TRUE)
 dat
 }
 

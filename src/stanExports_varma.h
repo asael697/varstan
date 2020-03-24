@@ -629,7 +629,7 @@ public:
         names__.push_back("loglik");
         names__.push_back("log_lik");
         names__.push_back("fit");
-        names__.push_back("residual");
+        names__.push_back("residuals");
     }
     void get_dims(std::vector<std::vector<size_t> >& dimss__) const {
         dimss__.resize(0);
@@ -881,23 +881,23 @@ public:
             stan::math::initialize(fit, DUMMY_VAR__);
             stan::math::fill(fit, DUMMY_VAR__);
             current_statement_begin__ = 97;
-            validate_non_negative_index("residual", "n", n);
-            validate_non_negative_index("residual", "d", d);
-            Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> residual(n, d);
-            stan::math::initialize(residual, DUMMY_VAR__);
-            stan::math::fill(residual, DUMMY_VAR__);
+            validate_non_negative_index("residuals", "n", n);
+            validate_non_negative_index("residuals", "d", d);
+            Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> residuals(n, d);
+            stan::math::initialize(residuals, DUMMY_VAR__);
+            stan::math::fill(residuals, DUMMY_VAR__);
             // generated quantities statements
             current_statement_begin__ = 99;
             for (int i = 1; i <= n; ++i) {
                 current_statement_begin__ = 100;
-                stan::model::assign(residual, 
+                stan::model::assign(residuals, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             transpose(multi_normal_cholesky_rng(get_base1(epsilon, i, "epsilon", 1), sigma, base_rng__)), 
-                            "assigning variable residual");
+                            "assigning variable residuals");
                 current_statement_begin__ = 101;
                 stan::model::assign(fit, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                            subtract(get_base1(y, i, "y", 1), get_base1(residual, i, "residual", 1)), 
+                            subtract(get_base1(y, i, "y", 1), get_base1(residuals, i, "residuals", 1)), 
                             "assigning variable fit");
                 current_statement_begin__ = 102;
                 stan::model::assign(log_lik, 
@@ -924,11 +924,11 @@ public:
                 }
             }
             current_statement_begin__ = 97;
-            size_t residual_j_2_max__ = d;
-            size_t residual_j_1_max__ = n;
-            for (size_t j_2__ = 0; j_2__ < residual_j_2_max__; ++j_2__) {
-                for (size_t j_1__ = 0; j_1__ < residual_j_1_max__; ++j_1__) {
-                    vars__.push_back(residual(j_1__, j_2__));
+            size_t residuals_j_2_max__ = d;
+            size_t residuals_j_1_max__ = n;
+            for (size_t j_2__ = 0; j_2__ < residuals_j_2_max__; ++j_2__) {
+                for (size_t j_1__ = 0; j_1__ < residuals_j_1_max__; ++j_1__) {
+                    vars__.push_back(residuals(j_1__, j_2__));
                 }
             }
         } catch (const std::exception& e) {
@@ -1064,12 +1064,12 @@ public:
                 param_names__.push_back(param_name_stream__.str());
             }
         }
-        size_t residual_j_2_max__ = d;
-        size_t residual_j_1_max__ = n;
-        for (size_t j_2__ = 0; j_2__ < residual_j_2_max__; ++j_2__) {
-            for (size_t j_1__ = 0; j_1__ < residual_j_1_max__; ++j_1__) {
+        size_t residuals_j_2_max__ = d;
+        size_t residuals_j_1_max__ = n;
+        for (size_t j_2__ = 0; j_2__ < residuals_j_2_max__; ++j_2__) {
+            for (size_t j_1__ = 0; j_1__ < residuals_j_1_max__; ++j_1__) {
                 param_name_stream__.str(std::string());
-                param_name_stream__ << "residual" << '.' << j_1__ + 1 << '.' << j_2__ + 1;
+                param_name_stream__ << "residuals" << '.' << j_1__ + 1 << '.' << j_2__ + 1;
                 param_names__.push_back(param_name_stream__.str());
             }
         }
@@ -1178,12 +1178,12 @@ public:
                 param_names__.push_back(param_name_stream__.str());
             }
         }
-        size_t residual_j_2_max__ = d;
-        size_t residual_j_1_max__ = n;
-        for (size_t j_2__ = 0; j_2__ < residual_j_2_max__; ++j_2__) {
-            for (size_t j_1__ = 0; j_1__ < residual_j_1_max__; ++j_1__) {
+        size_t residuals_j_2_max__ = d;
+        size_t residuals_j_1_max__ = n;
+        for (size_t j_2__ = 0; j_2__ < residuals_j_2_max__; ++j_2__) {
+            for (size_t j_1__ = 0; j_1__ < residuals_j_1_max__; ++j_1__) {
                 param_name_stream__.str(std::string());
-                param_name_stream__ << "residual" << '.' << j_1__ + 1 << '.' << j_2__ + 1;
+                param_name_stream__ << "residuals" << '.' << j_1__ + 1 << '.' << j_2__ + 1;
                 param_names__.push_back(param_name_stream__.str());
             }
         }

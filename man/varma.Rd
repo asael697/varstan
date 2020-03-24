@@ -4,7 +4,7 @@
 \alias{varma}
 \title{Constructor varma(p,q) object}
 \usage{
-varma(ts,order = c(1,1))
+varma(ts,order = c(1,0))
 }
 \arguments{
 \item{ts}{an multivariate time series}
