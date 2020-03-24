@@ -56,6 +56,9 @@ posterior_predict.varstan = function(obj,h = 1,
   if(is.garch(obj$model))
     fc = posterior_predict_garch(obj = obj,h = h,xreg = xreg,robust = robust,draws = draws,seed = seed)
 
+  if(is.SVM(obj$model) )
+    fc = posterior_predict_garch(obj = obj,h = h,xreg = xreg,robust = robust,draws = draws,seed = seed)
+
   if(is.varma(obj$model))
     fc = posterior_predict_varma(obj = obj,h = h,robust = robust,draws = draws,seed = seed)
 
@@ -157,7 +160,7 @@ posterior_predict_garch = function(obj,h = 1,xreg = NULL,robust = TRUE,
 
 
     # posterior predict draws
-    yh[,i] =rnorm(draws,mu,sigma[n1+i]);
+    yh[,i] =rnorm(n = draws,mean = mu,sd = sigma[n1+i]);
 
     # posterior estimate
     if(robust == TRUE)y1=c(y1, median(yh[,i]))
