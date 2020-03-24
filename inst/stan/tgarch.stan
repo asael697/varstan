@@ -179,12 +179,12 @@ generated quantities{
   real loglik = 0;
   vector[n] log_lik;
   vector[n] fit;
-  vector[n] residual;
+  vector[n] residuals;
 
   for(i in 1:n){
-     residual[i] = normal_rng(epsilon[i],sigma[i]);
+     residuals[i] = normal_rng(epsilon[i],sigma[i]);
      log_lik[i] = normal_lpdf(y[i]|mu[i],sigma[i]);
      loglik += log_lik[i];
   }
-  fit = y - residual;
+  fit = y - residuals;
 }

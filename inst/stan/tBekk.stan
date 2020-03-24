@@ -193,16 +193,14 @@ model{
 }
 generated quantities{
   real loglik = 0;
-  vector[m] log_lik;
+  vector[n] log_lik;
   matrix[n,d] fit;
-  matrix[n,d] residual;
+  matrix[n,d] residuals;
 
   for(i in 1:n){
-    residual[i] = multi_normal_cholesky_rng(epsilon[i],Lsigma[i])';
-    fit[i] = y[i]-residual[i];
-    if(i <=m){
-      log_lik[i] = multi_normal_cholesky_lpdf(y[i]|mu[i],Lsigma[i]);
-      loglik += log_lik[i];
-    }
+    residuals[i] = multi_normal_cholesky_rng(epsilon[i],Lsigma[i])';
+    fit[i] = y[i]-residuals[i];
+    log_lik[i] = multi_normal_cholesky_lpdf(y[i]|mu[i],Lsigma[i]);
+    loglik += log_lik[i];
   }
 }

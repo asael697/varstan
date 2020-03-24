@@ -156,12 +156,12 @@ generated quantities{
   real loglik = 0;
   vector[n1] log_lik;
   vector[n] fit;
-  vector[n] residual;
+  vector[n] residuals;
 
   for(i in 1:n){
-    if(i<=dinits) residual[i] = normal_rng(0,sigma0);
-    else residual[i] = normal_rng(epsilon[i-dinits],sigma0);
-    fit[i] = yreal[i]-residual[i];
+    if(i<=dinits) residuals[i] = normal_rng(0,sigma0);
+    else residuals[i] = normal_rng(epsilon[i-dinits],sigma0);
+    fit[i] = yreal[i]-residuals[i];
     if(i <=n1){
       log_lik[i] = normal_lpdf(y[i]|mu[i],sigma0);
       loglik += log_lik[i];
