@@ -35,85 +35,11 @@ posterior_fit.varstan = function(obj,robust = FALSE,...){
   if( !is.varstan(obj) )
     stop("The current object is not a varstan class")
 
-  if(is.Sarima(obj$model)) fit = get_fit_arima(model = obj$model,fit = obj$stanfit,robust)
-  if(is.naive(obj$model))  fit = get_fit_arima(model = obj$model,fit = obj$stanfit,robust)
-  if(is.garch(obj$model))  fit = get_fit_garch(model = obj$model,fit = obj$stanfit,robust)
-  if(is.varma(obj$model))  fit = get_fit_varma(model = obj$model,fit = obj$stanfit,robust)
-  if(is.Bekk(obj$model))   fit = get_fit_varma(model = obj$model,fit = obj$stanfit,robust)
+  post = as.data.frame(extract_stan(obj,"fit", permuted = TRUE) )
+  if(robust) sum1 = t(matrix(apply(post,2,median),nrow = obj$dimension,byrow = TRUE))
+  else sum1 = t(matrix(apply(post,2,mean),nrow =obj$dimension,byrow = TRUE))
 
-  fit =ts(fit,start =  min(obj$time),frequency = obj$period)
+  fit =ts(sum1,start =  min(obj$time),frequency = obj$period)
 
   return(fit)
-}
-#' Get the fitted values of an garch model
-#'
-#' get the fitted values of an garch(s,k,h) model  in STAN
-#'
-#' The function returns a data.frame object with the fitted values
-#'
-#' @usage  get_fit_garch(model,fit,robust)
-#'
-#' @param fit a stanfit object
-#' @param model a garch  model
-#' @param robust a boolean for obtain the robust estimation
-#'
-#' @author  Asael Alonzo Matamoros
-#'
-#' @return  a data frame with all the important fitted parameters
-#'
-#' @noRd
-#'
-get_fit_garch = function(model,fit,robust = FALSE,...){
-  post = as.data.frame(rstan::extract(fit,"fit", permuted = TRUE) )
-  if(robust) sum = apply(post,2,mean)
-  else sum = apply(post,2,median)
-  return(sum)
-}
-#' Get the fitted values of an arima model
-#'
-#' get the fitted values of an arima(p,d,q) model  in STAN
-#'
-#' The function returns a data.frame object with the fitted values
-#'
-#' @usage  get_fit_arima(model,fit,robust)
-#'
-#' @param fit a stanfit object
-#' @param model the arima model
-#' @param robust a boolean for obtain the robust estimation
-#'
-#' @author  Asael Alonzo Matamoros
-#'
-#' @return  a data frame with all the important fitted parameters
-#'
-#' @noRd
-#'
-get_fit_arima = function(model,fit,robust = FALSE,...){
-  post = as.data.frame(rstan::extract(fit,"fit", permuted = TRUE) )
-  if(robust) sum = apply(post,2,mean)
-  else sum = apply(post,2,median)
-  return(sum)
-}
-#' Get the fitted values of an varma model
-#'
-#' get the fitted values of an varma(p,q) model  in STAN
-#'
-#' The function returns a data.frame object with the fitted values
-#'
-#' @usage  get_fit_varma(model,fit,robust)
-#'
-#' @param model: a varma model object
-#' @param fit: a stanfit object
-#' @param robust: a boolean for obtain the robust estimation
-#'
-#' @author  Asael Alonzo Matamoros
-#'
-#' @return  a data frame with all the important fitted parameters
-#'
-#' @noRd
-#'
-get_fit_varma = function(model,fit,robust = FALSE,...){
-  post = as.data.frame(rstan::extract(fit,"fit", permuted = TRUE) )
-  if(robust) sum1 = t(matrix(apply(post,2,median),nrow = model$dimension,byrow = TRUE))
-  else sum1 = t(matrix(apply(post,2,mean),nrow = model$dimension,byrow = TRUE))
-  return(sum1)
 }

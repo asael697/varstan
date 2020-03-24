@@ -34,89 +34,11 @@ posterior_residuals.varstan = function(obj,robust = FALSE,...){
   if( !is.varstan(obj) )
     stop("The current object is not a varstan class")
 
-  if(is.Sarima(obj$model))resd = get_residuals_arima(fit = obj$stanfit,robust)
-  if(is.naive(obj$model)) resd = get_residuals_arima(fit = obj$stanfit,robust)
-  if(is.garch(obj$model)) resd = get_residuals_garch(fit = obj$stanfit,robust)
-  if(is.varma(obj$model)) resd = get_residuals_varma(fit = obj$stanfit,d = obj$model$dimension,robust)
-  if(is.Bekk(obj$model))  resd = get_residuals_varma(fit = obj$stanfit,d = obj$model$dimension,robust)
+  post = as.data.frame(extract_stan(obj,"residuals", permuted = TRUE) )
+  if(robust) sum1 = t(matrix(apply(post,2,median),nrow = obj$dimension,byrow = TRUE))
+  else sum1 = t(matrix(apply(post,2,mean),nrow =obj$dimension,byrow = TRUE))
 
-  resd =ts(resd,start =  min(obj$time),frequency = obj$period)
-
+  resd =ts(sum1,start =  min(obj$time),frequency = obj$period)
 
   return(resd)
-}
-
-##################################################################################
-# Internals
-##################################################################################
-
-
-#' Get the residuals of a garch model
-#'
-#' get the residuals of a garch(s,k,h) model  in STAN
-#'
-#' The function returns a data.frame object with the fitted values
-#'
-#' @usage  get_residuals_garch(fit,robust = TRUE,...)
-#'
-#' @param fit a stanfit object
-#' @param robust a boolean for obtain the robust estimation
-#'
-#' @author  Asael Alonzo Matamoros
-#'
-#' @return  a data frame with all the important fitted parameters
-#'
-#' @noRd
-#'
-get_residuals_garch = function(fit,robust = FALSE,...){
-  post = as.data.frame(rstan::extract(fit,"residual", permuted = TRUE) )
-  if(robust) sum = apply(post,2,mean)
-  else sum = apply(post,2,median)
-  return(sum)
-}
-#' Get the fitted values of an arima model
-#'
-#' get the fitted values of an arima(p,d,q) model  in STAN
-#'
-#' The function returns a data.frame object with the fitted values
-#'
-#' @usage  get_residuals_arima(fit,robust = FALSE,...)
-#'
-#' @param fit a stanfit object
-#' @param robust a boolean for obtain the robust estimation
-#'
-#' @author  Asael Alonzo Matamoros
-#'
-#' @return  a data frame with all the important fitted parameters
-#'
-#' @noRd
-#'
-get_residuals_arima = function(fit,robust = FALSE,...){
-  post = as.data.frame(rstan::extract(fit,"residual", permuted = TRUE) )
-  if(robust) sum = apply(post,2,mean)
-  else sum = apply(post,2,median)
-  return(sum)
-}
-#' Get the fitted values of an varma model
-#'
-#' get the fitted values of an varma(p,q) model  in STAN
-#'
-#' The function returns a data.frame object with the fitted values
-#'
-#' @usage  get_residuals_varma(fit,robust = FALSE,...)
-#'
-#' @param fit a stanfit object
-#' @param robust a boolean for obtain the robust estimation
-#'
-#' @author  Asael Alonzo Matamoros
-#'
-#' @return  a data frame with all the important fitted parameters
-#'
-#' @noRd
-#'
-get_residuals_varma = function(fit,d = 1,robust = FALSE,...){
-  post = as.data.frame(rstan::extract(fit,"residual", permuted = TRUE) )
-  if(robust) sum1 = t(matrix(apply(post,2,median),nrow = d,byrow = TRUE))
-  else sum1 = t(matrix(apply(post,2,mean),nrow =d,byrow = TRUE))
-  return(sum1)
 }
