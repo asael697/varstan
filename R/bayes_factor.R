@@ -55,6 +55,8 @@
 #' @export
 #'
 bridge_sampler.varstan <- function(samples, ...) {
+  if(!is.varstan(samples))
+    stop("Thr current object is not a varstan class")
 
   out <- try(bridge_sampler(samples$stanfit, ...))
   return(out)
