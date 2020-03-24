@@ -48,17 +48,17 @@ plot.varstan = function(object,par = "fit",prob = 0.9,combo = c("dens","trace"),
 
     par_ret = mod_parameter(object$model)
     stanfit2 = as.stan(object)
-    p = bayesplot::mcmc_combo(stanfit2,pars = par_ret,combo = combo)
+    p = bayesplot::mcmc_combo(stanfit2,pars = par_ret,combo = c("dens","trace"))
   }
   else if(par == "fit"){
     p = plot_ts(obj = object,par = "fit",prob = prob,real = TRUE)
   }
   else if(par == "residuals"){
-    p = plot_ts(obj = object,par = "residual",prob =  probs,real = FALSE)
+    p = plot_ts(obj = object,par = "residuals",prob =  prob,real = FALSE)
   }
   else if(par %in% get_params(object)$include){
     md = data.frame(extract_stan(object,pars = par))
-    p = bayesplot::mcmc_combo(x = md,combo = c("dens","trace"))
+    p = bayesplot::mcmc_combo(x = md,combo =combo)
   }
   else{
     stop("par argument is not valid, please enter a models valid argument")
