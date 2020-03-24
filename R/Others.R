@@ -23,15 +23,15 @@
 #'
 version = function(View = FALSE){
   m1 = c("Seasonal arima","Dynamic regression","arma-mgarch","varma-mbekk","Bekk",
-         "Dynamic Harmonic Regression","Random-walk")
-  f1 = c( "Sarima(order = c(p,d,q), seasonal = c(P,D,Q) )",
-          "Sarima(order = c(p,d,q), xreg != NULL )",
-          "garch(order=c(s,k,h),arma = c(p,q) )",
-          "varma(order=c(p,q),bekk = c(s,k,h) )",
-          "Bekk(order=c(s,k,h),varma = c(p,q) )",
-          "Sarima(order = c(p,d,q), xreg= fourier(ts,K) )",
-          "naive(seasonal = FALSE)")
-  G1 = c(FALSE,FALSE,TRUE,TRUE,TRUE,FALSE,FALSE)
+         "Dynamic Harmonic Regression","Random-walk","Stochastic Volatility model")
+  f1 = c( "Sarima(ts,order = c(p,d,q), seasonal = c(P,D,Q) )",
+          "Sarima(ts,order = c(p,d,q), xreg != NULL )",
+          "garch(ts,order=c(s,k,h),arma = c(p,q),xreg != NULL )",
+          "varma(mts,order=c(p,q),bekk = c(s,k,h) )",
+          "Bekk(mts,order=c(s,k,h),varma = c(p,q) )",
+          "Sarima(ts,order = c(p,d,q), xreg= fourier(ts,K) )",
+          "naive(ts,seasonal = FALSE)","SVM(ts,arma = c(p,q),xreg != NULL )")
+  G1 = c(FALSE,FALSE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE)
   df = data.frame(model = m1,functions = f1,GenT = G1)
   if(View){
     View(df)
@@ -75,6 +75,12 @@ version = function(View = FALSE){
 #'  distribution(par = "ar")
 #'
 distribution = function(par){
+
+  param = c("ar","ma","sar","sma","arch","garch","dfv","sigma0","mu0","breg","mgarch")
+
+  if( !(par %in% param) )
+    stop("Invalid par argument")
+
   if(par %in% c("ar","ma","sar","sma","arch","garch") ){
     cat("\nThe available prior  distribution for the ",par," parameter are: \n")
     cat(par,"~ normal(loc,scl) \n")
@@ -133,8 +139,7 @@ distribution = function(par){
 #'
 parameters = function(classes = NULL){
 
-  x = c("ar","ma","sar","sma","arch","garch","mgarch","mu0","breg",
-        "sigma0","dfv")
+  x = c("ar","ma","sar","sma","arch","garch","mgarch","mu0","breg","sigma0","dfv")
 
   if(is.null(classes)){
     cat("All the current parameters are: \n")
