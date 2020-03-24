@@ -6,12 +6,9 @@
 #' @export
 #'
 print.Sarima = function(obj,...){
-  if(is.Sarima(obj)){
-    print(report(obj))
-  }
-  else{
-    print("The current object is not an arima model")
-  }
+  if(!is.Sarima(obj))
+    stop("The current object is not an arima model")
+  report(obj)
 }
 #' Print a naive model
 #'
@@ -21,12 +18,9 @@ print.Sarima = function(obj,...){
 #' @export
 #'
 print.naive = function(obj,...){
-  if(is.naive(obj)){
-    print(report(obj))
-  }
-  else{
-    print("The current object is not an arima model")
-  }
+  if(!is.naive(obj))
+    stop("The current object is not a naive model")
+  report(obj)
 }
 #' Print a garch model
 #'
@@ -36,12 +30,21 @@ print.naive = function(obj,...){
 #' @export
 #'
 print.garch = function(obj,...){
-  if(is.garch(obj)){
-    print(report(obj))
-  }
-  else{
-    print("The current object is not a garch model")
-  }
+  if(!is.garch(obj))
+    stop("The current object is not a garch model")
+  report(obj)
+}
+#' Print a Stochastic Volatility model
+#'
+#' @param obj a SVM model from the varstan package
+#'
+#' @method print SVM
+#' @export
+#'
+print.SVM = function(obj,...){
+  if(!is.SVM(obj))
+    stop("The current object is not a SVM model")
+  report(obj)
 }
 #' Print a varma model
 #'
@@ -51,12 +54,9 @@ print.garch = function(obj,...){
 #' @export
 #'
 print.varma = function(obj,...){
-  if(is.varma(obj)){
-    print(report(obj))
-  }
-  else{
-    print("The current object is not a varma model")
-  }
+  if(!is.varma(obj))
+    stop("The current object is not a varma model")
+  report(obj)
 }
 #' Print a Bekk model
 #'
@@ -66,12 +66,9 @@ print.varma = function(obj,...){
 #' @export
 #'
 print.Bekk= function(obj,...){
-  if(is.Bekk(obj)){
-    print(report(obj))
-  }
-  else{
-    print("The current object is not a Bekk model")
-  }
+  if(!is.Bekk(obj))
+    stop("The current object is not a Bekk model")
+  report(obj)
 }
 #' Print a varstan object
 #'
@@ -81,14 +78,12 @@ print.Bekk= function(obj,...){
 #' @export
 #'
 print.varstan = function(obj,...){
-  if(is.varstan(obj)){
-    model(obj)
-    print(summary(obj))
-    cat("\n Samples were drawn using sampling(NUTS). For each parameter, ess")
-    cat("\n is the effective sample size, and Rhat is the potential")
-    cat("\n scale reduction factor on split chains (at convergence, Rhat = 1). \n")
-  }
-  else{
-    print("The current object is not a varstan object")
-  }
+  if(!is.varstan(obj))
+    stop("The current object is not a varstan object")
+
+  model(obj)
+  print(summary(obj))
+  cat("\n Samples were drawn using sampling(NUTS). For each parameter, ess")
+  cat("\n is the effective sample size, and Rhat is the potential")
+  cat("\n scale reduction factor on split chains (at convergence, Rhat = 1). \n")
 }
