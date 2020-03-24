@@ -80,6 +80,44 @@ fit_garch = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta =
 
   return(stanfit)
 }
+#' Fit a SVM model
+#'
+#' Fit a SVM(ts, arma = c(p,q),xreg = NULL) model  in STAN
+#'
+#' The function returns a list with the fitted model in stan
+#'
+#' @usage  fit_SVM(model,chains,iter,warmup,...)
+#'
+#' @param model A time series object for the varstan models
+#' @param chains the number of chains to be run
+#' @param iter the number of iteration per chain
+#' @param warmup the number of initial iteration to be burned
+#' @param adapt.delta the thin of the jumps in a HMC method
+#' @param  tree.depth maximum  depth of the trees  evaluated
+#' during each iteration
+#'
+#' @import rstan
+#'
+#' @author  Asael Alonzo Matamoros
+#'
+#' @noRd
+#'
+#' @return  a stanfit object
+#'
+fit_SVM = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta = 0.90,tree.depth,...){
+
+  pars = get_params_garch(model)$exclude
+
+
+  stanfit = rstan::sampling(stanmodels$SVM,
+                              data = model,
+                              chains = chains,
+                              iter = iter,
+                              warmup = warmup,
+                              control = list(adapt_delta = adapt.delta,max_treedepth = tree.depth))
+
+  return(stanfit)
+}
 #' Fit a  varma-Bekk model
 #'
 #' Fit a varma(p,q)-Bekk(s,k,m) model  in STAN
