@@ -11,6 +11,7 @@ get_params = function(obj,...){
   if(is.Sarima(obj$model)) gp = get_params_arima(obj$model)
   if(is.naive(obj$model))  gp = get_params_arima(obj$model)
   if(is.garch(obj$model))  gp = get_params_garch(obj$model)
+  if(is.SVM(obj$model))    gp = get_params_garch(obj$model)
   if(is.varma(obj$model))  gp = get_params_varma(obj$model)
   if(is.Bekk(obj$model))   gp = get_params_varma(obj$model)
 
