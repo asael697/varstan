@@ -60,6 +60,7 @@ Collate:
     'report.R'
     'Sarima.R'
     'summary.R'
+    'SVM.R'
     'stanmodels.R'
     'varma.R'
     'varstan-package.R'
