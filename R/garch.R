@@ -46,7 +46,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' dat = garch(birth,order = c(1,1,0),arma = c(1,1))
+#' dat = garch(ipc,order = c(1,1,0),arma = c(1,1),genT = TRUE)
 #' dat
 #' }
 #'
@@ -70,15 +70,15 @@ garch = function(ts,order = c(1,1,0),arma = c(0,0),xreg = NULL,
 
   m1$prior_mu0 = c(0,1,0,1)
   m1$prior_sigma0 = c(0,1,7,4)
-  m1$prior_arch    = matrix(rep(c(3,3,1,2),order[1]),ncol = 4,byrow = TRUE)
-  m1$prior_garch   = matrix(rep(c(3,3,1,2),order[2]),ncol = 4,byrow = TRUE)
+  m1$prior_arch    = matrix(rep(c(0,0.5,1,1),order[1]),ncol = 4,byrow = TRUE)
+  m1$prior_garch   = matrix(rep(c(0,0.5,1,1),order[2]),ncol = 4,byrow = TRUE)
   m1$prior_mgarch  = matrix(rep(c(0,0.5,1,1),order[3]),ncol = 4,byrow = TRUE)
 
   # arma representation
   m1$p = arma[1]
   m1$q = arma[2]
-  m1$prior_ar =  matrix(rep(c(3,3,1,2),arma[1]),ncol = 4,byrow = TRUE)
-  m1$prior_ma =  matrix(rep(c(3,3,1,2),arma[2]),ncol = 4,byrow = TRUE)
+  m1$prior_ar =  matrix(rep(c(0,0.5,1,1),arma[1]),ncol = 4,byrow = TRUE)
+  m1$prior_ma =  matrix(rep(c(0,0.5,1,1),arma[2]),ncol = 4,byrow = TRUE)
 
   # Generalized t distribution
   m1$genT = genT
