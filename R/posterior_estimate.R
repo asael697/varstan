@@ -32,6 +32,7 @@ posterior_estimate.varstan = function(obj,robust = FALSE,...){
   if(is.Sarima(obj$model)) resume = point_estimate_arima(model = obj$model,fit = obj$stanfit,roubst = robust)
   if(is.naive(obj$model))  resume = point_estimate_arima(model = obj$model,fit = obj$stanfit,roubst = robust)
   if(is.garch(obj$model))  resume = point_estimate_garch(model = obj$model,fit = obj$stanfit,roubst = robust)
+  if(is.SVM(obj$model))    resume = point_estimate_garch(model = obj$model,fit = obj$stanfit,roubst = robust)
   if(is.varma(obj$model))  resume = point_estimate_varma(model = obj$model,fit = obj$stanfit,roubst = robust)
   if(is.Bekk(obj$model))   resume = point_estimate_varma(model = obj$model,fit = obj$stanfit,roubst = robust)
 
