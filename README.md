@@ -13,14 +13,16 @@ non-linear models (*via*
 [prophet](https://github.com/facebook/prophet)), univariate kalman
 Filters, varma and bekk models.
 
-On the beta version 0.5.0.000, the avaliable models are:
+On the beta version 1.0.5.000, the avaliable models are:
 
 -   arima
 -   Seasonal arima
 -   garch
 -   varma
 -   Bekk
--   Dynamic regression +Dynamic Harmonic regresion
+-   Dynamic regression
+-   Dynamic Harmonic regresion
+-   Stochastic Volatility models
 
 The dynamic of varstan is to build your own model using one of the
 avaliable model constructor, personalize your own priors (*check the Use
@@ -85,14 +87,16 @@ version(View = FALSE)
 #> Algorithm: Stan-NUTS 
 #> Current classes: varstan, Sarima, garch, varma, Bekk,DWR 
 #> Current models: 
-#>        model                         functions                                GenT
-#> 1 Seasonal- ARIMA             Sarima(order = c(p,d,q), seasonal = c(P,D,Q) )  FALSE
-#> 2 Dynamic-Regression          Sarima(order = c(p,d,q), xreg != NULL )         FALSE
-#> 3 arma-mgarch                 garch(order=c(s,k,h),arma = c(p,q) )            TRUE
-#> 4 varma-mbekk                 varma(order=c(p,q),bekk = c(s,k,h) )            TRUE
-#> 5 Bekk                        Bekk(order=c(s,k,h),varma = c(p,q) )            TRUE
-#> 6 Dynamic-Harmonic-Regression Sarima(order = c(p,d,q), xreg= fourier(ts,K) )  FALSE
-#> 7 Random-walk                 naive(seasonal = FALSE)                         FALSE
+#>            model                           functions                               GenT
+#> 1 Seasonal arima              Sarima(ts,order = c(p,d,q),seasonal = c(P,D,Q))      FALSE
+#> 2 Dynamic regression          Sarima(ts,order = c(p,d,q), xreg != NULL)            FALSE
+#> 3 arma-mgarch                 garch(ts,order=c(s,k,h),arma = c(p,q),xreg != NULL)  TRUE
+#> 4 varma                       varma(mts,order=c(p,q),bekk = c(s,k,h) )             TRUE
+#> 5 Bekk                        Bekk(mts,order=c(s,k,h),varma = c(p,q) )             TRUE
+#> 6 Dynamic Harmonic Regression Sarima(ts,order = c(p,d,q), xreg= fourier(ts,K) )    FALSE
+#> 7 Random-walk                 naive(ts,seasonal = FALSE)                           FALSE
+#> 8 Stochastic Volatility model SVM(ts,arma = c(p,q),xreg != NULL )                  FALSE
+#> 
 #>  * model column represent the available model 
 #>  * functions column represent the function structure 
 #>  * GenT column represent if the model admits a generalized t-student distribution 
@@ -116,10 +120,10 @@ have some non-zero values every 12 lags (*inferior part*).
 dbirth = diff(birth)
 
 g1 = autoplot(birth)+labs(y= "births (thousands)",title ="U.S. Monthly live births")
-g2 = ggAcf(birth)+labs(y ="births",title = "ACF")
-g3 = ggPacf(birth)+labs(y ="births",title = "PACF")
-g4 = ggAcf(dbirth)+labs(y ="differenced births",title = "ACF")
-g5 = ggPacf(dbirth)+labs(y ="differenced births",title = "PACF")
+g2 = forecast::ggAcf(birth)+labs(y ="births",title = "ACF")
+g3 = forecast::ggPacf(birth)+labs(y ="births",title = "PACF")
+g4 = forecast::ggAcf(dbirth)+labs(y ="differenced births",title = "ACF")
+g5 = forecast::ggPacf(dbirth)+labs(y ="differenced births",title = "PACF")
 
 
 grid.arrange(g1,g2,g3,g4,g5,layout_matrix = lay1)
@@ -161,8 +165,7 @@ model1
 #> 
 #>  Seasonal Parameters: 
 #> sar[ 1 ] ~ normal (mu =  0 , sd =  0.5 ) 
-#> sma[ 1 ] ~ normal (mu =  0 , sd =  0.5 ) 
-#> NULL
+#> sma[ 1 ] ~ normal (mu =  0 , sd =  0.5 )
 ```
 
 The function *Sarima()* generates a Seasonal ARIMA model ready to be
@@ -189,7 +192,7 @@ get_prior(dat = model1,type = "ar")
 
 Now that the model and priors are defined, what follows is to fit the
 model using the *varstan()* function. We simulate 1 chain, of 2,000
-iterations and warm-up of the first 1,000 chain’s values.
+iterations and warm-up of the first 1,000 chain's values.
 
 ``` r
 sfit1 = varstan(model1,chains = 1)
@@ -203,13 +206,15 @@ fitted values using the plot method. On *figure 2* trace and posterior
 density plots are illustrated for all the model parameters.
 
 ``` r
-plot(sfit1,type = "parameter")
+plot(sfit1,par = "parameter")
 ```
 
 <img src="man/figures/fig2-1.png" width="60%" style="display: block; margin: auto;" />
 
-to have multi-modal distributions, indicating that all chains have mixed
-and converged. One useful way to assess models fit, is by the residuals
+In figure 2, all the chains appeared to be stationary, and the
+posteriors do not seem to have multi-modal distributions, indicating
+that all chains have mixed and converged. One useful way to assess
+models fit, is by the residuals
 (*e*<sub>*t*</sub> = *Y*<sub>*t*</sub> − *Ŷ*<sub>*t*</sub>). The package
 provides the posterior sample of every residual, but checking all of
 them is an exhausting task. An alternative, is checking the process
@@ -219,8 +224,8 @@ follow a random noise, the auto-correlation in *acf plots* quickly falls
 to zero, indicating an acceptable model fit.
 
 ``` r
-p1 = plot(sfit1,type = "residuals")
-p2 = plot(sfit1)
+p1 = autoplot(sfit1,par = "residuals")
+p2 = autoplot(sfit1)
 
 grid.arrange(p2,p1,ncol = 1)
 ```
@@ -237,9 +242,6 @@ ARIMA(1,1,1) residuals is declared and fitted to the birth data.
 ``` r
 model2 = Sarima(birth,order = c(1,1,1),xreg = fourier(birth,K = 2))
 sfit2 = varstan(model = model2,chains = 1,iter = 2000,warmup = 1000)
-```
-
-``` r
 sfit2
 #> 
 #> y ~ Sarima(1,1,1).reg[4] 
@@ -248,15 +250,15 @@ sfit2
 #> Current observations: 372 
 #>  
 #>              mean     se       2.5%      97.5%       ess   Rhat
-#> mu0       -0.0773 0.0065    -0.0900    -0.0646 1069.5412 1.0001
-#> sigma0    10.7657 0.0128    10.7406    10.7908  958.0279 1.0005
-#> phi       -0.2627 0.0019    -0.2664    -0.2590  902.3653 1.0006
-#> theta      0.6321 0.0015     0.6291     0.6350  863.2731 1.0001
-#> breg.1   -21.4846 0.0406   -21.5641   -21.4050  947.3377 1.0004
-#> breg.2     0.5771 0.0275     0.5232     0.6310 1043.4497 1.0012
-#> breg.3     4.7873 0.0211     4.7460     4.8286 1027.7898 0.9992
-#> breg.4    -5.2443 0.0251    -5.2935    -5.1951 1143.4878 0.9997
-#> loglik -1415.3885 0.0669 -1415.5197 -1415.2573 1009.5068 0.9993
+#> mu0       -0.0671 0.0068    -0.0803    -0.0539 1036.2232 0.9992
+#> sigma0    10.7950 0.0132    10.7690    10.8210  921.9799 0.9999
+#> phi       -0.2648 0.0018    -0.2684    -0.2612  996.2787 1.0026
+#> theta     -0.6404 0.0015    -0.6433    -0.6375  980.4661 1.0036
+#> breg.1   -21.5096 0.0388   -21.5857   -21.4335  908.3625 0.9990
+#> breg.2     0.6407 0.0278     0.5862     0.6952  871.6876 1.0016
+#> breg.3     4.8367 0.0233     4.7910     4.8825 1048.0365 1.0008
+#> breg.4    -5.2850 0.0243    -5.3325    -5.2374  987.9700 1.0004
+#> loglik -1415.3360 0.0694 -1415.4720 -1415.2001  971.5711 1.0002
 #> 
 #>  Samples were drawn using sampling(NUTS). For each parameter, ess
 #>  is the effective sample size, and Rhat is the potential
@@ -265,7 +267,7 @@ sfit2
 
 In this scenario both models seem to be a good choice for birth series
 analysis. Even so the harmonic regression fits more parameters. It is an
-obvious choice for birth’s sinusoidal behavior. As an example of model
+obvious choice for birth's sinusoidal behavior. As an example of model
 selection criteria, we compute the *bayes\_factor()* in logarithmic
 scale, that compares the marginals models likelihoods, values above 6
 (*in logarithmic scale*) provide good evidence for selecting the first
@@ -285,24 +287,16 @@ bayes_factor(x1 = sfit1,x2 = sfit2,log = TRUE)
 #> Iteration: 3
 #> Iteration: 4
 #> Iteration: 5
-#> Iteration: 6
-#> Estimated log Bayes factor in favor of model1 over model2: 199.11958
+#> Estimated log Bayes factor in favor of model1 over model2: 198.24703
 ```
 
-Now, a comparison of our selected model (*model1* ∼
-*Sarima(1,1,1)(1,1,1)\[12\]*) and the one given by the *auto.sarima()*
-function, for it we are gonna use a leave of one out cross validation
-*loo()*, and compare both looic with the *loo\_compare()* function
-provided by the loo package.
+Now, a comparison of our selected model (*model1 ~ Sarima(1,1,1)(1,1,1)\[12\]*) 
+and the one given by the *auto.sarima()* function, for it we are gonna use a leave 
+of one out cross validation *loo()*, and compare both looic with the *loo\_compare()* 
+function provided by the loo package.
 
 ``` r
 sfit3 = auto.sarima(birth,chains = 1,iter = 4000)
-#> Warning: There were 7 divergent transitions after warmup. Increasing adapt_delta above 0.9 may help. See
-#> http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
-#> Warning: Examine the pairs() plot to diagnose sampling problems
-```
-
-``` r
 sfit3
 #> 
 #> y ~ Sarima(0,1,2)(1,1,1)[12] 
@@ -311,13 +305,13 @@ sfit3
 #> Current observations: 360 
 #>  
 #>               mean     se       2.5%      97.5%      ess   Rhat
-#> mu0         0.0091 0.0018     0.0056     0.0126 1773.444 1.0003
-#> sigma0      7.3547 0.0060     7.3430     7.3665 2011.649 1.0018
-#> theta.1     0.3670 0.0013     0.3645     0.3695 1761.412 1.0007
-#> theta.2     0.1383 0.0010     0.1362     0.1403 1998.927 0.9995
-#> sphi       -0.2515 0.0016    -0.2546    -0.2483 1919.813 1.0010
-#> stheta      0.2966 0.0018     0.2932     0.3001 1996.057 0.9998
-#> loglik  -1231.6631 0.0391 -1231.7397 -1231.5866 2053.303 0.9998
+#> mu0         0.0071 0.0018     0.0035     0.0106 2132.576 1.0002
+#> sigma0      7.3544 0.0061     7.3423     7.3664 1995.597 1.0002
+#> theta.1    -0.3685 0.0013    -0.3711    -0.3659 1981.193 0.9996
+#> theta.2    -0.1388 0.0011    -0.1409    -0.1367 1788.780 0.9999
+#> sphi       -0.2570 0.0017    -0.2603    -0.2537 1810.921 1.0009
+#> stheta     -0.3019 0.0019    -0.3055    -0.2982 2014.697 1.0003
+#> loglik  -1231.6982 0.0402 -1231.7769 -1231.6195 2088.060 0.9995
 #> 
 #>  Samples were drawn using sampling(NUTS). For each parameter, ess
 #>  is the effective sample size, and Rhat is the potential
@@ -326,7 +320,7 @@ sfit3
 
 Different from model1, the selected one does not contemplate an
 auto-regressive component, and use 2 mean average components instead.
-Now let’s proceed to estimate the loo for both models:
+Now lets proceed to estimate the loo for both models:
 
 ``` r
 loo1 = loo(sfit1)
@@ -335,8 +329,8 @@ loo3 = loo(sfit3)
 lc = loo::loo_compare(loo1,loo3)
 print(lc,simplify = FALSE)
 #>        elpd_diff se_diff elpd_loo se_elpd_loo p_loo   se_p_loo looic   se_looic
-#> model2     0.0       0.0 -1235.2     15.3         6.9     0.8   2470.3    30.7 
-#> model1    -1.7       5.7 -1236.9     15.6         8.8     1.0   2473.8    31.3
+#> model2     0.0       0.0 -1235.5     15.4         7.4     0.8   2471.0    30.8 
+#> model1    -0.1       6.4 -1235.6     15.4         7.6     0.8   2471.2    30.8
 ```
 
 *loo\_compare()* prints first the best model. In this example is the one
@@ -364,3 +358,6 @@ For further readings and references you can check
 
 -   Rob J. Hyndman, Y. Khandakar, Automatic Time Series Forecasting: The
     forecast Package for R
+
+-   R. S. Tsay. Analysis of Financial Time Series. Wiley-Interscience,
+    Chicago, second edition, 2010.

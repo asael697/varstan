@@ -1,7 +1,34 @@
 **VARSTAN NEWS**
 ============
 
-**varstan 1.0.1.500 Date: 12/03/2020**
+
+**varstan 1.0.5.000 Date: 24/03/2020**
+----------------------------------
+
+### Features:
+
+-   Implementation of Stochastic Volatility models
+
+
+### Improvements:
+
+-  posterior_residuals and posterior_fit function updated and optimized
+
+-  report, model and print methods updated and optimized
+
+- legend  updates in plots and autoplot methods
+
+
+### Changes:
+
+-   No current changes
+
+### Fixes:
+
+- bug in plot methods
+
+
+**varstan 1.0.1.500 Date: 20/03/2020**
 ----------------------------------
 
 ### Features:
