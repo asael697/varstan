@@ -4,12 +4,18 @@
 #' The function prints the fitted values time series, the trace and density plots for the
 #' sampled model parameters, or the residuals' posterior mean time series.
 #'
-#' @param x An object of class \code{varstan}.
+#' @param object An object of class \code{varstan}.
 #' @param par a character string with the desired plot. Valid values are \code{"fit"} for the
 #'  model's fitted values plot, \code{"residuals"} for the residuals posterior mean plot,
 #'  and \code{"parameters"} for density and trace plots for the sampled model parameter.
 #'  The default value is \code{"fit"}.
+#' @param prob A number \eqn{p \in (0,1)}{p (0 < p < 1)} indicating the desired
+#'   probability mass to include in the intervals. The default is to report
+#'   \eqn{90}\% intervals (\code{prob=0.9}) rather than the traditionally used
+#'   \eqn{95}\%.
 #' @param ... Further arguments passed to  \code{mcmc_combo}.
+#' @param combo A character vector with at least two elements. Each element of combo corresponds
+#' to a column in the resulting graphic and should be the name of one of the available MCMC functions.
 #'
 #' @return A plot object from ggplot2 class.
 #'
@@ -31,7 +37,7 @@
 #' @importFrom bayesplot mcmc_combo
 #' @export
 #'
-plot.varstan = function(object,par = "fit",probs = 0.9,...){
+plot.varstan = function(object,par = "fit",prob = 0.9,combo = c("dens","trace"),...){
 
   if( !is.varstan(object))
     stop("The current object is not a varstan class")
@@ -42,13 +48,13 @@ plot.varstan = function(object,par = "fit",probs = 0.9,...){
 
     par_ret = mod_parameter(object$model)
     stanfit2 = as.stan(object)
-    p = bayesplot::mcmc_combo(stanfit2,pars = par_ret,combo = c("dens","trace"))
+    p = bayesplot::mcmc_combo(stanfit2,pars = par_ret,combo = combo)
   }
   else if(par == "fit"){
-    p = plot_ts(obj = object,par = "fit",prob = probs,real = TRUE)
+    p = plot_ts(obj = object,par = "fit",prob = prob,real = TRUE)
   }
   else if(par == "residuals"){
-    p = plot_ts(obj = object,par = "residual",prob =  probs,real = TRUE)
+    p = plot_ts(obj = object,par = "residual",prob =  probs,real = FALSE)
   }
   else if(par %in% get_params(object)$include){
     md = data.frame(extract_stan(object,pars = par))
@@ -65,12 +71,18 @@ plot.varstan = function(object,par = "fit",probs = 0.9,...){
 #' The function prints the fitted values time series, the trace and density plots for the
 #' sampled model parameters, or the residuals' posterior mean time series.
 #'
-#' @param x An object of class \code{varstan}.
+#' @param object An object of class \code{varstan}.
 #' @param par a character string with the desired plot. Valid values are \code{"fit"} for the
 #'  model's fitted values plot, \code{"residuals"} for the residuals posterior mean plot,
 #'  and \code{"parameters"} for density and trace plots for the sampled model parameter.
 #'  The default value is \code{"fit"}.
+#' @param prob A number \eqn{p \in (0,1)}{p (0 < p < 1)} indicating the desired
+#'   probability mass to include in the intervals. The default is to report
+#'   \eqn{90}\% intervals (\code{prob=0.9}) rather than the traditionally used
+#'   \eqn{95}\%.
 #' @param ... Further arguments passed to  \code{mcmc_combo}.
+#' @param combo A character vector with at least two elements. Each element of combo corresponds
+#' to a column in the resulting graphic and should be the name of one of the available MCMC functions.
 #'
 #' @return An autoplot object from ggplot2 class.
 #'
@@ -92,7 +104,7 @@ plot.varstan = function(object,par = "fit",probs = 0.9,...){
 #' @importFrom bayesplot mcmc_combo
 #' @export
 #'
-autoplot.varstan = function(object,par = "fit",probs = 0.9,...){
+autoplot.varstan = function(object,par = "fit",prob = 0.9,combo = c("dens","trace"),...){
 
   if( !is.varstan(object))
     stop("The current object is not a varstan class")
@@ -106,14 +118,14 @@ autoplot.varstan = function(object,par = "fit",probs = 0.9,...){
     p = bayesplot::mcmc_combo(stanfit2,pars = par_ret,combo = c("dens","trace"))
   }
   else if(par == "fit"){
-    p = plot_ts(obj = object,par = "fit",prob = probs,real = TRUE)
+    p = plot_ts(obj = object,par = "fit",prob = prob,real = TRUE)
   }
   else if(par == "residuals"){
-    p = plot_ts(obj = object,par = "residual",prob =  probs,real = TRUE)
+    p = plot_ts(obj = object,par = "residuals",prob =  prob,real = FALSE)
   }
   else if(par %in% get_params(object)$include){
     md = data.frame(extract_stan(object,pars = par))
-    p = bayesplot::mcmc_combo(x = md,combo = c("dens","trace"))
+    p = bayesplot::mcmc_combo(x = md,combo =combo)
   }
   else{
     stop("par argument is not valid, please enter a models valid argument")
@@ -132,7 +144,7 @@ mod_parameter = function(model){
     if(model$Q > 0) par_ret = c(par_ret,paste0("stheta[",1:model$Q,"]"))
     if(model$d1> 0) par_ret = c(par_ret,paste0("breg[",1:model$d1,"]"))
   }
-  if(is.garch(model) ){
+  if(is.garch(model) | is.SVM(model) ){
     if(model$p > 0) par_ret = c(par_ret,paste0("phi[",1:model$p,"]"))
     if(model$q > 0) par_ret = c(par_ret,paste0("theta[",1:model$q,"]"))
     if(model$s > 0) par_ret = c(par_ret,paste0("alpha[",1:model$s,"]"))
@@ -162,15 +174,25 @@ plot_ts = function(obj,par = "fit",prob = 0.90,real = FALSE){
 
   dat_temp = data.frame(fit = f2mean,q1 = as.numeric(f21),q2 = as.numeric(f22),time = time1,type = s)
 
-  if(real == TRUE) dat_temp$yreal = yreal
+  if(real == TRUE){
+    dat_temp$yreal = yreal
+    colors <- c("fit" = "#0000CC", "yreal" = "#000000")
 
-  g = ggplot2::ggplot(aes(x = time1,y = fit),data = dat_temp)+
-    ggplot2::geom_smooth(aes(ymin = q1, ymax = q2),fill="#333333", color="#0000CC",
-                       stat = "identity",size = 0.8) +ggplot2::labs(x = "time",y = " ")
-
+    g = ggplot2::ggplot(aes(x = time1,y = fit),data = dat_temp)+
+      ggplot2::geom_line(aes(y = fit,color = "fit"))+
+      ggplot2::geom_line(aes(y = yreal,color = "yreal"))+
+      ggplot2::geom_smooth(aes(ymin = q1, ymax = q2),fill="#333333", color="#0000CC",
+                           stat = "identity",size = 0.5)+
+      ggplot2::labs(x = "time",y = " ",color = "Legend") +
+      ggplot2::scale_color_manual(values = colors)
+  }
+  else{
+    g = ggplot2::ggplot(aes(x = time1,y = fit),data = dat_temp)+
+      ggplot2::geom_smooth(aes(ymin = q1, ymax = q2,),fill="#333333", color="#0000CC",
+                           stat = "identity",size = 0.5) +ggplot2::labs(x = "time",y = " ")
+  }
   if(obj$dimension > 1) g = g + ggplot2::facet_grid(type~.)
 
-  if(real == TRUE) g = g+ggplot2::geom_line(aes(y = yreal),size = 0.8,color = "#000000")
 
   return(g)
 }
