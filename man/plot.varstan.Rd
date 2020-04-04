@@ -39,10 +39,10 @@ sampled model parameters, or the residuals' posterior mean time series.
  plot(sf1)
 
  # residuals
- plot(sf1,type = "residuals)
+ plot(sf1,par = "residuals")
 
  # parameters
- plot(sf1,type = "parameter)
+ plot(sf1,par = "parameter")
 }
 
 }
