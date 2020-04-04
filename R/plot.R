@@ -26,10 +26,10 @@
 #'  plot(sf1)
 #'
 #'  # residuals
-#'  plot(sf1,type = "residuals)
+#'  plot(sf1,par = "residuals")
 #'
 #'  # parameters
-#'  plot(sf1,type = "parameter)
+#'  plot(sf1,par = "parameter")
 #' }
 #'
 #' @method plot varstan
@@ -48,7 +48,7 @@ plot.varstan = function(object,par = "fit",prob = 0.9,combo = c("dens","trace"),
 
     par_ret = mod_parameter(object$model)
     stanfit2 = as.stan(object)
-    p = bayesplot::mcmc_combo(stanfit2,pars = par_ret,combo = c("dens","trace"))
+    p = bayesplot::mcmc_combo(stanfit2,pars = par_ret,combo =combo)
   }
   else if(par == "fit"){
     p = plot_ts(obj = object,par = "fit",prob = prob,real = TRUE)
@@ -93,10 +93,10 @@ plot.varstan = function(object,par = "fit",prob = 0.9,combo = c("dens","trace"),
 #'  autoplot(sf1)
 #'
 #'  # residuals
-#'  autoplot(sf1,type = "residuals)
+#'  autoplot(sf1,par = "residuals")
 #'
 #'  # parameters
-#'  autoplot(sf1,type = "parameter)
+#'  autoplot(sf1,par = "parameter")
 #' }
 #'
 #' @method autoplot varstan
@@ -115,7 +115,7 @@ autoplot.varstan = function(object,par = "fit",prob = 0.9,combo = c("dens","trac
 
     par_ret = mod_parameter(object$model)
     stanfit2 = as.stan(object)
-    p = bayesplot::mcmc_combo(stanfit2,pars = par_ret,combo = c("dens","trace"))
+    p = bayesplot::mcmc_combo(stanfit2,pars = par_ret,combo = combo)
   }
   else if(par == "fit"){
     p = plot_ts(obj = object,par = "fit",prob = prob,real = TRUE)
