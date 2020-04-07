@@ -4,10 +4,10 @@
 \alias{print.SVM}
 \title{Print a Stochastic Volatility model}
 \usage{
-\method{print}{SVM}(obj, ...)
+\method{print}{SVM}(x, ...)
 }
 \arguments{
-\item{obj}{a SVM model from the varstan package}
+\item{x}{a SVM model from the varstan package}
 }
 \description{
 Print a Stochastic Volatility model
