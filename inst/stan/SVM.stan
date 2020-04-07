@@ -10,8 +10,8 @@ data {
   vector[4] prior_sigma0;    // prior scale parameter
   matrix[p,4] prior_ar;      // ar location hyper parameters
   matrix[q,4] prior_ma;      // ma location hyper parameters
-  matrix[1,4] prior_arch;    // prior arch hyper parameters
-  matrix[1,4] prior_mgarch;    // prior arch hyper parameters
+  matrix[1,4] prior_beta;    // prior arch hyper parameters
+  matrix[1,4] prior_alpha;   // prior arch hyper parameters
   matrix[d1,4] prior_breg;   // prior ma hyper parameters
 }
 parameters {
@@ -47,7 +47,7 @@ transformed parameters {
     else theta[i] = 2*theta0[i]-1;
   }
 
-  if(prior_arch[1,4] == 1) beta = beta0;
+  if(prior_beta[1,4] == 1) beta = beta0;
   else beta = 2*beta0-1;
 
   // regression estimation
@@ -74,30 +74,48 @@ transformed parameters {
 }
 model {
   //  prior for \mu0
-  if(prior_mu0[4]==1)      target += normal_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  if(prior_mu0[4] == 1)    target += normal_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
   else if(prior_mu0[4]==2) target += beta_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
-  else if(prior_mu0[4]==3) target += beta_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==3) target += uniform_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
   else if(prior_mu0[4]==4) target += student_t_lpdf(mu0|prior_mu0[3],prior_mu0[1],prior_mu0[2]);
   else if(prior_mu0[4]==5) target += cauchy_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==6) target += inv_gamma_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==7) target += inv_chi_square_lpdf(mu0|prior_mu0[3]);
+  else if(prior_mu0[4]==8) target += -log(sigma0);
   else if(prior_mu0[4]==9) target += gamma_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==10)target += exponential_lpdf(mu0|prior_mu0[2]);
+  else if(prior_mu0[4]==11)target += chi_square_lpdf(mu0|prior_mu0[3]);
+  else if(prior_mu0[4]==12)target += double_exponential_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
 
   // Prior sigma
   if(prior_sigma0[4] == 1)    target += normal_lpdf(sigma0|prior_sigma0[1],prior_sigma0[2]);
+  else if(prior_sigma0[4]==2) target += beta_lpdf(sigma0|prior_sigma0[1],prior_sigma0[2]);
+  else if(prior_sigma0[4]==3) target += uniform_lpdf(sigma0|prior_sigma0[1],prior_sigma0[2]);
   else if(prior_sigma0[4]==4) target += student_t_lpdf(sigma0|prior_sigma0[3],prior_sigma0[1],prior_sigma0[2]);
   else if(prior_sigma0[4]==5) target += cauchy_lpdf(sigma0|prior_sigma0[1],prior_sigma0[2]);
   else if(prior_sigma0[4]==6) target += inv_gamma_lpdf(sigma0|prior_sigma0[1],prior_sigma0[2]);
   else if(prior_sigma0[4]==7) target += inv_chi_square_lpdf(sigma0|prior_sigma0[3]);
+  else if(prior_sigma0[4]==8) target += -log(sigma0);
   else if(prior_sigma0[4]==9) target += gamma_lpdf(sigma0|prior_sigma0[1],prior_sigma0[2]);
+  else if(prior_sigma0[4]==10)target += exponential_lpdf(sigma0|prior_sigma0[2]);
+  else if(prior_sigma0[4]==11)target += chi_square_lpdf(sigma0|prior_sigma0[3]);
+  else if(prior_sigma0[4]==12)target += double_exponential_lpdf(sigma0|prior_sigma0[1],prior_sigma0[2]);
 
   // prior breg
   if(d1 > 0){
     for(i in 1:d1){
-      if(prior_breg[i,4] == 1)      target += normal_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
-      else if(prior_breg[i,4] == 2) target += beta_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
-      else if(prior_breg[i,4] == 3) target += cauchy_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
-      else if(prior_breg[i,4] == 4) target += student_t_lpdf(breg[i]|prior_breg[i,3],prior_breg[i,1],prior_breg[i,2]);
-      else if(prior_breg[i,4] == 5) target += cauchy_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
-      else if(prior_breg[i,4] == 9) target += gamma_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
+      if(prior_breg[i,4] == 1)    target += normal_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
+      else if(prior_breg[i,4]==2) target += beta_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
+      else if(prior_breg[i,4]==3) target += uniform_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
+      else if(prior_breg[i,4]==4) target += student_t_lpdf(breg[i]|prior_breg[i,3],prior_breg[i,1],prior_breg[i,2]);
+      else if(prior_breg[i,4]==5) target += cauchy_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
+      else if(prior_breg[i,4]==6) target += inv_gamma_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
+      else if(prior_breg[i,4]==7) target += inv_chi_square_lpdf(breg[i]|prior_breg[i,3]);
+      else if(prior_breg[i,4]==8) target += -log(sigma0);
+      else if(prior_breg[i,4]==9) target += gamma_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
+      else if(prior_breg[i,4]==10)target += exponential_lpdf(breg[i]|prior_breg[i,2]);
+      else if(prior_breg[i,4]==11)target += chi_square_lpdf(breg[i]|prior_breg[i,3]);
+      else if(prior_breg[i,4]==12)target += double_exponential_lpdf(breg[i]|prior_breg[i,1],prior_breg[i,2]);
     }
   }
 
@@ -105,29 +123,36 @@ model {
   if(p > 0){
     for(i in 1:p){
      if(prior_ar[i,4]==1) target += normal_lpdf(phi0[i]|prior_ar[i,1],prior_ar[i,2]);
-     else  target += beta_lpdf(fabs(phi0[i])|prior_ar[i,1],prior_ar[i,2]);
+     else if(prior_ar[i,4]==2) target += beta_lpdf(fabs(phi0[i])|prior_ar[i,1],prior_ar[i,2]);
+     else if(prior_ar[i,4]==3) target += uniform_lpdf(phi0[i]|prior_ar[i,1],prior_ar[i,2]);
     }
   }
   // prior ma
   if(q > 0){
     for(i in 1:q){
       if(prior_ma[i,4]==1) target += normal_lpdf(theta0[i]|prior_ma[i,1],prior_ma[i,2]);
-      else  target += beta_lpdf(fabs(theta0[i])|prior_ma[i,1],prior_ma[i,2]);
+      else if(prior_ma[i,4]==2) target += beta_lpdf(fabs(theta0[i])|prior_ma[i,1],prior_ma[i,2]);
+      else if(prior_ma[i,4]==3) target += uniform_lpdf(theta0[i]|prior_ma[i,1],prior_ma[i,2]);
     }
   }
-
   //  prior for \omega0
-  if(prior_mgarch[1,4]==1)      target += normal_lpdf(alpha|prior_mgarch[1,1],prior_mgarch[1,2]);
-  else if(prior_mgarch[1,4]==2) target += beta_lpdf(alpha|prior_mgarch[1,1],prior_mgarch[1,2]);
-  else if(prior_mgarch[1,4]==3) target += beta_lpdf(alpha|prior_mgarch[1,1],prior_mgarch[1,2]);
-  else if(prior_mgarch[1,4]==4) target += student_t_lpdf(alpha|prior_mgarch[1,3],prior_mgarch[1,1],prior_mgarch[1,2]);
-  else if(prior_mgarch[1,4]==5) target += cauchy_lpdf(alpha|prior_mgarch[1,1],prior_mgarch[1,2]);
-  else if(prior_mgarch[1,4]==9) target += gamma_lpdf(alpha|prior_mgarch[1,1],prior_mgarch[1,2]);
+  if(prior_alpha[1,4]== 1)     target += normal_lpdf(alpha|prior_alpha[1,1],prior_alpha[1,2]);
+  else if(prior_alpha[1,4]==2) target += beta_lpdf(alpha|prior_alpha[1,1],prior_alpha[1,2]);
+  else if(prior_alpha[1,4]==3) target += uniform_lpdf(alpha|prior_alpha[1,1],prior_alpha[1,2]);
+  else if(prior_alpha[1,4]==4) target += student_t_lpdf(alpha|prior_alpha[1,3],prior_alpha[1,1],prior_alpha[1,2]);
+  else if(prior_alpha[1,4]==5) target += cauchy_lpdf(alpha|prior_alpha[1,1],prior_alpha[1,2]);
+  else if(prior_alpha[1,4]==6) target += inv_gamma_lpdf(alpha|prior_alpha[1,1],prior_alpha[1,2]);
+  else if(prior_alpha[1,4]==7) target += inv_chi_square_lpdf(alpha|prior_alpha[1,3]);
+  else if(prior_alpha[1,4]==8) target += -log(sigma0);
+  else if(prior_alpha[1,4]==9) target += gamma_lpdf(alpha|prior_alpha[1,1],prior_alpha[1,2]);
+  else if(prior_alpha[1,4]==10)target += exponential_lpdf(alpha|prior_alpha[1,2]);
+  else if(prior_alpha[1,4]==11)target += chi_square_lpdf(alpha|prior_alpha[1,3]);
+  else if(prior_alpha[1,4]==12)target += double_exponential_lpdf(alpha|prior_alpha[1,1],prior_alpha[1,2]);
 
   // prior garch
-
-  if(prior_arch[1,4]==1) target += normal_lpdf(beta0|prior_arch[1,1],prior_arch[1,2]);
-  else target += beta_lpdf(fabs(beta0)|prior_arch[1,1],prior_arch[1,2]);
+  if(prior_beta[1,4]==1) target += normal_lpdf(beta0|prior_beta[1,1],prior_beta[1,2]);
+  else if(prior_beta[1,4]==2) target += beta_lpdf(beta0|prior_beta[1,1],prior_beta[1,2]);
+  else if(prior_beta[1,4]==3) target += uniform_lpdf(beta0|prior_beta[1,1],prior_beta[1,2]);
 
 
   // std volatility errors

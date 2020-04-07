@@ -56,19 +56,32 @@ model{
   //      Priors  definition
 
   //  prior for \mu0
-  if(prior_mu0[4]==1)      target += normal_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  if(prior_mu0[4] == 1)    target += normal_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
   else if(prior_mu0[4]==2) target += beta_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
-  else if(prior_mu0[4]==3) target += beta_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==3) target += uniform_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
   else if(prior_mu0[4]==4) target += student_t_lpdf(mu0|prior_mu0[3],prior_mu0[1],prior_mu0[2]);
   else if(prior_mu0[4]==5) target += cauchy_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==6) target += inv_gamma_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==7) target += inv_chi_square_lpdf(mu0|prior_mu0[3]);
+  else if(prior_mu0[4]==8) target += -log(sigma0);
   else if(prior_mu0[4]==9) target += gamma_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
+  else if(prior_mu0[4]==10)target += exponential_lpdf(mu0|prior_mu0[2]);
+  else if(prior_mu0[4]==11)target += chi_square_lpdf(mu0|prior_mu0[3]);
+  else if(prior_mu0[4]==12)target += double_exponential_lpdf(mu0|prior_mu0[1],prior_mu0[2]);
 
-  // Prior sigma0 diagonal vector
-  if(prior_sigma0[4] == 1)      target += normal_lpdf(sigma1|prior_sigma0[1],prior_sigma0[2]);
-  else if(prior_sigma0[4] == 4) target += student_t_lpdf(sigma1|prior_sigma0[3],prior_sigma0[1],prior_sigma0[2]);
-  else if(prior_sigma0[4] == 5) target += cauchy_lpdf(sigma1|prior_sigma0[1],prior_sigma0[2]);
-  else if(prior_sigma0[4] == 6) target += inv_gamma_lpdf(sigma1|prior_sigma0[1],prior_sigma0[2]);
-  else if(prior_sigma0[4] == 7) target += inv_chi_square_lpdf(sigma1|prior_sigma0[3]);
+  // Prior sigma
+  if(prior_sigma0[4] == 1)    target += normal_lpdf(sigma1|prior_sigma0[1],prior_sigma0[2]);
+  else if(prior_sigma0[4]==2) target += beta_lpdf(sigma1|prior_sigma0[1],prior_sigma0[2]);
+  else if(prior_sigma0[4]==3) target += uniform_lpdf(sigma1|prior_sigma0[1],prior_sigma0[2]);
+  else if(prior_sigma0[4]==4) target += student_t_lpdf(sigma1|prior_sigma0[3],prior_sigma0[1],prior_sigma0[2]);
+  else if(prior_sigma0[4]==5) target += cauchy_lpdf(sigma1|prior_sigma0[1],prior_sigma0[2]);
+  else if(prior_sigma0[4]==6) target += inv_gamma_lpdf(sigma1|prior_sigma0[1],prior_sigma0[2]);
+  else if(prior_sigma0[4]==7) target += inv_chi_square_lpdf(sigma1|prior_sigma0[3]);
+  else if(prior_sigma0[4]==9) target += gamma_lpdf(sigma1|prior_sigma0[1],prior_sigma0[2]);
+  else if(prior_sigma0[4]==10)target += exponential_lpdf(sigma1|prior_sigma0[2]);
+  else if(prior_sigma0[4]==11)target += chi_square_lpdf(sigma1|prior_sigma0[3]);
+  else if(prior_sigma0[4]==12)target += double_exponential_lpdf(sigma1|prior_sigma0[1],prior_sigma0[2]);
+
 
   //   sigma0 constant correlation Matrix
   target += lkj_corr_cholesky_lpdf(SigCorr|prior_lkj[1]);
