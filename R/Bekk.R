@@ -54,8 +54,7 @@
 #'
 #' @examples
 #' # Declare a Bekk model for the Astrovan data
-#'
-#' model = Bekk(Astrovan,p=1,q=1,sd=mbekk(1,1,0))
+#' model = Bekk(Astrovan,order = c(1,1,0),varma = c(1,0))
 #' model
 #'
 #'
