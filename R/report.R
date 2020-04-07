@@ -8,6 +8,7 @@
 #' @aliases report report.varstan report.Sarima report.garch report.varma report.Bekk report.naive
 #'
 #' @param obj an object varstan object or one of the defined current defined reports in varstan package
+#' @param ... additional values need in print methods
 #'
 #' @details if \code{obj} is a varstan object the function will print the information of the
 #' defined model inside of the object. If \code{obj} is one of the model classes (like Sarima or garch)
@@ -38,7 +39,7 @@ report <- function(obj,...) {
 #' @method report varstan
 #' @export
 #'
-report.varstan = function(obj,...){
+report.varstan = function(obj){
   if(!is.varstan(obj))
     stop("The current object is not a varstan class")
 
@@ -48,7 +49,6 @@ report.varstan = function(obj,...){
   if( is.SVM(obj$model))    report.SVM(obj$model)
   if( is.varma(obj$model))  report.varma(obj$model)
   if( is.Bekk(obj$model))   report.Bekk(obj$model)
-
 }
 #'
 #' @method report Sarima
@@ -60,20 +60,20 @@ report.Sarima = function(obj,...){
 
   model.Sarima(obj)
   cat("Priors: \n Intercept:\n")
-  get_prior(obj,type = "mu0")
+  get_prior(obj,par = "mu0")
   cat("\n Scale Parameter: \n")
-  get_prior(obj,type = "sigma0")
+  get_prior(obj,par = "sigma0")
   cat("\n")
-  if(obj$p  > 0 )get_prior(dat = obj,type = "ar")
-  if(obj$q  > 0 )get_prior(dat = obj,type = "ma")
+  if(obj$p  > 0 )get_prior(model = obj,par = "ar")
+  if(obj$q  > 0 )get_prior(model = obj,par = "ma")
   if(obj$P != 0 || obj$Q != 0 || obj$D != 0){
     cat("\n Seasonal Parameters: \n")
-    if(obj$P  > 0 )get_prior(dat = obj,type = "sar")
-    if(obj$Q  > 0 )get_prior(dat = obj,type = "sma")
+    if(obj$P  > 0 )get_prior(model = obj,par = "sar")
+    if(obj$Q  > 0 )get_prior(model = obj,par = "sma")
   }
   if(obj$d1 > 0 ){
     cat("\n Regression Parameters: \n")
-    get_prior(dat = obj,type = "breg")
+    get_prior(model = obj,par = "breg")
   }
 }
 #'
@@ -86,9 +86,9 @@ report.naive = function(obj,...){
 
   model.naive(obj)
   cat("Priors: \n Intercept:\n")
-  get_prior(obj,type = "mu0")
+  get_prior(obj,par = "mu0")
   cat("\n Scale Parameter: \n")
-  get_prior(obj,type = "sigma0")
+  get_prior(obj,par = "sigma0")
   cat("\n")
   if(obj$D > 0 ){
     cat("\n period:",obj$period,"\n")
@@ -104,26 +104,26 @@ report.garch = function(obj,...){
 
   model.garch(obj)
   cat("Priors: \n Intercept:\n")
-  get_prior(obj,type = "mu0")
+  get_prior(obj,par = "mu0")
   cat("\n Scale Parameter: \n")
-  get_prior(obj,type = "sigma0")
+  get_prior(obj,par = "sigma0")
   cat("\n")
-  if(obj$s  > 0 )get_prior(dat = obj,type = "arch")
-  if(obj$k  > 0 )get_prior(dat = obj,type = "garch")
-  if(obj$h  > 0 )get_prior(dat = obj,type = "mgarch")
+  if(obj$s  > 0 )get_prior(model = obj,par = "arch")
+  if(obj$k  > 0 )get_prior(model = obj,par = "garch")
+  if(obj$h  > 0 )get_prior(model = obj,par = "mgarch")
   if(obj$p != 0 || obj$q != 0 ){
     cat("\n mean Parameters: \n")
-    if(obj$p  > 0 )get_prior(dat = obj,type = "ar")
-    if(obj$q  > 0 )get_prior(dat = obj,type = "ma")
+    if(obj$p  > 0 )get_prior(model = obj,par = "ar")
+    if(obj$q  > 0 )get_prior(model = obj,par = "ma")
   }
   if(obj$d1 > 0 ){
     cat("\n Regression Parameters: \n")
-    get_prior(dat = obj,type = "breg")
+    get_prior(model = obj,par = "breg")
   }
   if(obj$genT == TRUE){
     cat("\n Generalized t-student \n")
     cat("\n lambda ~ G(v/2,v/2) \n")
-    get_prior(obj,type = "dfv")
+    get_prior(obj,par = "dfv")
   }
 }
 #'
@@ -136,21 +136,20 @@ report.SVM = function(obj,...){
 
   model.SVM(obj)
   cat("Priors: \n Intercept:\n")
-  get_prior(obj,type = "mu0")
+  get_prior(obj,par = "mu0")
   cat("\n log Scale Parameter: \n")
-  get_prior(obj,type = "sigma0")
+  get_prior(obj,par = "sigma0")
   cat("\n")
-  if(obj$s  > 0 )get_prior(dat = obj,type = "arch")
-  if(obj$k  > 0 )get_prior(dat = obj,type = "garch")
-  if(obj$h  > 0 )get_prior(dat = obj,type = "mgarch")
+  get_prior(model = obj,par = "alpha")
+  get_prior(model = obj,par = "beta")
   if(obj$p != 0 || obj$q != 0 ){
     cat("\n mean Parameters: \n")
-    if(obj$p  > 0 )get_prior(dat = obj,type = "ar")
-    if(obj$q  > 0 )get_prior(dat = obj,type = "ma")
+    if(obj$p  > 0 )get_prior(model = obj,par = "ar")
+    if(obj$q  > 0 )get_prior(model = obj,par = "ma")
   }
   if(obj$d1 > 0 ){
     cat("\n Regression Parameters: \n")
-    get_prior(dat = obj,type = "breg")
+    get_prior(model = obj,par = "breg")
   }
 }
 #'
@@ -163,23 +162,23 @@ report.varma = function(obj,...){
 
   model.varma(obj)
   cat("Priors: \n Intercept:\n")
-  get_prior(obj,type = "mu0")
+  get_prior(obj,par = "mu0")
   cat("\n Scale Parameter: \n")
-  get_prior(obj,type = "sigma0")
+  get_prior(obj,par = "sigma0")
   cat("\n mean Parameters: \n")
-  if(obj$p  > 0 )get_prior(dat = obj,type = "ar")
-  if(obj$q  > 0 )get_prior(dat = obj,type = "ma")
+  if(obj$p  > 0 )get_prior(model = obj,par = "ar")
+  if(obj$q  > 0 )get_prior(model = obj,par = "ma")
 
   if(obj$s != 0 || obj$k != 0 || obj$h != 0 ){
     cat("\n Bekk Parameters: \n")
-    if(obj$s  > 0 )get_prior(dat = obj,type = "arch")
-    if(obj$k  > 0 )get_prior(dat = obj,type = "garch")
-    if(obj$h  > 0 )get_prior(dat = obj,type = "mgarch")
+    if(obj$s  > 0 )get_prior(model = obj,par = "arch")
+    if(obj$k  > 0 )get_prior(model = obj,par = "garch")
+    if(obj$h  > 0 )get_prior(model = obj,par = "mgarch")
   }
   if(obj$genT == TRUE){
     cat("\n Generalized t-student \n")
-    cat("\n lambda ~ G(v/2,v/2) \n")
-    get_prior(obj,type = "dfv")
+    cat("\n lambda ~ inverse.gamma(v/2,v/2) \n")
+    get_prior(obj,par = "dfv")
   }
 }
 #'
@@ -192,22 +191,22 @@ report.Bekk = function(obj,...){
 
   model.Bekk(obj)
   cat("Priors: \n Intercept:\n")
-  get_prior(obj,type = "mu0")
+  get_prior(obj,par = "mu0")
   cat("\n Scale Parameter: \n")
-  get_prior(obj,type = "sigma0")
+  get_prior(obj,par = "sigma0")
   cat("\n mean Parameters: \n")
-  if(obj$p  > 0 )get_prior(dat = obj,type = "ar")
-  if(obj$q  > 0 )get_prior(dat = obj,type = "ma")
+  if(obj$p  > 0 )get_prior(model = obj,par = "ar")
+  if(obj$q  > 0 )get_prior(model = obj,par = "ma")
 
   if(obj$s != 0 || obj$k != 0 || obj$h != 0 ){
     cat("\n Bekk Parameters: \n")
-    if(obj$s  > 0 )get_prior(dat = obj,type = "arch")
-    if(obj$k  > 0 )get_prior(dat = obj,type = "garch")
-    if(obj$h  > 0 )get_prior(dat = obj,type = "mgarch")
+    if(obj$s  > 0 )get_prior(model = obj,par = "arch")
+    if(obj$k  > 0 )get_prior(model = obj,par = "garch")
+    if(obj$h  > 0 )get_prior(model = obj,par = "mgarch")
   }
   if(obj$genT == TRUE){
     cat("\n Generalized t-student \n")
-    cat("\n lambda ~ G(v/2,v/2) \n")
-    get_prior(obj,type = "dfv")
+    cat("\n lambda ~ inverse.gamma(v/2,v/2) \n")
+    get_prior(obj,par = "dfv")
   }
 }
