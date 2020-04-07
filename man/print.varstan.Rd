@@ -4,10 +4,10 @@
 \alias{print.varstan}
 \title{Print a varstan object}
 \usage{
-\method{print}{varstan}(obj, ...)
+\method{print}{varstan}(x, ...)
 }
 \arguments{
-\item{obj}{a varstan object}
+\item{x}{a varstan object}
 }
 \description{
 Print a varstan object

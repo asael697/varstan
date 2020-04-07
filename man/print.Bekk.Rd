@@ -4,10 +4,10 @@
 \alias{print.Bekk}
 \title{Print a Bekk model}
 \usage{
-\method{print}{Bekk}(obj, ...)
+\method{print}{Bekk}(x, ...)
 }
 \arguments{
-\item{obj}{a Bekk model from the varstan package}
+\item{x}{a Bekk model from the varstan package}
 }
 \description{
 Print a Bekk model

@@ -4,10 +4,10 @@
 \alias{print.naive}
 \title{Print a naive model}
 \usage{
-\method{print}{naive}(obj, ...)
+\method{print}{naive}(x, ...)
 }
 \arguments{
-\item{obj}{a navie model from the varstan package}
+\item{x}{a navie model from the varstan package}
 }
 \description{
 Print a naive model

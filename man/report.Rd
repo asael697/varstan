@@ -14,6 +14,8 @@ report(obj,...)
 }
 \arguments{
 \item{obj}{an object varstan object or one of the defined current defined reports in varstan package}
+
+\item{...}{additional values need in print methods}
 }
 \value{
 a  string with the defined time series report

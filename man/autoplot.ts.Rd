@@ -56,16 +56,6 @@ a ggplot object suitable for usage with \code{stat_forecast}.
 \code{fortify.ts} takes a \code{ts} object and converts it into a data frame
 (for usage with ggplot2).
 }
-\examples{
-
-library(ggplot2)
-autoplot(USAccDeaths)
-
-lungDeaths <- cbind(mdeaths, fdeaths)
-autoplot(lungDeaths)
-autoplot(lungDeaths, facets=TRUE)
-
-}
 \seealso{
 \code{\link[stats]{plot.ts}}, \code{\link[ggplot2]{fortify}}
 }

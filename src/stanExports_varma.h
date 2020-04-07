@@ -36,7 +36,7 @@ static int current_statement_begin__;
 stan::io::program_reader prog_reader__() {
     stan::io::program_reader reader;
     reader.add_event(0, 0, "start", "model_varma");
-    reader.add_event(107, 105, "end", "model_varma");
+    reader.add_event(120, 118, "end", "model_varma");
     return reader;
 }
 #include <stan_meta_header.hpp>
@@ -534,67 +534,103 @@ public:
                 lp_accum__.add(beta_log(mu0, get_base1(prior_mu0, 1, "prior_mu0", 1), get_base1(prior_mu0, 2, "prior_mu0", 1)));
             } else if (as_bool(logical_eq(get_base1(prior_mu0, 4, "prior_mu0", 1), 3))) {
                 current_statement_begin__ = 61;
-                lp_accum__.add(beta_log(mu0, get_base1(prior_mu0, 1, "prior_mu0", 1), get_base1(prior_mu0, 2, "prior_mu0", 1)));
+                lp_accum__.add(uniform_log(mu0, get_base1(prior_mu0, 1, "prior_mu0", 1), get_base1(prior_mu0, 2, "prior_mu0", 1)));
             } else if (as_bool(logical_eq(get_base1(prior_mu0, 4, "prior_mu0", 1), 4))) {
                 current_statement_begin__ = 62;
                 lp_accum__.add(student_t_log(mu0, get_base1(prior_mu0, 3, "prior_mu0", 1), get_base1(prior_mu0, 1, "prior_mu0", 1), get_base1(prior_mu0, 2, "prior_mu0", 1)));
             } else if (as_bool(logical_eq(get_base1(prior_mu0, 4, "prior_mu0", 1), 5))) {
                 current_statement_begin__ = 63;
                 lp_accum__.add(cauchy_log(mu0, get_base1(prior_mu0, 1, "prior_mu0", 1), get_base1(prior_mu0, 2, "prior_mu0", 1)));
-            } else if (as_bool(logical_eq(get_base1(prior_mu0, 4, "prior_mu0", 1), 9))) {
+            } else if (as_bool(logical_eq(get_base1(prior_mu0, 4, "prior_mu0", 1), 6))) {
                 current_statement_begin__ = 64;
-                lp_accum__.add(gamma_log(mu0, get_base1(prior_mu0, 1, "prior_mu0", 1), get_base1(prior_mu0, 2, "prior_mu0", 1)));
-            }
-            current_statement_begin__ = 67;
-            if (as_bool(logical_eq(get_base1(prior_sigma0, 4, "prior_sigma0", 1), 1))) {
+                lp_accum__.add(inv_gamma_log(mu0, get_base1(prior_mu0, 1, "prior_mu0", 1), get_base1(prior_mu0, 2, "prior_mu0", 1)));
+            } else if (as_bool(logical_eq(get_base1(prior_mu0, 4, "prior_mu0", 1), 7))) {
+                current_statement_begin__ = 65;
+                lp_accum__.add(inv_chi_square_log(mu0, get_base1(prior_mu0, 3, "prior_mu0", 1)));
+            } else if (as_bool(logical_eq(get_base1(prior_mu0, 4, "prior_mu0", 1), 8))) {
+                current_statement_begin__ = 66;
+                lp_accum__.add(minus(stan::math::log(sigma0)));
+            } else if (as_bool(logical_eq(get_base1(prior_mu0, 4, "prior_mu0", 1), 9))) {
                 current_statement_begin__ = 67;
-                lp_accum__.add(normal_log(sigma1, get_base1(prior_sigma0, 1, "prior_sigma0", 1), get_base1(prior_sigma0, 2, "prior_sigma0", 1)));
-            } else if (as_bool(logical_eq(get_base1(prior_sigma0, 4, "prior_sigma0", 1), 4))) {
+                lp_accum__.add(gamma_log(mu0, get_base1(prior_mu0, 1, "prior_mu0", 1), get_base1(prior_mu0, 2, "prior_mu0", 1)));
+            } else if (as_bool(logical_eq(get_base1(prior_mu0, 4, "prior_mu0", 1), 10))) {
                 current_statement_begin__ = 68;
+                lp_accum__.add(exponential_log(mu0, get_base1(prior_mu0, 2, "prior_mu0", 1)));
+            } else if (as_bool(logical_eq(get_base1(prior_mu0, 4, "prior_mu0", 1), 11))) {
+                current_statement_begin__ = 69;
+                lp_accum__.add(chi_square_log(mu0, get_base1(prior_mu0, 3, "prior_mu0", 1)));
+            } else if (as_bool(logical_eq(get_base1(prior_mu0, 4, "prior_mu0", 1), 12))) {
+                current_statement_begin__ = 70;
+                lp_accum__.add(double_exponential_log(mu0, get_base1(prior_mu0, 1, "prior_mu0", 1), get_base1(prior_mu0, 2, "prior_mu0", 1)));
+            }
+            current_statement_begin__ = 73;
+            if (as_bool(logical_eq(get_base1(prior_sigma0, 4, "prior_sigma0", 1), 1))) {
+                current_statement_begin__ = 73;
+                lp_accum__.add(normal_log(sigma1, get_base1(prior_sigma0, 1, "prior_sigma0", 1), get_base1(prior_sigma0, 2, "prior_sigma0", 1)));
+            } else if (as_bool(logical_eq(get_base1(prior_sigma0, 4, "prior_sigma0", 1), 2))) {
+                current_statement_begin__ = 74;
+                lp_accum__.add(beta_log(sigma1, get_base1(prior_sigma0, 1, "prior_sigma0", 1), get_base1(prior_sigma0, 2, "prior_sigma0", 1)));
+            } else if (as_bool(logical_eq(get_base1(prior_sigma0, 4, "prior_sigma0", 1), 3))) {
+                current_statement_begin__ = 75;
+                lp_accum__.add(uniform_log(sigma1, get_base1(prior_sigma0, 1, "prior_sigma0", 1), get_base1(prior_sigma0, 2, "prior_sigma0", 1)));
+            } else if (as_bool(logical_eq(get_base1(prior_sigma0, 4, "prior_sigma0", 1), 4))) {
+                current_statement_begin__ = 76;
                 lp_accum__.add(student_t_log(sigma1, get_base1(prior_sigma0, 3, "prior_sigma0", 1), get_base1(prior_sigma0, 1, "prior_sigma0", 1), get_base1(prior_sigma0, 2, "prior_sigma0", 1)));
             } else if (as_bool(logical_eq(get_base1(prior_sigma0, 4, "prior_sigma0", 1), 5))) {
-                current_statement_begin__ = 69;
+                current_statement_begin__ = 77;
                 lp_accum__.add(cauchy_log(sigma1, get_base1(prior_sigma0, 1, "prior_sigma0", 1), get_base1(prior_sigma0, 2, "prior_sigma0", 1)));
             } else if (as_bool(logical_eq(get_base1(prior_sigma0, 4, "prior_sigma0", 1), 6))) {
-                current_statement_begin__ = 70;
+                current_statement_begin__ = 78;
                 lp_accum__.add(inv_gamma_log(sigma1, get_base1(prior_sigma0, 1, "prior_sigma0", 1), get_base1(prior_sigma0, 2, "prior_sigma0", 1)));
             } else if (as_bool(logical_eq(get_base1(prior_sigma0, 4, "prior_sigma0", 1), 7))) {
-                current_statement_begin__ = 71;
+                current_statement_begin__ = 79;
                 lp_accum__.add(inv_chi_square_log(sigma1, get_base1(prior_sigma0, 3, "prior_sigma0", 1)));
+            } else if (as_bool(logical_eq(get_base1(prior_sigma0, 4, "prior_sigma0", 1), 9))) {
+                current_statement_begin__ = 80;
+                lp_accum__.add(gamma_log(sigma1, get_base1(prior_sigma0, 1, "prior_sigma0", 1), get_base1(prior_sigma0, 2, "prior_sigma0", 1)));
+            } else if (as_bool(logical_eq(get_base1(prior_sigma0, 4, "prior_sigma0", 1), 10))) {
+                current_statement_begin__ = 81;
+                lp_accum__.add(exponential_log(sigma1, get_base1(prior_sigma0, 2, "prior_sigma0", 1)));
+            } else if (as_bool(logical_eq(get_base1(prior_sigma0, 4, "prior_sigma0", 1), 11))) {
+                current_statement_begin__ = 82;
+                lp_accum__.add(chi_square_log(sigma1, get_base1(prior_sigma0, 3, "prior_sigma0", 1)));
+            } else if (as_bool(logical_eq(get_base1(prior_sigma0, 4, "prior_sigma0", 1), 12))) {
+                current_statement_begin__ = 83;
+                lp_accum__.add(double_exponential_log(sigma1, get_base1(prior_sigma0, 1, "prior_sigma0", 1), get_base1(prior_sigma0, 2, "prior_sigma0", 1)));
             }
-            current_statement_begin__ = 74;
+            current_statement_begin__ = 87;
             lp_accum__.add(lkj_corr_cholesky_log(SigCorr, get_base1(prior_lkj, 1, "prior_lkj", 1)));
-            current_statement_begin__ = 77;
+            current_statement_begin__ = 90;
             if (as_bool(logical_gt(p, 0))) {
-                current_statement_begin__ = 78;
+                current_statement_begin__ = 91;
                 for (int i = 1; i <= p; ++i) {
-                    current_statement_begin__ = 79;
+                    current_statement_begin__ = 92;
                     if (as_bool(logical_eq(get_base1(prior_ar, i, 4, "prior_ar", 1), 1))) {
-                        current_statement_begin__ = 79;
+                        current_statement_begin__ = 92;
                         lp_accum__.add(normal_log(to_vector(get_base1(phi, i, "phi", 1)), get_base1(prior_ar, i, 1, "prior_ar", 1), get_base1(prior_ar, i, 2, "prior_ar", 1)));
                     } else {
-                        current_statement_begin__ = 80;
+                        current_statement_begin__ = 93;
                         lp_accum__.add(normal_log(to_vector(get_base1(phi, i, "phi", 1)), 0, 1));
                     }
                 }
             }
-            current_statement_begin__ = 84;
+            current_statement_begin__ = 97;
             if (as_bool(logical_gt(q, 0))) {
-                current_statement_begin__ = 85;
+                current_statement_begin__ = 98;
                 for (int i = 1; i <= q; ++i) {
-                    current_statement_begin__ = 86;
+                    current_statement_begin__ = 99;
                     if (as_bool(logical_eq(get_base1(prior_ma, i, 4, "prior_ma", 1), 1))) {
-                        current_statement_begin__ = 86;
+                        current_statement_begin__ = 99;
                         lp_accum__.add(normal_log(to_vector(get_base1(theta, i, "theta", 1)), get_base1(prior_ma, i, 1, "prior_ma", 1), get_base1(prior_ma, i, 2, "prior_ma", 1)));
                     } else {
-                        current_statement_begin__ = 87;
+                        current_statement_begin__ = 100;
                         lp_accum__.add(normal_log(to_vector(get_base1(theta, i, "theta", 1)), 0, 1));
                     }
                 }
             }
-            current_statement_begin__ = 91;
+            current_statement_begin__ = 104;
             for (int i = 1; i <= n; ++i) {
-                current_statement_begin__ = 91;
+                current_statement_begin__ = 104;
                 lp_accum__.add(multi_normal_cholesky_log(get_base1(epsilon, i, "epsilon", 1), rep_vector(0, d), sigma));
             }
         } catch (const std::exception& e) {
@@ -863,59 +899,59 @@ public:
             }
             if (!include_gqs__) return;
             // declare and define generated quantities
-            current_statement_begin__ = 94;
+            current_statement_begin__ = 107;
             double loglik;
             (void) loglik;  // dummy to suppress unused var warning
             stan::math::initialize(loglik, DUMMY_VAR__);
             stan::math::fill(loglik, DUMMY_VAR__);
             stan::math::assign(loglik,0);
-            current_statement_begin__ = 95;
+            current_statement_begin__ = 108;
             validate_non_negative_index("log_lik", "n", n);
             Eigen::Matrix<double, Eigen::Dynamic, 1> log_lik(n);
             stan::math::initialize(log_lik, DUMMY_VAR__);
             stan::math::fill(log_lik, DUMMY_VAR__);
-            current_statement_begin__ = 96;
+            current_statement_begin__ = 109;
             validate_non_negative_index("fit", "n", n);
             validate_non_negative_index("fit", "d", d);
             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> fit(n, d);
             stan::math::initialize(fit, DUMMY_VAR__);
             stan::math::fill(fit, DUMMY_VAR__);
-            current_statement_begin__ = 97;
+            current_statement_begin__ = 110;
             validate_non_negative_index("residuals", "n", n);
             validate_non_negative_index("residuals", "d", d);
             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> residuals(n, d);
             stan::math::initialize(residuals, DUMMY_VAR__);
             stan::math::fill(residuals, DUMMY_VAR__);
             // generated quantities statements
-            current_statement_begin__ = 99;
+            current_statement_begin__ = 112;
             for (int i = 1; i <= n; ++i) {
-                current_statement_begin__ = 100;
+                current_statement_begin__ = 113;
                 stan::model::assign(residuals, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             transpose(multi_normal_cholesky_rng(get_base1(epsilon, i, "epsilon", 1), sigma, base_rng__)), 
                             "assigning variable residuals");
-                current_statement_begin__ = 101;
+                current_statement_begin__ = 114;
                 stan::model::assign(fit, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             subtract(get_base1(y, i, "y", 1), get_base1(residuals, i, "residuals", 1)), 
                             "assigning variable fit");
-                current_statement_begin__ = 102;
+                current_statement_begin__ = 115;
                 stan::model::assign(log_lik, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             multi_normal_cholesky_log(get_base1(y, i, "y", 1), get_base1(mu, i, "mu", 1), sigma), 
                             "assigning variable log_lik");
-                current_statement_begin__ = 103;
+                current_statement_begin__ = 116;
                 stan::math::assign(loglik, (loglik + get_base1(log_lik, i, "log_lik", 1)));
             }
             // validate, write generated quantities
-            current_statement_begin__ = 94;
+            current_statement_begin__ = 107;
             vars__.push_back(loglik);
-            current_statement_begin__ = 95;
+            current_statement_begin__ = 108;
             size_t log_lik_j_1_max__ = n;
             for (size_t j_1__ = 0; j_1__ < log_lik_j_1_max__; ++j_1__) {
                 vars__.push_back(log_lik(j_1__));
             }
-            current_statement_begin__ = 96;
+            current_statement_begin__ = 109;
             size_t fit_j_2_max__ = d;
             size_t fit_j_1_max__ = n;
             for (size_t j_2__ = 0; j_2__ < fit_j_2_max__; ++j_2__) {
@@ -923,7 +959,7 @@ public:
                     vars__.push_back(fit(j_1__, j_2__));
                 }
             }
-            current_statement_begin__ = 97;
+            current_statement_begin__ = 110;
             size_t residuals_j_2_max__ = d;
             size_t residuals_j_1_max__ = n;
             for (size_t j_2__ = 0; j_2__ < residuals_j_2_max__; ++j_2__) {

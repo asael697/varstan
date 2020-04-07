@@ -14,6 +14,8 @@ model(obj)
 }
 \arguments{
 \item{obj}{a varstan object or one of the defined current defined models in varstan package}
+
+\item{...}{additional values need in print methods}
 }
 \value{
 a  string with the defined time series model

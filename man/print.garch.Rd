@@ -4,10 +4,10 @@
 \alias{print.garch}
 \title{Print a garch model}
 \usage{
-\method{print}{garch}(obj, ...)
+\method{print}{garch}(x, ...)
 }
 \arguments{
-\item{obj}{a garch model from the varstan package}
+\item{x}{a garch model from the varstan package}
 }
 \description{
 Print a garch model

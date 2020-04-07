@@ -4,10 +4,12 @@
 \alias{print.Sarima}
 \title{Print a Sarima model}
 \usage{
-\method{print}{Sarima}(obj, ...)
+\method{print}{Sarima}(x, ...)
 }
 \arguments{
-\item{obj}{a Sarima model from the varstan package}
+\item{x}{a Sarima model from the varstan package}
+
+\item{...}{additional values need in print methods}
 }
 \description{
 Print a Sarima model

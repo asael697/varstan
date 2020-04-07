@@ -2,31 +2,33 @@
 % Please edit documentation in R/prior.R
 \name{get_prior}
 \alias{get_prior}
-\title{Generic function for setting a prior to an specify parameter}
+\title{Get the prior distribution of a model parameter}
 \usage{
-get_prior(dat,type,lag = 0)
+get_prior(model,par,lag = 0)
 }
 \arguments{
-\item{dat}{a model specified in varstan.}
+\item{model}{a time series model class specified in varstan.}
 
-\item{type}{the type of parameter which a prior is defined could be mu, sigma0, ar, ma, arch, garch, mgarch}
+\item{par}{a string value with the  desired parameter which a prior is defined could be:
+"mu0", "sigma0", "ar", "ma", "arch", "garch", "mgarch", "dfv", "df", "LKJ" or "breg".}
 
-\item{lag}{an optional integer value indicated thedesired lag of the parameter which the prior is defined
-if lag = 0, then the prior will be applied for all the lags.}
+\item{lag}{an optional integer value, indicates the desired lag of the parameter which the prior
+is defined if lag = 0, then the prior distribution will be applied for all lags}
 }
 \description{
-Generic function for setting a prior to an specify parameter
+The functions gets the defined distribution of a defined model parameter
 }
 \examples{
+# get all the ar parameters
+dat = Sarima(birth,order = c(2,1,2))
+get_prior(model = dat,par = "ar")
 
-dat = Sarima(birth,order = c(1,1,2))
-dat = set_prior(dat,type = "ar",par1 =0,par2 = 1,dist = "normal")
-get_prior(dat,type = "ar")
-
-dat = set_prior(dat,type = "mu0",par1 = 0,par2 = 2.5,df = 7,dist = "student")
+# change the mean constant parameter
+dat = set_prior(model = dat,par = "mu0",dist = student(0,2.5,7))
 get_prior(dat,type = "mu0")
 
-dat = set_prior(dat,type = "ma",par1 =2,par2 = 2,dist = "beta",lag = 2)
+# change and print only the second ma parameter
+dat = set_prior(model = dat,par = "ma",dist = beta(2,2),lag = 2)
 get_prior(dat,type = "ma")
 
 }

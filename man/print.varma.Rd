@@ -4,10 +4,10 @@
 \alias{print.varma}
 \title{Print a varma model}
 \usage{
-\method{print}{varma}(obj, ...)
+\method{print}{varma}(x, ...)
 }
 \arguments{
-\item{obj}{a varma model from the varstan package}
+\item{x}{a varma model from the varstan package}
 }
 \description{
 Print a varma model

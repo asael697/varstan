@@ -4,7 +4,7 @@
 \alias{SVM}
 \title{Constructor of an Stochastic volatility model object}
 \usage{
-SVM(ts,arma = c(1,0),xreg = NULL)
+SVM(ts,arma = c(1,0),xreg = NULL,series.name = NULL)
 }
 \arguments{
 \item{ts}{an multivariate time series}
