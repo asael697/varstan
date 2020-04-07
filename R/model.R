@@ -5,6 +5,7 @@
 #' @usage  model(obj)
 #'
 #' @param obj a varstan object or one of the defined current defined models in varstan package
+#' @param ... additional values need in print methods
 #'
 #' @details if \code{obj} is a varstan object the function will print the information of the
 #' defined model inside of the object. If \code{obj} is one of the model classes (like Sarima or garch)

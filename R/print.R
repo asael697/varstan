@@ -1,88 +1,89 @@
 #' Print a Sarima model
 #'
-#' @param  obj a Sarima model from the varstan package
+#' @param  x a Sarima model from the varstan package
+#' @param ... additional values need in print methods
 #'
 #' @method print Sarima
 #' @export
 #'
-print.Sarima = function(obj,...){
-  if(!is.Sarima(obj))
+print.Sarima = function(x,...){
+  if(!is.Sarima(x))
     stop("The current object is not an arima model")
-  report(obj)
+  report(x)
 }
 #' Print a naive model
 #'
-#' @param  obj a navie model from the varstan package
+#' @param  x a navie model from the varstan package
 #'
 #' @method print naive
 #' @export
 #'
-print.naive = function(obj,...){
-  if(!is.naive(obj))
+print.naive = function(x,...){
+  if(!is.naive(x))
     stop("The current object is not a naive model")
-  report(obj)
+  report(x)
 }
 #' Print a garch model
 #'
-#' @param obj a garch model from the varstan package
+#' @param x a garch model from the varstan package
 #'
 #' @method print garch
 #' @export
 #'
-print.garch = function(obj,...){
-  if(!is.garch(obj))
+print.garch = function(x,...){
+  if(!is.garch(x))
     stop("The current object is not a garch model")
-  report(obj)
+  report(x)
 }
 #' Print a Stochastic Volatility model
 #'
-#' @param obj a SVM model from the varstan package
+#' @param x a SVM model from the varstan package
 #'
 #' @method print SVM
 #' @export
 #'
-print.SVM = function(obj,...){
-  if(!is.SVM(obj))
+print.SVM = function(x,...){
+  if(!is.SVM(x))
     stop("The current object is not a SVM model")
-  report(obj)
+  report(x)
 }
 #' Print a varma model
 #'
-#' @param obj a varma model from the varstan package
+#' @param x a varma model from the varstan package
 #'
 #' @method print varma
 #' @export
 #'
-print.varma = function(obj,...){
-  if(!is.varma(obj))
+print.varma = function(x,...){
+  if(!is.varma(x))
     stop("The current object is not a varma model")
-  report(obj)
+  report(x)
 }
 #' Print a Bekk model
 #'
-#' @param obj a Bekk model from the varstan package
+#' @param x a Bekk model from the varstan package
 #'
 #' @method print Bekk
 #' @export
 #'
-print.Bekk= function(obj,...){
-  if(!is.Bekk(obj))
+print.Bekk= function(x,...){
+  if(!is.Bekk(x))
     stop("The current object is not a Bekk model")
-  report(obj)
+  report(x)
 }
 #' Print a varstan object
 #'
-#' @param obj a varstan object
+#' @param x a varstan object
 #'
 #' @method print varstan
 #' @export
 #'
-print.varstan = function(obj,...){
-  if(!is.varstan(obj))
-    stop("The current object is not a varstan object")
+print.varstan = function(x,...){
+  if(!is.varstan(x))
+    stop("The current object is not a varstan model")
 
-  model(obj)
-  print(summary(obj))
+  model(x)
+  print(summary(x))
   cat("\n Samples were drawn using sampling(NUTS). For each parameter, ess")
   cat("\n is the effective sample size, and Rhat is the potential")
   cat("\n scale reduction factor on split chains (at convergence, Rhat = 1). \n")
