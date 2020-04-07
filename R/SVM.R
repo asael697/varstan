@@ -5,7 +5,7 @@
 #' The function returns  a list with the data for running stan() function of
 #'  rstan package
 #'
-#' @usage SVM(ts,arma = c(1,0),xreg = NULL)
+#' @usage SVM(ts,arma = c(1,0),xreg = NULL,series.name = NULL)
 #'
 #' @param ts an multivariate time series
 #' @param arma A specification of the  ARMA model,same as order parameter:  the two
@@ -54,7 +54,10 @@ SVM = function(ts,arma = c(0,0),xreg = NULL,series.name = NULL){
 
   m1 = garch(ts = ts,order = c(1,1,1),arma = arma,xreg = xreg,
              genT = FALSE,series.name = series.name)
-  m1$h = 0
+
+  m1$prior_alpha = m1$prior_mgarch;m1$prior_garch = NULL;
+  m1$prior_beta = m1$prior_arch; m1$prior_arch = NULL
+  m1$h = 0;
   attr(m1,"class") = "SVM"
   return(m1)
 }
