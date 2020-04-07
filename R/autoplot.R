@@ -25,16 +25,7 @@
 #'
 #' @seealso \code{\link[stats]{plot.ts}}, \code{\link[ggplot2]{fortify}}
 #'
-#' @examples
-#'
-#' library(ggplot2)
-#' autoplot(USAccDeaths)
-#'
-#' lungDeaths <- cbind(mdeaths, fdeaths)
-#' autoplot(lungDeaths)
-#' autoplot(lungDeaths, facets=TRUE)
-#'
-#' @importFrom forecast autoplot
+#' @import ggplot2
 #' @export
 #'
 autoplot.ts <- function(object, series=NULL, xlab = "Time", ylab = deparse(substitute(object)),
