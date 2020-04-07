@@ -470,20 +470,12 @@ check_df <- function(x) {
 #'
 check_dist <- function(x,par) {
   y = FALSE
-  if(par == "ar"){
+  if(identical(par,"ar")){
     if(identical(x,"normal"))  y = TRUE
     if(identical(x,"beta"))    y = TRUE
     if(identical(x,"uniform")) y = TRUE
   }
-  if(par == "breg"){
-    if(identical(x,"normal"))  y = TRUE
-    if(identical(x,"student")) y = TRUE
-    if(identical(x,"cauchy"))  y = TRUE
-    if(identical(x,"gamma"))   y = TRUE
-    if(identical(x,"beta"))    y = TRUE
-    if(identical(x,"uniform")) y = TRUE
-  }
-  if(par == "mgarch"){
+  if(identical(par,"breg")){
     if(identical(x,"normal"))  y = TRUE
     if(identical(x,"student")) y = TRUE
     if(identical(x,"cauchy"))  y = TRUE
@@ -491,7 +483,7 @@ check_dist <- function(x,par) {
     if(identical(x,"beta"))    y = TRUE
     if(identical(x,"uniform")) y = TRUE
   }
-  if(par == "mu"){
+  if(identical(par,"mgarch")){
     if(identical(x,"normal"))  y = TRUE
     if(identical(x,"student")) y = TRUE
     if(identical(x,"cauchy"))  y = TRUE
@@ -499,7 +491,7 @@ check_dist <- function(x,par) {
     if(identical(x,"beta"))    y = TRUE
     if(identical(x,"uniform")) y = TRUE
   }
-  if(par == "mu0"){
+  if(identical(par,"mu")){
     if(identical(x,"normal"))  y = TRUE
     if(identical(x,"student")) y = TRUE
     if(identical(x,"cauchy"))  y = TRUE
@@ -507,7 +499,15 @@ check_dist <- function(x,par) {
     if(identical(x,"beta"))    y = TRUE
     if(identical(x,"uniform")) y = TRUE
   }
-  if(par == "sigma0"){
+  if(identical(par,"mu0")){
+    if(identical(x,"normal"))  y = TRUE
+    if(identical(x,"student")) y = TRUE
+    if(identical(x,"cauchy"))  y = TRUE
+    if(identical(x,"gamma"))   y = TRUE
+    if(identical(x,"beta"))    y = TRUE
+    if(identical(x,"uniform")) y = TRUE
+  }
+  if(identical(par,"sigma0")){
     if(identical(x,"normal"))      y = TRUE
     if(identical(x,"student"))     y = TRUE
     if(identical(x,"cauchy"))      y = TRUE
@@ -515,7 +515,7 @@ check_dist <- function(x,par) {
     if(identical(x,"inv_chi_square"))  y = TRUE
     if(identical(x,"inv_gamma"))       y = TRUE
   }
-  if(par == "dfv"){
+  if(identical(par,"dfv")){
     if(identical(x,"normal"))      y = TRUE
     if(identical(x,"gamma"))       y = TRUE
     if(identical(x,"Jeffrey"))     y = TRUE
