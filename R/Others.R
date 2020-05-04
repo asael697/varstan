@@ -38,7 +38,7 @@ version = function(View = FALSE){
   }
   else{
     cat("package: varstan \n")
-    cat("version: 1.0.0.000 \n")
+    cat("version: 1.0.1.000 \n")
     cat("Algorithm: Stan-NUTS \n")
     cat("Current classes: varstan, Sarima, garch, varma, Bekk,DWR \n")
     cat("Current models: \n")

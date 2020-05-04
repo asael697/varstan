@@ -40,7 +40,7 @@ lay2 =  matrix(c(1,1,2,3),ncol = 2,byrow = TRUE)
 
 Varstan is a a package for bayesian estimation of structured time series models,using the Hamiltonian monte carlo method, implemented with [Stan](http://mc-stan.org/), a probabilistic language model in C++. The aim of varstan is to have an interface of the most popular time series modeles such as: sarima,garch, stochastic Volatility models (*SVM*), Hiden Markov models(*HMM*), Dynamic Harmonic regresion, additive non-linear models (*via* [prophet](https://github.com/facebook/prophet)), univariate kalman Filters, varma and bekk models.
 
-On the beta version 1.0.5.000, the avaliable models are:
+On the beta version 1.0.1.000, the avaliable models are:
  
   + arima
   + Seasonal arima
@@ -55,48 +55,17 @@ The dynamic of varstan is to build your own model using one of the avaliable mod
 
 ### Installing varstan
 
-Varstan is stil a beta version package, so currently installing it could be challenging, we recomend to first install the package rstan, you can follow the instalation procedure [here](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started)
-
-### Troubleshooting Rstan / Rtools install for Windows:
-
-Ensure recent version of R and Rtools is installed.
-
-try including these lines in home/.R/makevars. :
-
-    CXX14 = g++ -std=c++1y
-    CXX14FLAGS = -O3 -Wno-unused-variable -Wno-unused-function
-
-If makevars does not exist, run this code within R:
-
-``` {r,eval = FALSE}
-dotR <- file.path(Sys.getenv("HOME"), ".R")
-if (!file.exists(dotR)) dir.create(dotR)
-M <- file.path(dotR, ifelse(.Platform$OS.type == "windows", "Makevars.win", "Makevars"))
-if (!file.exists(M)) file.create(M)
-cat("\nCXX14FLAGS=-O3 -march=native -mtune=native",
-    if( grepl("^darwin", R.version$os)) "CXX14FLAGS += -arch x86_64 -ftemplate-depth-256" else
-      if (.Platform$OS.type == "windows") "CXX11FLAGS=-O3 -march=native -mtune=native" else
-        "CXX14FLAGS += -fPIC","CXX11FLAGS=-O3 -mtune=native CXX14 = $(BINPREF)g++ -m$(WIN) -std=c++1y",
-    "CXX14 = g++ -std=c++1y","CXX14FLAGS = -O3 -Wno-unused-variable -Wno-unused-function",
-    file = M, sep = "\n", append = TRUE)
-```
+Varstan is stil a beta version package, so currently installing it could be challenging, we recomend to install the current R version (R4.0) and the Rtools4.0. After that, install the package rstan, you can follow the instalation procedure [here](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started)
 
 
 ### Install varstan from git
 
 
-For installing varstan package for git use the code on the next chunk:
+For installing varstan package from git use the code on the next chunk:
 
 ```{r, eval = FALSE}
-install.packages(c("rstan","bridgesampling","loo","Rcpp","rstantools","forecast"))
+if (!requireNamespace("remotes")) install.packages("remotes")
 
-if (!requireNamespace("remotes")) {
-  install.packages("remotes")
-}
-
-Sys.setenv(PATH = paste("C:/Rtools/bin", Sys.getenv("PATH"), sep=";"))
-Sys.setenv(PATH = paste("C:\\Rtools\\mingw_64\\bin", Sys.getenv("PATH"), sep=";"))
-Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
 remotes::install_github("asael697/varstan",dependencies = TRUE)
 ```
  
@@ -137,8 +106,8 @@ model1
 The function *Sarima()* generates a Seasonal ARIMA model ready to be fitted in *Stan*. As the model is printed, all the important information is shown: the model to be fit, the total observations of the data, the seasonal period, the current observations that can be used after differences, and a list of priors for all the model parameters. Using the information provided by the *acf plot* in figure 1 (*middle right*), the partial auto-correlations are not that strong, and a normal distribution for the auto-regressive coefficient (*ar[1]*) could explore values close to 1 or -1, causing the prior to be too informative. Instead beta distribution in $[-1,1]$ (*If* $\theta \sim beta(\alpha,\beta)$ in $[0,1]$ then $\theta_1 = 2(\theta-1) \sim beta(\alpha,\beta)$ in $[-1,1]$)  centered at zero, could be a more proper prior. With the functions *set_prior()* and *get_prior()* we automatically update and check our changes.
 
 ```{r}
-model1 = set_prior(dat = model1,type = "ar",par1 = 2,par2 = 2,dist = "beta")
-get_prior(dat = model1,type = "ar")
+model1 = set_prior(model = model1,par = "ar",dist = beta(2,2))
+get_prior(model = model1,par = "ar")
 ```
 
 Now that the model and priors are defined, what follows is to fit the model using the *varstan()* function. We simulate 1 chain, of 2,000 iterations and warm-up of the first 1,000 chain's values. 

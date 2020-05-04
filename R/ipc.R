@@ -3,6 +3,8 @@
 #' Monthly return coefficients for the inflation. An economic indicator of
 #' a country's economy.
 #'
+#' @docType data
+#'
 #' @format A time series of monthly data from 1980 to 2018.
 #'
 #' @source

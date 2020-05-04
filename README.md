@@ -13,7 +13,7 @@ non-linear models (*via*
 [prophet](https://github.com/facebook/prophet)), univariate kalman
 Filters, varma and bekk models.
 
-On the beta version 1.0.5.000, the avaliable models are:
+On the beta version 1.0.1.000, the avaliable models are:
 
 -   arima
 -   Seasonal arima
@@ -32,48 +32,15 @@ model.
 
 ### Installing varstan
 
-Varstan is stil a beta version package, so currently installing it could
-be challenging, we recomend to first install the package rstan, you can
-follow the instalation procedure
-[here](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started)
-
-### Troubleshooting Rstan / Rtools install for Windows:
-
-Ensure recent version of R and Rtools is installed.
-
-try including these lines in home/.R/makevars. :
-
-    CXX14 = g++ -std=c++1y
-    CXX14FLAGS = -O3 -Wno-unused-variable -Wno-unused-function
-
-If makevars does not exist, run this code within R:
-
-``` r
-dotR <- file.path(Sys.getenv("HOME"), ".R")
-if (!file.exists(dotR)) dir.create(dotR)
-M <- file.path(dotR, ifelse(.Platform$OS.type == "windows", "Makevars.win", "Makevars"))
-if (!file.exists(M)) file.create(M)
-cat("\nCXX14FLAGS=-O3 -march=native -mtune=native",
-    if( grepl("^darwin", R.version$os)) "CXX14FLAGS += -arch x86_64 -ftemplate-depth-256" else
-      if (.Platform$OS.type == "windows") "CXX11FLAGS=-O3 -march=native -mtune=native" else
-        "CXX14FLAGS += -fPIC","CXX11FLAGS=-O3 -mtune=native CXX14 = $(BINPREF)g++ -m$(WIN) -std=c++1y",
-    "CXX14 = g++ -std=c++1y","CXX14FLAGS = -O3 -Wno-unused-variable -Wno-unused-function",
-    file = M, sep = "\n", append = TRUE)
-```
+Varstan is stil a beta version package, so currently installing it could be challenging, we recomend to install the current R version (R4.0) and the Rtools4.0. After that, install the package rstan, you can follow the instalation procedure [here](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started)
 
 ### Install varstan from git
 
-For installing varstan package for git use the code on the next chunk:
+For installing varstan package from git use the code on the next chunk:
 
 ``` r
-install.packages(c("rstan","bridgesampling","loo","Rcpp","rstantools","forecast"))
+if (!requireNamespace("remotes")) install.packages("remotes")
 
-if (!requireNamespace("remotes")) {
-  install.packages("remotes")
-}
-Sys.setenv(PATH = paste("C:/Rtools/bin", Sys.getenv("PATH"), sep=";"))
-Sys.setenv(PATH = paste("C:\\Rtools\\mingw_64\\bin", Sys.getenv("PATH"), sep=";"))
-Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
 remotes::install_github("asael697/varstan",dependencies = TRUE)
 ```
 
@@ -86,7 +53,7 @@ implemented in the actual package version:
 ``` r
 version(View = FALSE)
 #> package: varstan 
-#> version: 1.0.0.000 
+#> version: 1.0.1.000 
 #> Algorithm: Stan-NUTS 
 #> Current classes: varstan, Sarima, garch, varma, Bekk,DWR 
 #> Current models: 
@@ -188,8 +155,8 @@ centered at zero, could be a more proper prior. With the functions
 changes.
 
 ``` r
-model1 = set_prior(dat = model1,type = "ar",par1 = 2,par2 = 2,dist = "beta")
-get_prior(dat = model1,type = "ar")
+model1 = set_prior(model = model1,par = "ar",dist = beta(2,2))
+get_prior(model = model1,par = "ar")
 #> ar[ 1 ] ~ beta (form1 =  2 , form2 =  2 )
 ```
 
