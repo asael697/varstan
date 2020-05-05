@@ -25,8 +25,11 @@
 #'   interval), then the column names will be \code{"5\%"} and \code{"95\%"},
 #'   respectively.
 #'
-#'   @export
+#' @export
 #'
 posterior_interval = function(mat, prob = 0.90, ...){
-  rstantools::posterior_interval(object = mat,prob = prob)
+  if(is.data.frame(mat))
+    mat1 = as.matrix(mat)
+  else mat1 = mat
+  rstantools::posterior_interval(object = mat1,prob = prob)
 }
