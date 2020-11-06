@@ -4,13 +4,12 @@
 #' of \strong{all} the model parameters of the varstan object. By defaults it returns the
 #' posterior mean.
 #'
-#' @aliases posterior_estimate posterior_estimate.varstan
+#' @usage  posterior_estimate(object,robust = FALSE,...)
 #'
-#' @usage  posterior_estimate(obj,..)
-#'
-#' @param obj a varstan object
+#' @param object a varstan object
 #' @param robust A boolean value, if its \code{TRUE} it returns the median of the posterior distribution,
 #' And if its \code{FALSE} it returns the mean, by default is the \code{FALSE} value
+#' @param ... Further arguments passed to  \code{posterior_estimate}.
 #'
 #' @author  Asael Alonzo Matamoros
 #'
@@ -19,24 +18,24 @@
 #'
 #' @export
 #'
-posterior_estimate <- function(obj, ...) {
-  UseMethod("posterior_estimate")
-}
-#'
-#' @export
-#'
-posterior_estimate.varstan = function(obj,robust = FALSE,...){
-  if(!is.varstan(obj))
+posterior_estimate.varstan = function(object,robust = FALSE,...){
+  if(!is.varstan(object))
     stop("The current object is not a varstan class")
 
-  if(is.Sarima(obj$model)) resume = point_estimate_arima(model = obj$model,fit = obj$stanfit,roubst = robust)
-  if(is.naive(obj$model))  resume = point_estimate_arima(model = obj$model,fit = obj$stanfit,roubst = robust)
-  if(is.garch(obj$model))  resume = point_estimate_garch(model = obj$model,fit = obj$stanfit,roubst = robust)
-  if(is.SVM(obj$model))    resume = point_estimate_garch(model = obj$model,fit = obj$stanfit,roubst = robust)
-  if(is.varma(obj$model))  resume = point_estimate_varma(model = obj$model,fit = obj$stanfit,roubst = robust)
-  if(is.Bekk(obj$model))   resume = point_estimate_varma(model = obj$model,fit = obj$stanfit,roubst = robust)
+  if(is.Sarima(object$model)) resume = point_estimate_arima(model = object$model,fit = object$stanfit,robust = robust)
+  if(is.naive(object$model))  resume = point_estimate_arima(model = object$model,fit = object$stanfit,robust = robust)
+  if(is.garch(object$model))  resume = point_estimate_garch(model = object$model,fit = object$stanfit,robust = robust)
+  if(is.SVM(object$model))    resume = point_estimate_garch(model = object$model,fit = object$stanfit,robust = robust)
+  if(is.varma(object$model))  resume = point_estimate_varma(model = object$model,fit = object$stanfit,robust = robust)
+  if(is.Bekk(object$model))   resume = point_estimate_varma(model = object$model,fit = object$stanfit,robust = robust)
 
   return(resume)
+}
+#' @rdname posterior_estimate.varstan
+#' @export
+#'
+posterior_estimate <- function(object,robust = FALSE, ...) {
+  UseMethod("posterior_estimate")
 }
 #' posterior estimate method for garch model
 #'
@@ -46,7 +45,7 @@ posterior_estimate.varstan = function(obj,robust = FALSE,...){
 #'
 #' @noRd
 #'
-point_estimate_garch = function(model,fit,robust = FALSE,...){
+point_estimate_garch = function(model,fit,robust = FALSE){
   l1 = list()
   # mu0 Parameter
   l1$mu0 = extract_estimate(fit = fit,model = model,par = "mu0",robust)
@@ -76,6 +75,10 @@ point_estimate_garch = function(model,fit,robust = FALSE,...){
   if(model$d1 > 0 ){
     l1$breg = extract_estimate(fit = fit,model = model,par = "breg",robust)
   }
+  # bregParameter
+  if(model$asym1){
+    l1$breg = extract_estimate(fit = fit,model = model,par = "gamma",robust)
+  }
   return(l1)
 }
 #' posterior estimate method for Sarima models
@@ -86,7 +89,7 @@ point_estimate_garch = function(model,fit,robust = FALSE,...){
 #'
 #' @noRd
 #'
-point_estimate_arima = function(model,fit,robust = FALSE,...){
+point_estimate_arima = function(model,fit,robust = FALSE){
     l1 = list()
     # mu0 Parameter
     l1$mu0 = extract_estimate(fit = fit,model = model,par = "mu0",robust)
@@ -121,8 +124,9 @@ point_estimate_arima = function(model,fit,robust = FALSE,...){
 #' @param robust a boolean value for robust indicators
 #'
 #' @noRd
+#' @importFrom stats median
 #'
-point_estimate_varma = function(model,fit,robust = FALSE,...){
+point_estimate_varma = function(model,fit,robust = FALSE){
   l1 = list()
   # mu0 Parameter
   l1$mu0 = get_lag_varma("mu0",fit,model,robust = FALSE)
@@ -150,7 +154,7 @@ point_estimate_varma = function(model,fit,robust = FALSE,...){
   }
   if(model$genT){
     post = data.frame(rstan::extract(fit,"v", permuted = TRUE))
-    if(robust) pe = apply(post,2,median)
+    if(robust) pe = apply(post,2,stats::median)
     else pe = apply(post,2,mean)
     l1$v = pe
   }
