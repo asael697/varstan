@@ -1,6 +1,6 @@
-#' U.S. Monthly Live Births
+#' U.S. Monthly Live Births.
 #'
-#'  Monthly live births (adjusted) in thousands for the United States, 1948-1979.
+#' Monthly live births (adjusted) in thousands for the United States, 1948-1979.
 #'
 #' @docType data
 #'

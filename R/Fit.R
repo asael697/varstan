@@ -59,24 +59,12 @@ fit_Sarima = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta 
 fit_garch = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta = 0.90,tree.depth,...){
 
   pars = get_params_garch(model)$exclude
-
-  if(model$genT == FALSE){
-    stanfit = rstan::sampling(stanmodels$garch,
-                              data = model,
-                              chains = chains,
-                              iter = iter,
-                              warmup = warmup,
-                              control = list(adapt_delta = adapt.delta,max_treedepth = tree.depth))
-  }
-  else{
-
-    stanfit = rstan::sampling(stanmodels$tgarch,
-                              data = model,
-                              chains = chains,
-                              iter = iter,
-                              warmup = warmup,
-                              control = list(adapt_delta = adapt.delta,max_treedepth = tree.depth))
-  }
+  stanfit = rstan::sampling(stanmodels$tgarch,
+                            data = model,
+                            chains = chains,
+                            iter = iter,
+                            warmup = warmup,
+                            control = list(adapt_delta = adapt.delta,max_treedepth = tree.depth))
 
   return(stanfit)
 }
@@ -98,7 +86,7 @@ fit_garch = function(model,chains=4,iter=2000,warmup=floor(iter/2),adapt.delta =
 #'
 #' @import rstan
 #'
-#' @author  Asael Alonzo Matamoros
+#' @author Asael Alonzo Matamoros
 #'
 #' @noRd
 #'

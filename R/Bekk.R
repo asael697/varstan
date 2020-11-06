@@ -1,30 +1,26 @@
-#' Constructor varma(p,q)-Bekk(s,k) object
+#' Constructor VARMA(p,q)-Bekk(s,k) object.
 #'
-#' Constructor of the varma(p,q)-Bekk(s,k) object for Bayesian estimation in STAN
+#' Constructor of the VARMA(p,q)-Bekk(s,k) object for Bayesian estimation in STAN.
 #'
-#' The function returns  a list with the data for running stan() function of
-#'  rstan package
+#' The function returns  a list with the data for running \code{stan()} function of
+#'  \pkg{rstan} package
 #'
-#' @usage Bekk(ts,order = c(1,1,0),varma = c(0,0),genT = FALSE)
+#' @usage Bekk(ts,order = c(1,1,0),varma = c(0,0),genT = FALSE,series.name = NULL)
 #'
-#' @param ts an multivariate time series
-#' @param varma A specification of VARMA model: the two components (p, q) are the AR
-#' order, the number of differences, and the MA order.
-#' @param order an optional value for specify the Bekk  part for variance, same as
+#' @param ts an multivariate time series.
+#' @param order A numeric vector for specify the Bekk  part for variance, same as
 #' order parameter:  the three components (s, k, h) are the arch order,
-#' the garch order and the garch on the mean (mgarch) order.
-#' @param genT a boolean value to specify a Generalized a t-student model Cruz (2015)
-#' @param series.name an optional string vector with the series names.
-#' @details If \code{sd} option can only be used with the mbekk function, and it  adds
-#' a m-Bekk model for volatility.
+#' the garch order and the garch for the mean (mgarch) order.
+#' @param varma an optional numeric vector for specification of a VARMA model: the two
+#' components (p, q) are the VAR order, the number of differences, and the VMA order.
+#' @param genT a boolean value to specify a Generalized a t-student model Cruz (2015).
+#' @param series.name an optional string vector with the time series names.
 #'
-#' If a mbekk model is not used, then sigma0 represents the covariance matrix
-#' of the model.
+#' @details
+#' If a Bekk model is specified, then sigma0 represents the triangular inferior matrix
+#' alpha0 of a Bekk model.
 #'
-#' If a bekk model is specified, then sigma0 represents the triangular inferior matrix
-#' alpha0 of a bekk model
-#'
-#' The default priors used in varma are:
+#' The default priors used in VARMA(p,q)-MBekk(s,k,h) model are:
 #'
 #' \itemize{
 #'  \item{"ar"}{ar ~ normal(0,0.5)}
@@ -37,20 +33,26 @@
 #'  \item{"dfv"}{dfv ~ gamma(2,0.1)}
 #' }
 #'
-#' For changing the default prior use the function \code{set_prior}
+#' For changing the default prior use the \code{set_prior()} function.
 #'
 #' @author  Asael Alonzo Matamoros
-#'
+#' @importFrom  stats as.ts
 #' @export
 #'
 #' @references
-#'  Polasek, Ren(1999).
-#'  A multivariate GARCH-M model for exchange rates in the US,Germany and Japan
+#' Polasek, W. (2000). A Multivariate GARCH-M Model for Exchange Rates in the US,
+#' Germany and Japan. \emph{Springer Berlin Heidelberg}. 355-363.
+#' \code{doi: 10.1007/978-3-642-57280-7_39}
 #'
-#'  Fonseca,Ferreira, Migon (2008)
-#'  Objective Bayesian analysis for the Student-t regression model
+#' Fioruci, J. and Ehlers, R. and Andrade, M. (2014). Bayesian multivariate GARCH
+#' models with dynamic correlations and asymmetric error distributions.
+#' \emph{Journal of Applied Statistics}. 41(2), 320 - 331.
 #'
-#' @seealso \code{\link{garch}} \code{\link{Sarima}} \code{\link{set_prior}}
+#' Berg, T. O. (2016) Multivariate Forecasting with BVARs and DSGE Models.
+#' \emph{J. Forecast}. 35(1), 718- 740.
+#' \code{doi: 10.1002/for.2406}.
+#'
+#' @seealso \code{\link{garch}} \code{\link{Sarima}} \code{\link{varma}}
 #'
 #' @examples
 #' # Declare a Bekk model for the Astrovan data
@@ -63,13 +65,13 @@ Bekk = function(ts,order = c(1,1,0),varma = c(0,0),genT = FALSE,series.name = NU
   d = dim(ts)[2]
   y = matrix(ts,nrow = n)
   time = as.numeric(time(ts))
-  yreal = as.ts(ts)
+  yreal = stats::as.ts(ts)
 
   if(n < d){
     n = d
     d = dim(ts)[2]
     y = t(y)
-    yreal = t( as.ts(ts) )
+    yreal = t( stats::as.ts(ts) )
     time = as.numeric(time(ts))
   }
   if(!is.null(series.name)){
@@ -108,12 +110,12 @@ Bekk = function(ts,order = c(1,1,0),varma = c(0,0),genT = FALSE,series.name = NU
 }
 #' Checks if is a Bekk object
 #'
-#' @param obj a Bekk object
+#' @param object a Bekk object
 #' @noRd
 #'
-is.Bekk = function(obj){
+is.Bekk = function(object){
   y = FALSE
-  if(class(obj) == "Bekk") y = TRUE
+  if(identical(class(object),"Bekk")) y = TRUE
   return (y)
 }
 #' Get the degree freedom values of a Bekk model
@@ -130,6 +132,8 @@ is.Bekk = function(obj){
 #'
 #' @author  Asael Alonzo Matamoros
 #'
+#' @importFrom stats median
+#'
 #' @return  a data frame with all the important fitted parameters
 #'
 #' @noRd
@@ -140,7 +144,7 @@ get_df_varma = function(fit,model,robust = FALSE,...){
     if(is.garch(model)) d1 = 1
     else d1 = model$d
     # Estimation
-    if(robust) sum1 = t(matrix(apply(post,2,median),nrow = d1,byrow = TRUE))
+    if(robust) sum1 = t(matrix(apply(post,2,stats::median),nrow = d1,byrow = TRUE))
     else sum1 = t(matrix(apply(post,2,mean),nrow = d1,byrow = TRUE))
     return(sum1)
 }
@@ -150,26 +154,28 @@ get_df_varma = function(fit,model,robust = FALSE,...){
 #'
 #' The function returns a data.frame object with the degree freedom values
 #'
-#' @usage  get_lag_varma(type,model,fit,robust,...)
+#' @usage  get_lag_varma(par,model,fit,robust,...)
 #'
-#' @param type the parameter to be extracted
+#' @param par the parameter to be extracted
 #' @param fit a stanfit object
 #' @param model a model object
 #' @param robust a boolean for obtain the robust estimation
 #'
 #' @author  Asael Alonzo Matamoros
 #'
+#' @importFrom stats median
+#'
 #' @return  a data frame with all the important fitted parameters
 #' @noRd
 #'
-get_lag_varma = function(type,fit,model,robust = FALSE,...){
-  if(type %in% get_params_varma(model)$include ){
-    post = as.data.frame(rstan::extract(fit,type, permuted = TRUE) )
-    if(robust) pe = apply(post,2,median)
+get_lag_varma = function(par,fit,model,robust = FALSE){
+  if(par %in% get_params_varma(model)$include ){
+    post = as.data.frame(rstan::extract(fit,pars = par, permuted = TRUE) )
+    if(robust) pe = apply(post,2,stats::median)
     else pe = apply(post,2,mean)
     return(pe)
   }
-  else cat(Type,"is not a fitted parameter")
+  else cat(par,"is not a fitted parameter")
 }
 #' Extracts all the order coefficients in a list
 #'
