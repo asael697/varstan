@@ -10,11 +10,11 @@
 #' a data frame with the current models will visualize in the RStudio console
 #'
 #'
-#' @author  Asael Alonzo Matamoros
+#' @author Asael Alonzo Matamoros.
 #'
 #' @export
 #'
-#' @return  a string
+#' @return a string
 #'
 #' @examples
 #'  version()
@@ -22,17 +22,24 @@
 #'  distribution(par = "ar")
 #'
 version = function(View = FALSE){
-  m1 = c("Seasonal arima","Dynamic regression","arma-mgarch","varma-mbekk","Bekk",
-         "Dynamic Harmonic Regression","Random-walk","Stochastic Volatility model")
-  f1 = c( "Sarima(ts,order = c(p,d,q), seasonal = c(P,D,Q) )",
-          "Sarima(ts,order = c(p,d,q), xreg != NULL )",
-          "garch(ts,order=c(s,k,h),arma = c(p,q),xreg != NULL )",
-          "varma(mts,order=c(p,q),bekk = c(s,k,h) )",
-          "Bekk(mts,order=c(s,k,h),varma = c(p,q) )",
-          "Sarima(ts,order = c(p,d,q), xreg= fourier(ts,K) )",
-          "naive(ts,seasonal = FALSE)","SVM(ts,arma = c(p,q),xreg != NULL )")
-  G1 = c(FALSE,FALSE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE)
-  df = data.frame(model = m1,functions = f1,GenT = G1)
+  m1 = c("SARIMA",
+         "ARIMAX",
+         "mGARCH",
+         "VARMA",
+         "Bekk",
+         "Harmonic ARIMAX",
+         "Random-walk",
+         "Stochastic Volatility model",
+         "Asymmetric-GARCH")
+  f1 = c("Sarima(ts,order = c(p,d,q), seasonal = c(P,D,Q) )",
+         "Sarima(ts,order = c(p,d,q), xreg != NULL )",
+         "garch(ts,order=c(s,k,h),arma = c(p,q),xreg != NULL)",
+         "varma(mts,order=c(p,q),bekk = c(s,k,h) )",
+         "Bekk(mts,order=c(s,k,h),varma = c(p,q) )",
+         "Sarima(ts,order = c(p,d,q), xreg= fourier(ts,K) )",
+         "naive(ts,seasonal = FALSE)","SVM(ts,arma = c(p,q),xreg != NULL )",
+         "garch(ts,order=c(s,k,h),arma = c(p,q),xreg != NULL,asym ='logit')")
+  df = data.frame(model = m1,functions = f1)
   if(View){
     View(df)
   }
@@ -40,7 +47,7 @@ version = function(View = FALSE){
     cat("package: varstan \n")
     cat("version: 1.0.1.000 \n")
     cat("Algorithm: Stan-NUTS \n")
-    cat("Current classes: varstan, Sarima, garch, varma, Bekk,DWR \n")
+    cat("Current classes: varstan, Sarima, garch, varma, Bekk,SVM \n")
     cat("Current models: \n")
     print(df)
     cat("\n * model column represent the available model \n")
@@ -52,22 +59,20 @@ version = function(View = FALSE){
 #' Print the  available prior distribution for the model parameters
 #'
 #' The functions prints the available distributions for the model
-#' parameters in varstan
-#'
+#' parameters in \pkg{varstan}.
 #'
 #' @usage distribution(par)
 #'
 #' @param par a string value with the desired parameter, if not know the parameter
-#' use the function \code{parameters} with the model class
+#' use the function \code{parameters} with the model class.
 #'
-#'
-#' @author  Asael Alonzo Matamoros
+#' @author Asael Alonzo Matamoros
 #'
 #' @export
 #'
-#' @return  a string with the prior distributions for the desired parameter
+#' @return a string with the prior distributions for the desired parameter
 #'
-#' @seealso  \code{parameters}, \code{version}
+#' @seealso \code{parameters}, \code{version}
 #'
 #' @examples
 #'  version()
@@ -76,58 +81,49 @@ version = function(View = FALSE){
 #'
 distribution = function(par){
 
-  param = c("ar","ma","sar","sma","arch","garch","dfv","sigma0","mu0","breg","mgarch")
+  param = c("ar","ma","sar","sma","arch","garch","dfv","sigma0","mu0","breg","mgarch","gamma")
 
   if( !(par %in% param) )
     stop("Invalid par argument")
 
   if(par %in% c("ar","ma","sar","sma","arch","garch") ){
     cat("\nThe available prior  distribution for the ",par," parameter are: \n")
-    cat(par,"~ normal(loc,scl) \n")
-    cat(par,"~ beta(par1,par2) *DONT USE In VARMA MODELS \n")
-    cat(par,"~ Uniform(-1,1)   *DONT USE In VARMA MODELS \n" )
+    cat(par,"~ normal(loc,sd) \n")
+    cat(par,"~ beta(shape1,shape2) *DONT USE In VARMA MODELS \n")
+    cat(par,"~ Uniform(min,max)   *DONT USE In VARMA MODELS \n" )
   }
-  if(par %in% c("mu0","breg","mgarch") ){
+  if(par %in% c("mu0","breg","mgarch","sigma0","dfv","df","alpha","gamma") ){
     cat("\nThe available prior  distribution for the ",par," parameter are: \n")
-    cat(par,"~ normal(loc,scl) \n")
-    cat(par,"~ cauchy(loc,scl) \n")
-    cat(par,"~ beta(par1,par2) \n")
-    cat(par,"~ Uniform(-1,1)   \n" )
-    cat(par,"~ gamma(par1,par2) \n")
-    cat(par,"~ t-student(loc,scl,df) \n")
-  }
-  if(par == "sigma0"){
-    cat("\nThe available prior  distribution for the ",par," parameter are: \n")
-    cat(par,"~ chi_square(df) \n")
-    cat(par,"~ gamma(par1,par2) \n")
-    cat(par,"~ inv_chi_square(df) \n")
-    cat(par,"~ half normal(loc,scl) \n")
-    cat(par,"~ half cauchy(loc,scl) \n")
-    cat(par,"~ inv_gamma(par1,par2) \n")
-    cat(par,"~ half t-student(loc,scl,df) \n")
-  }
-  if(par == "dfv"){
-    cat("\nThe available prior  distribution for the ",par," parameter are: \n")
+    cat(par,"~ normal(loc,sd) \n")
+    cat(par,"~ beta(shape1,shape2) *DONT USE In VARMA MODELS \n")
+    cat(par,"~ Uniform(min,max)   *DONT USE In VARMA MODELS \n" )
+    cat(par,"~ student(mu,sd,df) \n")
+    cat(par,"~ cauchy(mu,sd) \n")
+    cat(par,"~ inverse.gamma(shape,rate) \n")
+    cat(par,"~ inverse.chisq(df) \n")
     cat(par,"~ jeffrey() \n")
-    cat(par,"~ normal(loc,scl) \n")
-    cat(par,"~ gamma(par1,par2) \n")
-    cat(par,"~ inv_gamma(par1,par2) \n")
+    cat(par,"~ gamma(shape,rate) \n")
+    cat(par,"~ exponential(rate) \n")
+    cat(par,"~ chisq(df) \n")
+    cat(par,"~ laplace(mu,sd) \n")
+  }
+  if(identical(par,"lkj")){
+    cat("\nThe available prior  distribution for the ",par," parameter are: \n")
+    cat(par,"~ lkj(df) \n")
   }
 }
 #' Print the parameters of a model class
 #'
-#' The functions prints the parameters in one of the defined model classes in varstan
+#' The functions prints the parameters in one of the defined model classes in varstan.
 #'
 #' @usage parameters(classes = NULL)
 #'
 #' @param classes a string value with the desyred model class (Sarima,garch,varma,...),
-#' for knowing the current available model classes use the \code{version()} function
-#'
+#' for knowing the current available model classes use the \code{version()} function.
 #'
 #' @author  Asael Alonzo Matamoros
 #'
 #' @export
-#'
 #' @return  a string with the prior distributions for the desired parameter
 #'
 #' @seealso  \code{parameters}, \code{version}
@@ -139,7 +135,7 @@ distribution = function(par){
 #'
 parameters = function(classes = NULL){
 
-  x = c("ar","ma","sar","sma","arch","garch","mgarch","mu0","breg","sigma0","dfv")
+  x = c("ar","ma","sar","sma","arch","garch","mgarch","mu0","breg","sigma0","dfv","alpha","beta","gamma")
 
   if(is.null(classes)){
     cat("All the current parameters are: \n")
@@ -152,11 +148,15 @@ parameters = function(classes = NULL){
     }
     if(classes == "garch" || classes =="varma" || classes =="Bekk"){
       cat(classes,"parameters are: \n")
-      print(c("mu0","sigma0","ar","ma","arch","garch","mgarch","dfv"))
+      print(c("mu0","sigma0","ar","ma","arch","garch","mgarch","dfv","gamma"))
     }
     if(classes == "naive"){
       cat(classes,"parameters are: \n")
       print(c("mu0","sigma0"))
+    }
+    if(classes == "SVM"){
+      cat(classes,"parameters are: \n")
+      print(c("mu0","sigma0","ar","ma","breg","alpha","beta"))
     }
   }
 }
