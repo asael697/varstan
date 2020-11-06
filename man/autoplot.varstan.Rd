@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{autoplot.varstan}
 \alias{autoplot.varstan}
-\title{autoplot methods for varstan models}
+\title{autoplot methods for varstan models.}
 \usage{
 \method{autoplot}{varstan}(object, par = "fit", prob = 0.9, combo = c("dens", "trace"), ...)
 }
@@ -34,6 +34,7 @@ sampled model parameters, or the residuals' posterior mean time series.
 }
 \examples{
 \dontrun{
+ library(astsa)
  sf1 = auto.sarima(ts = birth)
  # fitted model
  autoplot(sf1)

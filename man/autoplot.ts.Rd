@@ -4,7 +4,7 @@
 \alias{autoplot.ts}
 \alias{autoplot.numeric}
 \alias{fortify.ts}
-\title{Automatically create a ggplot for time series objects}
+\title{Automatically create a ggplot for time series objects.}
 \usage{
 \method{autoplot}{ts}(
   object,
@@ -12,6 +12,8 @@
   xlab = "Time",
   ylab = deparse(substitute(object)),
   main = NULL,
+  facets = FALSE,
+  colour = TRUE,
   ...
 )
 
@@ -29,8 +31,20 @@
 \arguments{
 \item{object}{Object of class \dQuote{\code{ts}} or \dQuote{\code{mts}}.}
 
-\item{series}{Identifies the timeseries with a colour, which integrates well
+\item{series}{Identifies the time series with a colour, which integrates well
 with the functionality of \link{geom_forecast}.}
+
+\item{xlab}{a string with the plot's x axis label. By default a NUll value.}
+
+\item{ylab}{a string with the plot's y axis label. By default a counts" value.}
+
+\item{main}{a string with the plot's title.}
+
+\item{facets}{If TRUE, multiple time series will be faceted (and unless
+specified, colour is set to FALSE). If FALSE, each series will be assigned a
+colour.}
+
+\item{colour}{If TRUE, the time series will be assigned a colour aesthetic}
 
 \item{...}{Other plotting parameters to affect the plot.}
 
@@ -38,15 +52,9 @@ with the functionality of \link{geom_forecast}.}
 \dQuote{\code{data.frame}}.}
 
 \item{data}{Not used (required for \link{fortify} method)}
-
-\item{facets}{If TRUE, multiple time series will be faceted (and unless
-specified, colour is set to FALSE). If FALSE, each series will be assigned a
-colour.}
-
-\item{colour}{If TRUE, the time series will be assigned a colour aesthetic}
 }
 \value{
-None. Function produces a ggplot graph.
+None. Function produces a ggplot2 graph.
 }
 \description{
 \code{autoplot} takes an object of type \code{ts} or \code{mts} and creates
@@ -56,9 +64,19 @@ a ggplot object suitable for usage with \code{stat_forecast}.
 \code{fortify.ts} takes a \code{ts} object and converts it into a data frame
 (for usage with ggplot2).
 }
+\examples{
+
+library(ggplot2)
+autoplot(USAccDeaths)
+
+lungDeaths <- cbind(mdeaths, fdeaths)
+autoplot(lungDeaths)
+autoplot(lungDeaths, facets=TRUE)
+
+}
 \seealso{
 \code{\link[stats]{plot.ts}}, \code{\link[ggplot2]{fortify}}
 }
 \author{
-Mitchell O'Hara-Wild
+Mitchell O'Hara-Wild.
 }

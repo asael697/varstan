@@ -4,56 +4,45 @@
 \alias{SVM}
 \title{Constructor of an Stochastic volatility model object}
 \usage{
-SVM(ts,arma = c(1,0),xreg = NULL,series.name = NULL)
+SVM(ts,arma = c(0,0),xreg = NULL,series.name = NULL)
 }
 \arguments{
-\item{ts}{an multivariate time series}
+\item{ts}{a numeric or ts object with the univariate time series.}
 
-\item{arma}{A specification of the  ARMA model,same as order parameter:  the two
-components (p, q) are the AR order,and the  MA order.}
+\item{arma}{Optionally, a specification of the  ARMA model,same
+as order parameter: the two components (p, q) are the AR order,and
+the  MA order.}
 
 \item{xreg}{Optionally, a numerical matrix of external regressors,
 which must have the same number of rows as ts. It should not be a data frame.}
 
-\item{series.name}{an optional string vector with the series names.
-
-
-The default priors used in Bekk are:
-
-\itemize{
- \item{"ar"}{ar ~ normal(0,0.5)}
- \item{"ma"}{ma ~ normal(0,0.5)}
- \item{"mu0"}{mu0 ~ normal(0,1)}
- \item{"sigma0"}{sigma0 ~ t-student(0,1,7)}
- \item{"arch"}{arch ~ normal(0,0.5)}
- \item{"garch"}{garch ~ normal(0,0.5)}
- \item{"mgarch"}{mgarch ~ normal(0,0.5)}
- \item{"dfv"}{dfv ~ gamma(2,0.1)}
-}
-
-For changing the default prior use the function \code{set_prior}}
+\item{series.name}{an optional string vector with the time series names.}
 }
 \description{
-Constructor of the Sorhcastic Volatility model for Bayesian estimation in STAN
+Constructor of the Stochastic Volatility model (SVM) for Bayesian estimation in \pkg{Stan}.
 }
 \details{
-The function returns  a list with the data for running stan() function of
- rstan package
+The function returns a list with the data for running \code{stan()} function of
+\pkg{rstan} package.
 }
 \examples{
-# Declares a varma model for the Astrovan data
+# Declares a SVM model for the IPC data
 
 model = SVM(ipc,arma = c(1,1))
 model
 
-
 }
 \references{
-Polasek, Ren(1999).
- A multivariate GARCH-M model for exchange rates in the US,Germany and Japan
+Sangjoon,K. and Shephard, N. and Chib.S (1998). Stochastic Volatility: Likelihood
+Inference and Comparison with ARCH Models. \emph{Review of Economic Studies}.
+65(1), 361-93. \code{url: https://www.jstor.org/stable/2566931}.
 
- Fonseca,Ferreira, Migon (2008)
- Objective Bayesian analysis for the Student-t regression model
+Tsay, R (2010). Analysis of Financial Time Series.
+\emph{Wiley-Interscience}. 978-0470414354, second edition.
+
+Shumway, R.H. and Stoffer, D.S. (2010).Time Series Analysis and Its
+Applications: With R Examples. \emph{Springer Texts in Statistics}.
+isbn: 9781441978646. First edition.
 }
 \seealso{
 \code{\link{garch}} \code{\link{varma}} \code{\link{set_prior}}

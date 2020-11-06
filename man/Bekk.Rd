@@ -2,41 +2,36 @@
 % Please edit documentation in R/Bekk.R
 \name{Bekk}
 \alias{Bekk}
-\title{Constructor varma(p,q)-Bekk(s,k) object}
+\title{Constructor VARMA(p,q)-Bekk(s,k) object.}
 \usage{
-Bekk(ts,order = c(1,1,0),varma = c(0,0),genT = FALSE)
+Bekk(ts,order = c(1,1,0),varma = c(0,0),genT = FALSE,series.name = NULL)
 }
 \arguments{
-\item{ts}{an multivariate time series}
+\item{ts}{an multivariate time series.}
 
-\item{order}{an optional value for specify the Bekk  part for variance, same as
+\item{order}{A numeric vector for specify the Bekk  part for variance, same as
 order parameter:  the three components (s, k, h) are the arch order,
-the garch order and the garch on the mean (mgarch) order.}
+the garch order and the garch for the mean (mgarch) order.}
 
-\item{varma}{A specification of VARMA model: the two components (p, q) are the AR
-order, the number of differences, and the MA order.}
+\item{varma}{an optional numeric vector for specification of a VARMA model: the two
+components (p, q) are the VAR order, the number of differences, and the VMA order.}
 
-\item{genT}{a boolean value to specify a Generalized a t-student model Cruz (2015)}
+\item{genT}{a boolean value to specify a Generalized a t-student model Cruz (2015).}
 
-\item{series.name}{an optional string vector with the series names.}
+\item{series.name}{an optional string vector with the time series names.}
 }
 \description{
-Constructor of the varma(p,q)-Bekk(s,k) object for Bayesian estimation in STAN
+Constructor of the VARMA(p,q)-Bekk(s,k) object for Bayesian estimation in STAN.
 }
 \details{
-The function returns  a list with the data for running stan() function of
- rstan package
+The function returns  a list with the data for running \code{stan()} function of
+ \pkg{rstan} package
 
-If \code{sd} option can only be used with the mbekk function, and it  adds
-a m-Bekk model for volatility.
 
-If a mbekk model is not used, then sigma0 represents the covariance matrix
-of the model.
+If a Bekk model is specified, then sigma0 represents the triangular inferior matrix
+alpha0 of a Bekk model.
 
-If a bekk model is specified, then sigma0 represents the triangular inferior matrix
-alpha0 of a bekk model
-
-The default priors used in varma are:
+The default priors used in VARMA(p,q)-MBekk(s,k,h) model are:
 
 \itemize{
  \item{"ar"}{ar ~ normal(0,0.5)}
@@ -49,7 +44,7 @@ The default priors used in varma are:
  \item{"dfv"}{dfv ~ gamma(2,0.1)}
 }
 
-For changing the default prior use the function \code{set_prior}
+For changing the default prior use the \code{set_prior()} function.
 }
 \examples{
 # Declare a Bekk model for the Astrovan data
@@ -59,14 +54,20 @@ model
 
 }
 \references{
-Polasek, Ren(1999).
- A multivariate GARCH-M model for exchange rates in the US,Germany and Japan
+Polasek, W. (2000). A Multivariate GARCH-M Model for Exchange Rates in the US,
+Germany and Japan. \emph{Springer Berlin Heidelberg}. 355-363.
+\code{doi: 10.1007/978-3-642-57280-7_39}
 
- Fonseca,Ferreira, Migon (2008)
- Objective Bayesian analysis for the Student-t regression model
+Fioruci, J. and Ehlers, R. and Andrade, M. (2014). Bayesian multivariate GARCH
+models with dynamic correlations and asymmetric error distributions.
+\emph{Journal of Applied Statistics}. 41(2), 320 - 331.
+
+Berg, T. O. (2016) Multivariate Forecasting with BVARs and DSGE Models.
+\emph{J. Forecast}. 35(1), 718- 740.
+\code{doi: 10.1002/for.2406}.
 }
 \seealso{
-\code{\link{garch}} \code{\link{Sarima}} \code{\link{set_prior}}
+\code{\link{garch}} \code{\link{Sarima}} \code{\link{varma}}
 }
 \author{
 Asael Alonzo Matamoros

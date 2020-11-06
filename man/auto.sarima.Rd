@@ -2,78 +2,87 @@
 % Please edit documentation in R/auto_sarima.R
 \name{auto.sarima}
 \alias{auto.sarima}
-\title{Bayesian version of auto.arima  function}
+\title{Automatic estimate of a Seasonal ARIMA model}
 \usage{
 auto.sarima(ts,xreg = NULL,chains=1,iter=4000,warmup=floor(iter/2),
                 adapt.delta = 0.9,tree.depth =10,stepwise = TRUE,...)
 }
 \arguments{
-\item{ts}{an univariate time series}
+\item{ts}{a numeric or ts object with the univariate time series.}
 
 \item{xreg}{Optionally, a numerical matrix of external regressors,
 which must have the same number of rows as ts. It should not be a data frame.}
 
 \item{chains}{An integer of the number of Markov Chains chains to be run,
-by default 1 chains is run}
+by default 1 chain is run.}
 
 \item{iter}{An integer of total iterations per chain including the warm-up,
-by default  the number of iterations are 2000}
+by default  the number of iterations are 2000.}
 
 \item{warmup}{A positive integer specifying number of warm-up (aka burn-in)
-iterations. This also specifies the number of iterations used for stepsize
-adaptation, so warmup samples should not be used for inference. The number
+iterations. This also specifies the number of iterations used for step-size
+adaptation, so warm-up samples should not be used for inference. The number
 of warmup should not be larger than \code{iter} and the default is
-\code{iter/2}}
+\code{iter/2}.}
 
 \item{adapt.delta}{An optional real value between 0 and 1, the thin of the jumps
-in a HMC method. By default is 0.9}
+in a HMC method. By default is 0.9.}
 
 \item{tree.depth}{An integer of the maximum  depth of the trees  evaluated
-during each iteration. By default is 10}
+during each iteration. By default is 10.}
 
 \item{stepwise}{If TRUE, will do stepwise selection (faster). Otherwise, it searches
 over all models. Non-stepwise selection can be very slow, especially for seasonal models.}
+
+\item{...}{Further arguments passed to  \code{auto.arima} function.}
 }
 \value{
 a varstan model
 }
 \description{
-Returns the best \code{Sarima} model using a \code{bic} value, this
-function is a bayesian adaptation of the auto.arima() function of the
-forecast package. Used as a starting point of your bayesian analysis.
+Returns the best seasonal ARIMA model using a \code{bic} value, this
+function the\code{auto.arima} function of the \pkg{forecast} package
+to select the seasonal ARIMA model and estimates the model using a
+HMC sampler.
 }
 \details{
-Bayesian version of the automatic arima model fitting proposed by
-Robj Hyndman, this function finds the best Sarima model using \code{bic},
-and then proceeds to fit the model using \code{varstan} function and the default
-priors of a \code{Sarima} model constructor
+Automatic ARIMA model fitting implemented by Rob Hyndman, this function finds the best
+Seasonal ARIMA model using \code{bic}, and then proceeds to fit the model using
+\code{varstan} function and the default priors of a \code{Sarima} model constructor.
 
-This function provides an initial model fit for beginning the bayesian analysis
+This function provides an initial model fit for beginning the Bayesian analysis
 of the univariate time series. For better fit and model selection try different
-models and other moodel selection criteria such as \code{loo} or \code{bayes_factor}
+models and other model selection criteria such as \code{loo} or \code{bayes_factor}.
 
 The default arguments are designed for rapid estimation of models for many time series.
-If you are analysing just one time series, and can afford to take some more time,
-it is recommended that you set \code{stepwise}=\code{FALSE} and reduce the number of iterations
-per chain (\code{iter})
+If you are analyzing just one time series, and can afford to take some more time, it is
+recommended that you set \code{stepwise}=\code{FALSE} and reduce the number of iterations
+per chain (\code{iter}).
 
 For more information look at auto.arima function of forecast package.
 }
 \examples{
 \dontrun{
-# Automatic Sarima model for the birth data
-auto.sarima(birth)
+ # Automatic Sarima model for the birth data
+ auto.sarima(birth)
 
-# Dyanimc Harmonic regression
-auto.sarima(birth,xreg = fourier(birth,K= 6))
+ # Dynamic Harmonic regression
+ auto.sarima(birth,xreg = fourier(birth,K= 6))
 }
 
 }
 \references{
-Hyndman and Khandakar, Automatic Time Series Forecasting: The forecast
- package for R.
+Hyndman, R. & Khandakar, Y. (2008). Automatic time series forecasting: the
+forecast package for \code{R}. \emph{Journal of Statistical Software}. 26(3),
+1-22.\code{doi:	10.18637/jss.v027.i03}.
 
- Hyndman Athanasopoulos, Forecasting: Principles and Practice
+Box, G. E. P. and Jenkins, G.M. (1978). Time series analysis: Forecasting and
+control. San Francisco: Holden-Day. \emph{Biometrika}, 60(2), 297-303.
+\code{doi:10.1093/biomet/65.2.297}.
+
+Kennedy, P. (1992). Forecasting with dynamic regression models: Alan Pankratz, 1991.
+\emph{International Journal of Forecasting}. 8(4), 647-648.
+\code{url: https://EconPapers.repec.org/RePEc:eee:intfor:v:8:y:1992:i:4:p:647-648}.
 }
 \seealso{
 \code{Sarima} \code{varstan}.
