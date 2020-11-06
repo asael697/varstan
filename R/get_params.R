@@ -47,7 +47,8 @@ get_params_garch = function(dat,...){
   if(dat$p > 0) include = c(include,"phi")
   if(dat$q > 0) include = c(include,"theta")
   if(dat$d1 >0) include = c(include,"breg")
-  if(dat$genT == TRUE) include = c(include,"v")
+  if(dat$genT)  include = c(include,"v")
+  if(dat$asym1) include = c(include,"gamma")
 
   exclude = c("phi0","theta0")
   pars = list(include = c(include,"loglik"),exclude = exclude)
@@ -65,7 +66,7 @@ get_params_varma = function(dat,...){
   if(dat$s > 0) include = c(include,"alpha")
   if(dat$k > 0) include = c(include,"beta")
   if(dat$h > 0) include = c(include,"mgarch")
-  if(dat$genT == TRUE) include = c(include,"v")
+  if(dat$genT)  include = c(include,"v")
 
   exclude = c("phi0","theta0","Msigma0","vsigma0",
               "sigma1","Lsigma","vsigma","lambda1")
