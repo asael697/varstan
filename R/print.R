@@ -16,6 +16,7 @@ print.Sarima = function(x,...){
 #' @param  x a navie model from the varstan package
 #'
 #' @method print naive
+#' @param ... additional values need in print methods
 #' @export
 #'
 print.naive = function(x,...){
@@ -26,6 +27,7 @@ print.naive = function(x,...){
 #' Print a garch model
 #'
 #' @param x a garch model from the varstan package
+#' @param ... additional values need in print methods
 #'
 #' @method print garch
 #' @export
@@ -38,6 +40,7 @@ print.garch = function(x,...){
 #' Print a Stochastic Volatility model
 #'
 #' @param x a SVM model from the varstan package
+#' @param ... additional values need in print methods
 #'
 #' @method print SVM
 #' @export
@@ -50,6 +53,7 @@ print.SVM = function(x,...){
 #' Print a varma model
 #'
 #' @param x a varma model from the varstan package
+#' @param ... additional values need in print methods
 #'
 #' @method print varma
 #' @export
@@ -62,6 +66,7 @@ print.varma = function(x,...){
 #' Print a Bekk model
 #'
 #' @param x a Bekk model from the varstan package
+#' @param ... additional values need in print methods
 #'
 #' @method print Bekk
 #' @export
@@ -74,6 +79,7 @@ print.Bekk= function(x,...){
 #' Print a varstan object
 #'
 #' @param x a varstan object
+#' @param ... additional values need in print methods
 #'
 #' @method print varstan
 #' @export
