@@ -10,11 +10,12 @@
 #' @author stan development core team
 #'
 #' @param mat a matrix containing the posterior samples of a fitted parameter
-#'
+#' @param ... Further arguments passed to  \code{posterior_intervals}.
 #' @param prob A number \eqn{p \in (0,1)}{p (0 < p < 1)} indicating the desired
 #'   probability mass to include in the intervals. The default is to report
 #'   \eqn{90}\% intervals (\code{prob=0.9}) rather than the traditionally used
 #'   \eqn{95}\%.
+#'
 #'
 #' @return A matrix with two columns and as many rows as model parameters (or
 #'   the subset of parameters specified by \code{pars} and/or
