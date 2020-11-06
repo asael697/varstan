@@ -3,7 +3,7 @@
 \name{bridge_sampler.varstan}
 \alias{bridge_sampler.varstan}
 \alias{bridge_sampler}
-\title{Log Marginal Likelihood via Bridge Sampling}
+\title{Log Marginal Likelihood via Bridge Sampling.}
 \usage{
 \method{bridge_sampler}{varstan}(samples, ...)
 }
@@ -22,27 +22,24 @@ and posterior model probabilities.
 The \code{varstan} class is just a thin wrapper that
 contains the \code{stanfit} objects.
 
+
 Computing the marginal likelihood  via the bridgesampler package
- for stanfit objects
+for stanfit objects.
 
-  The computation of marginal likelihoods based on bridge sampling requires
-  a lot more posterior samples than usual. A good conservative
-  rule of thump is perhaps 10-fold more samples (read: the default of 4000
-  samples may not be enough in many cases). If not enough posterior
-  samples are provided, the bridge sampling algorithm tends to be
-  unstable leading to considerably different results each time it is run.
-  We thus recommend running \code{bridge_sampler}
-  multiple times to check the stability of the results.
+The computation of marginal likelihoods based on bridge sampling requires
+a lot more posterior samples than usual. A good conservative rule of thump
+is perhaps 10-fold more samples (read: the default of 4000 samples may not
+be enough in many cases). If not enough posterior samples are provided, the
+bridge sampling algorithm tends to be unstable leading to considerably different
+results each time it is run. We thus recommend running \code{bridge_sampler}
+multiple times to check the stability of the results.
 
- For  more details check the \pkg{bridgesampling} package
+For  more details check the \pkg{bridgesampling} package.
 }
 \examples{
 \dontrun{
-# model with the treatment effect
-library("astsa")
-library("forecast")
-
-# Fitting a seasonal arima model
+library(astsa)
+# Fitting a seasonal ARIMA model
 mod1 = Sarima(birth,order = c(0,1,2),seasonal = c(1,1,1))
 fit1 = varstan(mod1,chains = 1)
 

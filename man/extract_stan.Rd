@@ -4,10 +4,10 @@
 \alias{extract_stan}
 \title{Extract chains of an stanfit object implemented in rstan package}
 \usage{
-extract_stan(obj,permuted = TRUE,inc_warmup = FALSE,include = TRUE)
+extract_stan(object,pars,permuted = TRUE,inc_warmup = FALSE,include = TRUE, ...)
 }
 \arguments{
-\item{obj}{a varstan object}
+\item{object}{a varstan object}
 
 \item{pars}{n optional character vector providing the parameter names
 (or other quantity names) of interest. If not specified, all parameters
@@ -25,9 +25,21 @@ warmup draws. This argument is only relevant if permuted is FALSE.}
 
 \item{include}{A logical scalar indicating whether the parameters named
 in pars should be included (TRUE) or excluded (FALSE).}
+
+\item{...}{Further arguments passed to  \code{extract} function.}
 }
 \description{
 Extract chains of an stanfit object implemented in rstan package
+}
+\examples{
+library(astsa)
+# Fitting a GARCH(1,1) model
+dat = garch(ipc,order = c(1,1,0))
+fit2 = varstan(dat,chains = 1)
+
+# Extracting the mean parameter
+mu0 = extract_stan(fit2,pars = "mu0")
+
 }
 \author{
 Asael Alonzo Matamoros

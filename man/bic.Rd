@@ -4,10 +4,10 @@
 \alias{bic}
 \title{Computes posterior sample of the pointwise BIC method from a varstan object}
 \usage{
-bic(obj)
+bic(x)
 }
 \arguments{
-\item{obj}{A varstan object of the time series fitted model.}
+\item{x}{A varstan object of the time series fitted model.}
 }
 \value{
 A numeric array  of size R, containing the posterior samples of the aic
@@ -21,12 +21,12 @@ method from a varstan object.
 \examples{
 
 \dontrun{
-library(astsa)
-model = Sarima(birth,order = c(0,1,2),seasonal = c(1,1,1))
-fit1 = varstan(model,chains = 1)
+ library(astsa)
+ model = Sarima(birth,order = c(0,1,2),seasonal = c(1,1,1))
+ fit1 = varstan(model,chains = 1)
 
-bic1 <- bic(fit1)
-mean(bic1)
+ bic1 <- bic(fit1)
+ mean(bic1)
 }
 
 }

@@ -8,14 +8,14 @@ distribution(par)
 }
 \arguments{
 \item{par}{a string value with the desired parameter, if not know the parameter
-use the function \code{parameters} with the model class}
+use the function \code{parameters} with the model class.}
 }
 \value{
 a string with the prior distributions for the desired parameter
 }
 \description{
 The functions prints the available distributions for the model
-parameters in varstan
+parameters in \pkg{varstan}.
 }
 \examples{
  version()

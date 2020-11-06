@@ -3,8 +3,10 @@
 \docType{data}
 \name{birth}
 \alias{birth}
-\title{U.S. Monthly Live Births}
-\format{the format is: Time-Series [1:373] from 1948 to 1979:}
+\title{U.S. Monthly Live Births.}
+\format{
+the format is: Time-Series [1:373] from 1948 to 1979:
+}
 \source{
 \pkg{astsa}
 }
@@ -13,9 +15,6 @@ birth
 }
 \description{
 Monthly live births (adjusted) in thousands for the United States, 1948-1979.
-}
-\details{
-@docType data
 }
 \references{
 http://www.stat.pitt.edu/stoffer/tsa4/
