@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{x}{a garch model from the varstan package}
+
+\item{...}{additional values need in print methods}
 }
 \description{
 Print a garch model

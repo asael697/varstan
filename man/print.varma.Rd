@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{x}{a varma model from the varstan package}
+
+\item{...}{additional values need in print methods}
 }
 \description{
 Print a varma model

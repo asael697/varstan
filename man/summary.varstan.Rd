@@ -2,13 +2,12 @@
 % Please edit documentation in R/summary.R
 \name{summary.varstan}
 \alias{summary.varstan}
-\alias{summary}
 \title{Summary method for a varstan object}
 \usage{
-summary(obj,robust = FALSE,prob = 0.95,...)
+\method{summary}{varstan}(object, robust = FALSE, prob = 0.9, ...)
 }
 \arguments{
-\item{obj}{a varstan object}
+\item{object}{A varstan object.}
 
 \item{robust}{A boolean value, if its \code{TRUE} it returns the median of the posterior distribution,
 And if its \code{FALSE} it returns the mean, by default is the \code{FALSE} value}
@@ -17,6 +16,8 @@ And if its \code{FALSE} it returns the mean, by default is the \code{FALSE} valu
 probability mass to include in the intervals. The default is to report
 \eqn{90}\% intervals (\code{prob=0.9}) rather than the traditionally used
 \eqn{95}\%.}
+
+\item{...}{Further arguments passed to  \code{summary}.}
 }
 \value{
 A data.frame with the posterior mean, standard error, credible intervals, effective sample

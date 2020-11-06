@@ -13,6 +13,8 @@ posterior_interval(mat, prob = 0.9, ...)
 probability mass to include in the intervals. The default is to report
 \eqn{90}\% intervals (\code{prob=0.9}) rather than the traditionally used
 \eqn{95}\%.}
+
+\item{...}{Further arguments passed to  \code{posterior_intervals}.}
 }
 \value{
 A matrix with two columns and as many rows as model parameters (or
@@ -23,8 +25,6 @@ A matrix with two columns and as many rows as model parameters (or
   = 1-p}. For example, if \code{prob=0.9} is specified (a \eqn{90}\%
   interval), then the column names will be \code{"5\%"} and \code{"95\%"},
   respectively.
-
-  @export
 }
 \description{
 The \code{posterior_interval} function computes Bayesian posterior uncertainty

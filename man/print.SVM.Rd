@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{x}{a SVM model from the varstan package}
+
+\item{...}{additional values need in print methods}
 }
 \description{
 Print a Stochastic Volatility model

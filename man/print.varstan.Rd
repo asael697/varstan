@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{x}{a varstan object}
+
+\item{...}{additional values need in print methods}
 }
 \description{
 Print a varstan object

@@ -2,26 +2,26 @@
 % Please edit documentation in R/prior.R
 \name{set_prior}
 \alias{set_prior}
-\title{Set a prior distribution to a model parameter}
+\title{Set a prior distribution to a model parameter.}
 \usage{
-set_prior(model,par,dist,lag)
+set_prior(model, par = "ar", dist = normal(), lag = 0)
 }
 \arguments{
-\item{model}{a time series model class specified in varstan.}
+\item{model}{a time series model class specified in \pkg{varstan}.}
 
 \item{par}{a string value with the  desired parameter which a prior is defined could be:
 "mu0", "sigma0", "ar", "ma", "arch", "garch", "mgarch", "dfv", "df", "LKJ" or "breg".}
 
-\item{dist}{the distribution of the prior parameter. The only accepted is a prior_dist object}
+\item{dist}{the distribution of the prior parameter. The only accepted is a prior_dist object.}
 
 \item{lag}{an optional integer value, indicates the desired lag of the parameter which the prior
-is defined if lag = 0, then the prior distribution will be applied for all lags}
+is defined if lag = 0, then the prior distribution will be applied for all lags.}
 }
 \value{
-a time series model class specified in varstan with the changed prior
+a time series model class specified in \pkg{varstan} with the changed prior.
 }
 \description{
-setting a prior distribution to an specify model parameter
+setting a prior distribution to an specify model parameter.
 }
 \details{
 varstan provides its own functions to manipulate the parameter prior, this functions return
@@ -40,7 +40,7 @@ Where Omega is the correlation matrix that accepts an LKJ prior distribution D i
 the inverse std desviations
 
 For changing the degree freedom in a LKJ distribution for omega use par = "LKJ" and dist = LKJ(df),
-where df are the desired degree freedom
+where df are the desired degree freedom.
 
 For changing the the priors in the diagonal D use par = "sigma0" and select one of the available prior
 distributions.
@@ -49,7 +49,7 @@ For ar, ma garch, arch parameters in varma and Bekk models only normal distribut
 mu and sd are accepted. Even if \code{get_prior} accepts its change, Stan will change it to a normal(0,1) prior.
 }
 \examples{
-
+library(astsa)
 dat = Sarima(birth,order = c(1,1,2))
 dat = set_prior(model = dat,par = "ar",dist = normal(0,2))
 dat

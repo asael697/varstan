@@ -8,12 +8,12 @@
 \alias{report.varma}
 \alias{report.Bekk}
 \alias{report.naive}
-\title{Print a full report of the time series model in a  varstan object}
+\title{Print a full report of the time series model in a  varstan object.}
 \usage{
-report(obj,...)
+report(object,...)
 }
 \arguments{
-\item{obj}{an object varstan object or one of the defined current defined reports in varstan package}
+\item{object}{an object varstan object or one of the defined current defined reports in varstan package}
 
 \item{...}{additional values need in print methods}
 }
@@ -22,25 +22,22 @@ a  string with the defined time series report
 }
 \description{
 The function returns a report with the users defined model for the given time series data
-and all the current defined priors of the model
+and all the current defined priors of the model.
 }
 \details{
-if \code{obj} is a varstan object the function will print the information of the
-defined model inside of the object. If \code{obj} is one of the model classes (like Sarima or garch)
+if \code{object} is a varstan object the function will print the information of the
+defined model inside of the object. If \code{object} is one of the model classes (like Sarima or garch)
 then it will print the report information as well.
 }
 \examples{
-
+library(astsa)
 dat2 = garch(birth,order = c(1,1,0))
 report(dat2)
 
-dat = varma(Astrovan,p=1,q=1)
+dat = varma(Astrovan,order = c(1,1))
 report(dat)
 
 
-}
-\seealso{
-\code{\link{report}} \code{\link{prior}}
 }
 \author{
 Asael Alonzo Matamoros
