@@ -3,8 +3,10 @@
 \docType{data}
 \name{ipc}
 \alias{ipc}
-\title{Monthly inflation coefficients from 1980-2018}
-\format{A time series of monthly data from 1980 to 2018.}
+\title{Monthly inflation coefficients from 1980-2018.}
+\format{
+A time series of monthly data from 1980 to 2018.
+}
 \source{
 https://www.bch.hn/series_estadisticas.php
 }

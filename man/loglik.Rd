@@ -4,10 +4,10 @@
 \alias{loglik}
 \title{Extract posterior sample of the accumulated log-likelihood from a varstan object}
 \usage{
-loglik(obj, permuted = TRUE)
+loglik(object, permuted = TRUE)
 }
 \arguments{
-\item{obj}{A varstan object of the time series fitted model.}
+\item{object}{A varstan object of the time series fitted model.}
 
 \item{permuted}{A logical scalar indicating whether the draws after
 the warmup period in each chain should be permuted and merged.
@@ -16,23 +16,33 @@ the permutation is fixed (i.e., extracting samples a second time
 will give the same sequence of iterations).}
 }
 \value{
-Usually, A nxS array containing the accumulated log-likelihood
- samples, where S is the number of samples. If \code{permuted} is \code{FALSE},
- an SxR array is returned, where R is the number of fitted chains.
+A real value with the accumulated log likelihood.
 }
 \description{
 Convenience function for extracting the posterior sample of the accumulated
 log-likelihood array from a fitted varstan object.
 }
 \examples{
-
 \dontrun{
-library(astsa)
-model = Sarima(birth,order = c(0,1,2),seasonal = c(1,1,1))
-fit1 = varstan(model,chains = 1)
+ library(astsa)
+ model = Sarima(birth,order = c(0,1,2),seasonal = c(1,1,1))
+ fit1 = varstan(model,chains = 1)
 
-log1 <- loglik(fit1)
-log1
+ log1 <- loglik(fit1)
+ log1
 }
 
+}
+\references{
+Vehtari, A., Gelman, A., & Gabry J. (2016). Practical Bayesian model
+evaluation using leave-one-out cross-validation and WAIC. \emph{In Statistics
+and Computing}, \code{doi:10.1007/s11222-016-9696-4}.
+
+Gelman, A., Hwang, J., & Vehtari, A. (2014). Understanding predictive
+information criteria for Bayesian models. \emph{Statistics and Computing}.
+ 24, 997-1016.
+
+Watanabe, S. (2010). Asymptotic equivalence of Bayes cross validation
+and widely applicable information criterion in singular learning theory.
+\emph{The Journal of Machine Learning Research}. 11, 3571-3594.
 }

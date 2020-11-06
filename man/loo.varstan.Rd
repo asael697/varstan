@@ -5,18 +5,19 @@
 \alias{loo}
 \title{Leave-one-out cross-validation}
 \usage{
-\method{loo}{varstan}(obj, ...)
+\method{loo}{varstan}(x, ...)
 }
 \arguments{
-\item{obj}{A varstan object}
+\item{x}{A varstan object}
+
+\item{...}{additional values need in loo methods}
 }
 \description{
 The \code{loo} method for varstan objects. Computes approximate
-leave-one-out cross-validation using Pareto smoothed importance sampling
-(PSIS-LOO CV).
+leave-one-out cross-validation using Pareto smoothed importance
+sampling (PSIS-LOO CV).
 }
 \examples{
-
 \dontrun{
 library(astsa)
 model = Sarima(birth,order = c(0,1,2),seasonal = c(1,1,1))
@@ -25,6 +26,20 @@ fit1 = varstan(model,chains = 1)
 loo1 <- loo(fit1)
 loo1
 }
+
+}
+\references{
+Vehtari, A., Gelman, A., & Gabry J. (2016). Practical Bayesian model
+evaluation using leave-one-out cross-validation and WAIC. \emph{In Statistics
+and Computing}, \code{doi:10.1007/s11222-016-9696-4}.
+
+Gelman, A., Hwang, J., & Vehtari, A. (2014). Understanding predictive
+information criteria for Bayesian models. \emph{Statistics and Computing}.
+ 24, 997-1016.
+
+Watanabe, S. (2010). Asymptotic equivalence of Bayes cross validation
+and widely applicable information criterion in singular learning theory.
+\emph{The Journal of Machine Learning Research}. 11, 3571-3594.
 }
 \seealso{
 * The **loo** package [vignettes](https://mc-stan.org/loo/articles/index.html)

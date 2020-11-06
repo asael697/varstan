@@ -2,12 +2,12 @@
 % Please edit documentation in R/plot.R
 \name{plot.varstan}
 \alias{plot.varstan}
-\title{plot methods for varstan models}
+\title{plot methods for varstan models.}
 \usage{
-\method{plot}{varstan}(object, par = "fit", prob = 0.9, combo = c("dens", "trace"), ...)
+\method{plot}{varstan}(x, par = "fit", prob = 0.9, combo = c("dens", "trace"), ...)
 }
 \arguments{
-\item{object}{An object of class \code{varstan}.}
+\item{x}{An object of class \code{varstan}.}
 
 \item{par}{a character string with the desired plot. Valid values are \code{"fit"} for the
 model's fitted values plot, \code{"residuals"} for the residuals posterior mean plot,
@@ -34,6 +34,7 @@ sampled model parameters, or the residuals' posterior mean time series.
 }
 \examples{
 \dontrun{
+ library(astsa)
  sf1 = auto.sarima(ts = birth)
  # fitted model
  plot(sf1)

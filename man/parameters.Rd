@@ -8,13 +8,13 @@ parameters(classes = NULL)
 }
 \arguments{
 \item{classes}{a string value with the desyred model class (Sarima,garch,varma,...),
-for knowing the current available model classes use the \code{version()} function}
+for knowing the current available model classes use the \code{version()} function.}
 }
 \value{
 a string with the prior distributions for the desired parameter
 }
 \description{
-The functions prints the parameters in one of the defined model classes in varstan
+The functions prints the parameters in one of the defined model classes in varstan.
 }
 \examples{
  version()
