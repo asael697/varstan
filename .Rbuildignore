@@ -1,2 +1,11 @@
 ^varstan\.Rproj$
 ^\.Rproj\.user$
+^\.git$
+^\.github$
+^.*\.Rprofile$
+^README\.Rmd$
+^README-.*\.png$
+^\README_cache$
+^\.travis\.yml$
+^varstan_pkg\.R$
+^LICENSE$

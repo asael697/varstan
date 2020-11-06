@@ -1,3 +1,5 @@
 .Rproj.user
+README.Rmd
+varstan_pkg.R
 
 inst/doc
