@@ -5,19 +5,26 @@ functions{
     y = (v/(v+3))*y;
     return sqrt(y);
   }
+    real asymf(real u, real gamma,int asym){
+    real y;
+    if(asym == 0) y = u;
+    if(asym == 1) y = inv_logit(-gamma*u);
+    if(asym == 2) y = 1-exp(-gamma*pow(u,2));
+    return(pow(u,2)*y);
+  }
 }
 data {
   // Model data
-  int<lower=0> n;     // number of data items
-  int<lower=0> s;     // number of predictors  arch
-  int<lower=0> k;     // number of predictions garch
-  int<lower=0> h;     // number of predictions mgarch
-  int<lower=0> p;     // number of predictors  ar
-  int<lower=0> q;     // number of predictions ma
+  int<lower=0> n;            // number of data items
+  int<lower=0> s;            // number of predictors  arch
+  int<lower=0> k;            // number of predictions garch
+  int<lower=0> h;            // number of predictions mgarch
+  int<lower=0> p;            // number of predictors  ar
+  int<lower=0> q;            // number of predictions ma
   vector[n] y;               // outcome time series
   int<lower=0,upper=1> genT; // Generalized t-student
-  int<lower=0>d1;     // number of independent variables
-  matrix[n,d1] xreg;  // matrix with independent variables
+  int<lower=0>d1;            // number of independent variables
+  matrix[n,d1] xreg;         // matrix with independent variables
   // prior data
   vector[4] prior_mu0;       // prior location parameter
   vector[4] prior_sigma0;    // prior scale parameter
@@ -27,8 +34,14 @@ data {
   matrix[s,4] prior_arch;    // prior arch hyper parameters
   matrix[k,4] prior_garch;   // prior ma hyper parameters
   matrix[h,4] prior_mgarch;  // prior ma hyper parameters
-  matrix[d1,4] prior_breg; // prior ma hyper parameters
+  matrix[d1,4] prior_breg;   // prior ma hyper parameters
+  
+  // asymmetric garch
+  int<lower=0,upper=2> asym;    // Asymmetric garch
+  int<lower=0,upper=1> asym1;   // Boolean Asymmetric garch
+  matrix[asym1*2,4] prior_gamma;// prior gamma asymmetric parameters
 }
+
 parameters{
   real mu0;
   real<lower=0> sigma0;               // Variance parameter
@@ -38,8 +51,10 @@ parameters{
   vector<lower=0,upper=1>[s] alpha;   // arch parameters
   vector<lower=0,upper=1>[k] beta;    // garch parameters
   vector[h] mgarch;                   // mean garch parameters
-  real<lower=2.01> v;                 // Degree fredom
-  vector<lower=1>[n] lambda;          // lambda parameter
+  vector<lower=2.01>[genT*1] v;       // Degree fredom
+  vector<lower=1>[genT*n] lambda;     // lambda parameter
+  vector<lower=0>[asym1*2] gamma;     // parameter for asymmetric garch;
+
 }
 transformed parameters{
   vector[p] phi;          // ar parameters
@@ -88,10 +103,13 @@ transformed parameters{
       if(k > 0) for(j in 1:k) if(i > j)  sigma[i] += beta[j]*pow(sigma[i-j], 2);
     }
     // Degrees freedom t-student innovations
-    if(genT == 1 ) sigma[i] = sqrt((v-2)*lambda[i]*sigma[i]/v);
+    if(genT == 1 ) sigma[i] = sqrt((v[1]-2)*lambda[i]*sigma[i]/v[1]);
     else sigma[i] = sqrt(sigma[i]);
     // mgarch estimation
-    if(h > 0) for(j in 1:h)if(i > j) mu[i] += mgarch[j]*sigma[i-j];
+    if(h > 0) for(j in 1:h)if(i > j) mu[i] += mgarch[j]*sigma[i-j+1];
+    
+    // asymetric garch
+    if(asym1 == 1) if(i > 1)sigma[i] += gamma[1]*asymf(epsilon[i-1],gamma[2],asym);
   }
 }
 model {
@@ -194,22 +212,39 @@ model {
   }
   if(genT == 1){
     // Prior dfv
-    if(prior_dfv[4] == 1) target += normal_lpdf(v|prior_dfv[1],prior_dfv[2]);
-    else if(prior_dfv[4]==2) target += beta_lpdf(v|prior_dfv[1],prior_dfv[2]);
-    else if(prior_dfv[4]==3) target += uniform_lpdf(v|prior_dfv[1],prior_dfv[2]);
-    else if(prior_dfv[4]==4) target += student_t_lpdf(v|prior_dfv[3],prior_dfv[1],prior_dfv[2]);
-    else if(prior_dfv[4]==5) target += cauchy_lpdf(v|prior_dfv[1],prior_dfv[2]);
-    else if(prior_dfv[4]==6) target += inv_gamma_lpdf(v|prior_dfv[1],prior_dfv[2]);
-    else if(prior_dfv[4]==7) target += inv_chi_square_lpdf(v|prior_dfv[3]);
-    else if(prior_dfv[4] == 8) target += log(Jpv(v));
-    else if(prior_dfv[4]==9) target += gamma_lpdf(v|prior_dfv[1],prior_dfv[2]);
-    else if(prior_dfv[4]==10)target += exponential_lpdf(v|prior_dfv[2]);
-    else if(prior_dfv[4]==11)target += chi_square_lpdf(v|prior_dfv[3]);
-    else if(prior_dfv[4]==12)target += double_exponential_lpdf(v|prior_dfv[1],prior_dfv[2]);
+    if(prior_dfv[4] == 1) target += normal_lpdf(v[1]|prior_dfv[1],prior_dfv[2]);
+    else if(prior_dfv[4]==2) target += beta_lpdf(v[1]|prior_dfv[1],prior_dfv[2]);
+    else if(prior_dfv[4]==3) target += uniform_lpdf(v[1]|prior_dfv[1],prior_dfv[2]);
+    else if(prior_dfv[4]==4) target += student_t_lpdf(v[1]|prior_dfv[3],prior_dfv[1],prior_dfv[2]);
+    else if(prior_dfv[4]==5) target += cauchy_lpdf(v[1]|prior_dfv[1],prior_dfv[2]);
+    else if(prior_dfv[4]==6) target += inv_gamma_lpdf(v[1]|prior_dfv[1],prior_dfv[2]);
+    else if(prior_dfv[4]==7) target += inv_chi_square_lpdf(v[1]|prior_dfv[3]);
+    else if(prior_dfv[4] == 8) target += log(Jpv(v[1]));
+    else if(prior_dfv[4]==9) target += gamma_lpdf(v[1]|prior_dfv[1],prior_dfv[2]);
+    else if(prior_dfv[4]==10)target += exponential_lpdf(v[1]|prior_dfv[2]);
+    else if(prior_dfv[4]==11)target += chi_square_lpdf(v[1]|prior_dfv[3]);
+    else if(prior_dfv[4]==12)target += double_exponential_lpdf(v[1]|prior_dfv[1],prior_dfv[2]);
+  }
+  // asymmetric garch
+  if(asym1 == 1){
+    for(i in 1:2){
+      if(prior_gamma[i,4]== 1)     target += normal_lpdf(gamma[i]|prior_gamma[i,1],prior_gamma[i,2]);
+      else if(prior_gamma[i,4]==2) target += beta_lpdf(gamma[i]|prior_gamma[i,1],prior_gamma[i,2]);
+      else if(prior_gamma[i,4]==3) target += uniform_lpdf(gamma[i]|prior_gamma[i,1],prior_gamma[i,2]);
+      else if(prior_gamma[i,4]==4) target += student_t_lpdf(gamma[i]|prior_gamma[i,3],prior_gamma[i,1],prior_gamma[i,2]);
+      else if(prior_gamma[i,4]==5) target += cauchy_lpdf(gamma[i]|prior_gamma[i,1],prior_gamma[i,2]);
+      else if(prior_gamma[i,4]==6) target += inv_gamma_lpdf(gamma[i]|prior_gamma[i,1],prior_gamma[i,2]);
+      else if(prior_gamma[i,4]==7) target += inv_chi_square_lpdf(gamma[i]|prior_gamma[i,3]);
+      else if(prior_gamma[i,4]==8) target += -log(sigma0);
+      else if(prior_gamma[i,4]==9) target += gamma_lpdf(gamma[i]|prior_gamma[i,1],prior_gamma[i,2]);
+      else if(prior_gamma[i,4]==10)target += exponential_lpdf(gamma[i]|prior_gamma[i,2]);
+      else if(prior_gamma[i,4]==11)target += chi_square_lpdf(gamma[i]|prior_gamma[i,3]);
+      else if(prior_gamma[i,4]==12)target += double_exponential_lpdf(gamma[i]|prior_gamma[i,1],prior_gamma[i,2]);
+    }
   }
 
   // Likelihood
-  if(genT == 1)  target+= inv_gamma_lpdf(lambda|v/2,v/2);
+  if(genT == 1)  target+= inv_gamma_lpdf(lambda|v[1]/2,v[1]/2);
   target += normal_lpdf(epsilon|0,sigma);
 }
 generated quantities{
