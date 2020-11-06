@@ -1,4 +1,4 @@
-#' Automatically create a ggplot for time series objects
+#' Automatically create a ggplot for time series objects.
 #'
 #' \code{autoplot} takes an object of type \code{ts} or \code{mts} and creates
 #' a ggplot object suitable for usage with \code{stat_forecast}.
@@ -7,8 +7,11 @@
 #' (for usage with ggplot2).
 #'
 #' @param object Object of class \dQuote{\code{ts}} or \dQuote{\code{mts}}.
-#' @param series Identifies the timeseries with a colour, which integrates well
+#' @param series Identifies the time series with a colour, which integrates well
 #' with the functionality of \link{geom_forecast}.
+#' @param xlab a string with the plot's x axis label. By default a NUll value.
+#' @param ylab a string with the plot's y axis label. By default a counts" value.
+#' @param main a string with the plot's title.
 #' @param facets If TRUE, multiple time series will be faceted (and unless
 #' specified, colour is set to FALSE). If FALSE, each series will be assigned a
 #' colour.
@@ -19,18 +22,28 @@
 #' @param ... Other plotting parameters to affect the plot.
 #'
 #'
-#' @return None. Function produces a ggplot graph.
+#' @return None. Function produces a ggplot2 graph.
 #'
-#' @author Mitchell O'Hara-Wild
+#' @author Mitchell O'Hara-Wild.
 #'
 #' @seealso \code{\link[stats]{plot.ts}}, \code{\link[ggplot2]{fortify}}
 #'
-#' @import ggplot2
+#' @examples
+#'
+#' library(ggplot2)
+#' autoplot(USAccDeaths)
+#'
+#' lungDeaths <- cbind(mdeaths, fdeaths)
+#' autoplot(lungDeaths)
+#' autoplot(lungDeaths, facets=TRUE)
+#'
+#' @importFrom forecast autoplot
+#' @importFrom stats is.ts
 #' @export
 #'
 autoplot.ts <- function(object, series=NULL, xlab = "Time", ylab = deparse(substitute(object)),
-                        main = NULL,  ...) {
-  if (!is.ts(object))
+                        main = NULL,facets = FALSE,colour = TRUE, ...) {
+  if (!stats::is.ts(object))
     stop("autoplot.ts requires a ts object, use object=object")
 
   # Create data frame with time as a column labelled x
@@ -56,10 +69,12 @@ autoplot.ts <- function(object, series=NULL, xlab = "Time", ylab = deparse(subst
 
   # Make x axis contain only whole numbers (e.g., years)
   p <- p + ggplot2::scale_x_continuous(breaks = ggtsbreaks)
-   return(p)
+  return(p)
 }
+#'
 #' @rdname autoplot.ts
 #' @export
+#'
 autoplot.numeric <-function(object, series=NULL, xlab = "Time", ylab = deparse(substitute(object)),
                             main = NULL,  ...) {
   if(is.numeric(object))
@@ -68,8 +83,10 @@ autoplot.numeric <-function(object, series=NULL, xlab = "Time", ylab = deparse(s
                   main = NULL,  ...)
   return(g)
 }
+#'
 #' @rdname autoplot.ts
 #' @export
+#'
 fortify.ts <- function(model, data, ...) {
   # Use ggfortify version if it is loaded
   # to prevent cran errors
@@ -77,7 +94,7 @@ fortify.ts <- function(model, data, ...) {
     tsp <- attr(model, which = "tsp")
     dtindex <- time(model)
     if (any(tsp[3] == c(4, 12))) {
-      dtindex <- zoo::as.Date.yearmon(dtindex)
+      dtindex <- as.Date.yearmon(dtindex)
     }
     model <- data.frame(Index = dtindex, Data = as.numeric(model))
     return(ggplot2::fortify(model))
@@ -127,7 +144,171 @@ ggAddExtras <- function(xlab=NA, ylab=NA, main=NA) {
   }
   return(extras)
 }
+#'
+#' @noRd
+#'
 ggtsbreaks <- function(x) {
   # Make x axis contain only whole numbers (e.g., years)
   return(unique(round(pretty(floor(x[1]):ceiling(x[2])))))
 }
+#' Histogram with optional normal density functions
+#'
+#' Plots a histogram and density estimates using ggplot.
+#'
+#'
+#' @param y a numeric vector or an object of the \code{ts} class containing a stationary time series.
+#' @param title a string with the plot's title.
+#' @param xlab a string with the plot's x axis label. By default a NUll value
+#' @param ylab a string with the plot's y axis label. By default a "counts" value
+#' @param add.normal A boolean value. Add a normal density function for comparison,
+#' by default \code{add.normal = TRUE}.
+#' @param bins The number of bins to use for the histogram. Selected by default
+#' using the Friedman-Diaconis rule.
+#'
+#' @return None.
+#'
+#' @author Rob J Hyndman
+#'
+#' @importFrom grDevices nclass.FD
+#' @importFrom stats dnorm is.ts na.exclude
+#' @export
+#'
+#' @examples
+#' x = rnorm(100)
+#' gghist(x,add.normal = TRUE)
+#'
+gghist = function(y,title = NULL,xlab = NULL,ylab = "counts",bins,add.normal = TRUE){
+
+  if (!stats::is.ts(y) && !is.numeric(y))
+    stop("gghist requires a ts or numeric object")
+
+  if (missing(bins))
+    bins = min(grDevices::nclass.FD(stats::na.exclude(y)),500)
+
+  xlab1 = xlab
+  if(is.null(xlab))
+    xlab1 =  deparse(substitute(y))
+
+  data = data.frame(y = as.numeric(c(y)))
+  # Initialise ggplot object and plot histogram
+
+  boundary=0
+  binwidth = (max(y, na.rm = TRUE) - min(y, na.rm = TRUE)) / bins
+
+  p = ggplot2::ggplot() +
+    ggplot2::geom_histogram(ggplot2::aes(y),data = data,
+                            binwidth = binwidth, boundary = boundary)
+
+  if (add.normal) {
+    xmin  = min(y, na.rm = TRUE)
+    xmax  = max(y, na.rm = TRUE)
+    xmean = mean(y, na.rm = TRUE)
+    xsd   = sd(y, na.rm = TRUE)
+    xmin  = min(xmin, xmean - 3 * xsd)
+    xmax  = max(xmax, xmean + 3 * xsd)
+  }
+  xgrid  =  seq(xmin, xmax, length.out = 512)
+
+  if (add.normal) {
+    df = data.frame(x = xgrid, y = length(y)*binwidth*stats::dnorm(xgrid, xmean, xsd))
+    p = p + ggplot2::geom_line(ggplot2::aes(df$x, df$y), col = "blue")
+  }
+
+  p = p + ggplot2::labs(title = title,x = xlab1 ,y = ylab)
+
+  return(p)
+
+}
+#' \code{qqplot} with normal \code{qqline}
+#'
+#' Plot the quantile-quantile plot and quantile-quantile line using ggplot.
+#'
+#'
+#' @param y a numeric vector or an object of the \code{ts} class containing a stationary time series.
+#' @param add.normal Add a normal density function for comparison.
+#' @param title a string with the plot's title.
+#'
+#' @return None.
+#'
+#' @author Asael Alonzo Matamoros
+#'
+#' @import ggplot2
+#' @importFrom stats is.ts
+#' @export
+#'
+#' @examples
+#' x = rnorm(100)
+#' ggnorm(x)
+#'
+ggnorm = function(y,title = NULL,add.normal = TRUE){
+
+  if (!stats::is.ts(y) && !is.numeric(y))
+    stop("gghist requires a ts or numeric object")
+
+  df = data.frame(y = as.numeric(y))
+
+  p = ggplot2::ggplot(data = df,ggplot2::aes(sample = y)) + ggplot2::stat_qq() +
+    ggplot2::labs(title = title)
+
+  if(add.normal)
+    p = p + ggplot2::stat_qq_line(color = "blue")
+
+  return(p)
+}
+#' \code{acf} plot
+#'
+#' Plot of the auto-correlation function for a univariate time series.
+#'
+#' @param y a numeric vector or an object of the \code{ts} class containing a stationary time series.
+#' @param title a string with the plot's title.
+#'
+#' @return None.
+#'
+#' @author Asael Alonzo Matamoros
+#'
+#' @import forecast
+#' @importFrom stats is.ts
+#' @export
+#'
+#' @examples
+#' x = rnorm(100)
+#' ggacf(x)
+#'
+ggacf = function(y,title = NULL){
+  if (!stats::is.ts(y) && !is.numeric(y))
+    stop("gghist requires a ts or numeric object")
+
+  p = forecast::ggAcf(x = y) + ggplot2::labs(title = title)
+
+  return(p)
+}
+#' \code{pacf} plot.
+#'
+#' Plot of the partial autocorrelation function for a univariate time series.
+#'
+#' @param y a numeric vector or an object of the \code{ts} class containing a stationary time series.
+#' @param title a string with the plot's title.
+#'
+#' @return None.
+#'
+#' @author Mitchell O'Hara-Wild and Asael Alonzo Matamoros
+#'
+#' @import forecast
+#' @importFrom stats is.ts
+#' @export
+#'
+#' @examples
+#' x = rnorm(100)
+#' ggpacf(x)
+#'
+ggpacf = function(y,title = NULL){
+  if (!stats::is.ts(y) && !is.numeric(y))
+    stop("gghist requires a ts or numeric object")
+
+  p = forecast::ggPacf(x = y) + ggplot2::labs(title = title)
+
+  return(p)
+}
+#'
+#' @export
+#'
