@@ -2,96 +2,113 @@
 % Please edit documentation in R/varstan.R
 \name{varstan}
 \alias{varstan}
-\title{Constructor varstan object}
+\title{Constructor of a varstan object.}
 \usage{
 varstan(model,chains=4,iter=2000,warmup=floor(iter/2),
-adapt.delta = 0.90,tree.depth =10,...)
+               adapt.delta = 0.90,tree.depth =10,...)
 }
 \arguments{
-\item{model}{One of the varstan model classes defined in the package}
+\item{model}{One of the \code{varstan} model classes defined in the package.}
 
 \item{chains}{An integer of the number of Markov Chains chains to be run,
-by default 4 chains are run}
+by default 4 chains are run.}
 
 \item{iter}{An integer of total iterations per chain including the warm-up,
-by default  the number of iterations are 2000}
+by default  the number of iterations are 2000.}
 
 \item{warmup}{A positive integer specifying number of warm-up (aka burn-in)
 iterations. This also specifies the number of iterations used for stepsize
 adaptation, so warmup samples should not be used for inference. The number
 of warmup should not be larger than \code{iter} and the default is
-\code{iter/2}}
+\code{iter/2}.}
 
 \item{adapt.delta}{An optional real value between 0 and 1, the thin of the jumps
-in a HMC method. By default is 0.9}
+in a HMC method. By default is 0.9.}
 
 \item{tree.depth}{An integer of the maximum  depth of the trees  evaluated
-during each iteration. By default is 10}
+during each iteration. By default is 10.}
+
+\item{...}{Further arguments passed to  \code{rstan()} function.}
 }
 \value{
-a list with the components
-\itemize{
- \item stanfit An stanfit object returned by rstan
- \item model the current fitted model
- \item stanparams The stan parameters used in the HMC NUTS algorithm
-}
+a \code{varstan} object with the estimated time series model.
 }
 \description{
-Constructor of the varstan object for Bayesian estimation in STAN
+Constructor of the varstan object for Bayesian estimation in \pkg{Stan}.
 }
 \details{
-The function returns  a list with the data for running stan() function of
- rstan package
+The function estimates one of  the defined models in \pkg{Stan} using
+the \code{stan()} function for sampling.
 
-This is the principal package's function and the link with Stan,
-this function fits the posterior distribution of every
 
-  Default priors are chosen to be non or very weakly informative so that their
-  influence on the results will. However, after getting more familiar with Bayesian
-  statistics, I recommend you to start thinking about reasonable informative priors
-  for your model parameters. For more information see \code{set_prior}
+This is the principal package's function and the link with \pkg{Stan}, this function
+fits the posterior distribution of every parameter for a defined model using a
+HMC method.
 
-  \bold{Adjusting the sampling behavior of \pkg{Stan}}
+Every estimated model become a \code{varstan} object, with different methods
+for summary, diagnostic, forecast and plotting.
 
-  In addition to choosing the number of iterations, warmup samples, and
-  chains, users can control the behavior of the NUTS sampler, by using the
-  \code{control} argument. The most important reason to use \code{control} is
-  to decrease (or eliminate at best) the number of divergent transitions that
-  cause a bias in the obtained posterior samples. Whenever you see the
-  warning "There were x divergent transitions after warmup." you should
-  really think about increasing \code{adapt_delta}.  Increasing
-  \code{adapt_delta} will slow down the sampler but will decrease the number
-  of divergent transitions threatening the validity of your posterior
-  samples.
+\bold{Defining priors}
 
-  Another problem arises when the depth of the tree being evaluated in each
-  iteration is exceeded. This is less common than having divergent
-  transitions, but may also bias the posterior samples. When it happens,
-  \pkg{Stan} will throw out a warning suggesting to increase
-  \code{max_treedepth}. For more details on the \code{control} argument see
-  \code{\link[rstan:stan]{stan}}.
+Default priors are chosen to be non or very weakly informative so that their
+influence on the results will. However, after getting more familiar with Bayesian
+statistics, I recommend you to start thinking about reasonable informative priors
+for your model parameters.
+
+Those can be changed using the function \code{set_prior()} before estimating the
+model with the \code{varstan()} function. For checking the defined priors use
+\code{get_prior()} and \code{report()} functions.
+
+\bold{Adjusting the sampling behavior of \pkg{Stan}}
+
+In addition to choosing the number of iterations, warmup samples, and
+chains, users can control the behavior of the NUTS sampler, by using the
+\code{control} argument. The most important reason to use \code{control}
+is to decrease (or eliminate at best) the number of divergent transitions
+that cause a bias in the obtained posterior samples. Whenever you see the
+warning "There were x divergent transitions after warmup." you should really
+think about increasing \code{adapt_delta}.  Increasing \code{adapt_delta} will
+slow down the sampler but will decrease the number of divergent transitions
+threatening the validity of your posterior samples.
+
+Another problem arises when the depth of the tree being evaluated in each iteration
+is exceeded. This is less common than having divergent transitions, but may also
+bias the posterior samples. When it happens, \pkg{Stan} will throw out a warning
+suggesting to increase \code{max_treedepth}. For more details on the \code{control}
+argument see \code{\link[rstan:stan]{stan}}.
 }
 \examples{
-\dontrun{
-# model with the treatment effect
-library("astsa")
-library("forecast")
 
-# Fitting a seasonal arima model
+library(astsa)
+# Fitting a seasonal ARIMA model
 mod1 = Sarima(birth,order = c(0,1,2),seasonal = c(1,1,1))
 fit1 = varstan(mod1,chains = 1)
 
 fit1
-}
+
+# Fitting a GARCH(1,1) model
+dat = garch(ipc,order = c(1,1,0))
+fit2 = varstan(dat,chains = 1)
+
+fit2
 
 }
 \references{
-Carpenter,Gelman,Hoffman, Lee, Goodrich, Betancourt, Brubaker, Guo, Li, and Riddell. 2017.
- Stan: A probabilistic programming language. Journal of Statistical Software 76(1).
- DOI 10.18637/jss.v076.i01
+Carpenter, B. and Gelman, A. and Hoffman, D. and  Lee, D. and Goodrich, B. and
+Betancourt, M. and Brubaker, and Guo, L. and Riddell. 2017. Stan: A probabilistic
+programming language. \emph{Journal of Statistical Software} 76(1).
+\code{doi: 10.18637/jss.v076.i01}.
 
- Stan Development Team. 2018.
- Stan Modeling Language Users Guide and Reference Manual, Version 2.18.0. http://mc-stan.org
+Stan Development Team. (2018). Stan Modeling Language Users Guide and Reference Manual,
+Version 2.18.0. \code{url: http://mc-stan.org}.
+
+Paul-Christian Buerkner (2017). brms: An R Package for Bayesian Multilevel
+Models Using Stan. \emph{Journal of Statistical Software}, 80(1), 1-28.
+\code{doi:10.18637/jss.v080.i01}
+
+Hyndman, R. & Khandakar, Y. (2008). Automatic time series forecasting: the
+forecast package for \code{R}. \emph{Journal of Statistical Software}. 26(3),
+1-22.\code{doi:	10.18637/jss.v027.i03}.
 }
 \seealso{
 \code{\link[rstan:stan]{rstan:stan}}.

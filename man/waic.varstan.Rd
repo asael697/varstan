@@ -5,10 +5,12 @@
 \alias{waic}
 \title{Widely Applicable Information Criterion (WAIC)}
 \usage{
-\method{waic}{varstan}(obj, ...)
+\method{waic}{varstan}(x, ...)
 }
 \arguments{
-\item{obj:}{A varstan object}
+\item{x}{A varstan object}
+
+\item{...}{additional values need in waic methods}
 }
 \value{
 An object of class \code{loo}.
@@ -23,27 +25,26 @@ See the \code{loo_compare} function of the \pkg{loo} package
 for more details on model comparisons.
 }
 \examples{
-
 \dontrun{
-library(astsa)
-model = Sarima(birth,order = c(0,1,2),seasonal = c(1,1,1))
-fit1 = varstan(model,chains = 1)
+ library(astsa)
+ model = Sarima(birth,order = c(0,1,2),seasonal = c(1,1,1))
+ fit1 = varstan(model,chains = 1)
 
-waic1 <- waic(fit1)
-waic1
+ waic1 <- waic(fit1)
+ waic1
 }
 
 }
 \references{
 Vehtari, A., Gelman, A., & Gabry J. (2016). Practical Bayesian model
-evaluation using leave-one-out cross-validation and WAIC. In Statistics
-and Computing, doi:10.1007/s11222-016-9696-4. arXiv preprint arXiv:1507.04544.
+evaluation using leave-one-out cross-validation and WAIC. \emph{In Statistics
+and Computing}, \code{doi:10.1007/s11222-016-9696-4}.
 
-Gelman, A., Hwang, J., & Vehtari, A. (2014).
-Understanding predictive information criteria for Bayesian models.
-Statistics and Computing, 24, 997-1016.
+Gelman, A., Hwang, J., & Vehtari, A. (2014). Understanding predictive
+information criteria for Bayesian models. \emph{Statistics and Computing}.
+ 24, 997-1016.
 
 Watanabe, S. (2010). Asymptotic equivalence of Bayes cross validation
 and widely applicable information criterion in singular learning theory.
-The Journal of Machine Learning Research, 11, 3571-3594.
+\emph{The Journal of Machine Learning Research}. 11, 3571-3594.
 }

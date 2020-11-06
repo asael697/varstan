@@ -24,5 +24,5 @@ the varstan package
 
 }
 \author{
-Asael Alonzo Matamoros
+Asael Alonzo Matamoros.
 }
