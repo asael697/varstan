@@ -6,27 +6,26 @@
 #'
 #' Extract a Matrix from an stan fit summary
 #'
-#'
 #' The function returns a matrix with the extracted coefficients of the stan fit
 #' summary
 #'
-#' @usage  vector_to_matrix(vect,d = 2,m = d, p = 1)
+#' @usage  vector_to_matrix(x,d = 2,m = d, p = 1)
 #'
-#' @param vect  a vector with the posterior estimate
+#' @param x a vector with the posterior estimate
 #' @param d an integer with the number of columns
-#' @param p   the number of lags to be extracted
+#' @param p the number of lags to be extracted
 #'
-#' @author  Asael Alonzo Matamoros
+#' @author Asael Alonzo Matamoros
 #'
 #' @noRd
 #'
 #' @return  a  list of matrices with the extracted lags
 #'
-vector_to_matrix = function(vect,d = 2,m = d,p = 1){
+vector_to_matrix = function(x,d = 2,m = d,p = 1){
   l1 = list()
-  n1 = length(vect)
-  x = matrix(1:n1,ncol = d*m,byrow = TRUE)
-  for(i in 1:p) l1[[i]] = matrix(vect[x[i,]],nrow = m,ncol = d)
+  n1 = length(x)
+  y = matrix(1:n1,ncol = d*m,byrow = TRUE)
+  for(i in 1:p) l1[[i]] = matrix(x[y[i,]],nrow = m,ncol = d)
   return(l1)
 }
 #' point estimate of univariate parameters
@@ -43,6 +42,7 @@ vector_to_matrix = function(vect,d = 2,m = d,p = 1){
 #' @param robust a boolean for obtain the robust estimation
 #'
 #' @noRd
+#' @importFrom stats median
 #'
 #' @author  Asael Alonzo Matamoros
 #'
@@ -50,57 +50,60 @@ vector_to_matrix = function(vect,d = 2,m = d,p = 1){
 #'
 extract_estimate = function(model,fit,par,robust = FALSE,...){
   post = data.frame(rstan::extract(fit,par, permuted = TRUE))
-  if(robust) pe = apply(post,2,median)
+  if(robust) pe = apply(post,2,stats::median)
   else pe = apply(post,2,mean)
   return( as.numeric(pe) )
 }
 #' Extract estimate time series parameters from a stanfit object
 #'
-#'  @param obj varstan object
-#'  @param par a string with the desired parameter
-#'  @param robust a boolean value for robust estimate
-#'  @param lag the max lags desired
+#' @param object varstan object
+#' @param par a string with the desired parameter
+#' @param robust a boolean value for robust estimate
+#' @param lag the max lags desired
 #'
-#'  @author Asael Alonzo Matamoros
+#' @author Asael Alonzo Matamoros
 #'
-#'  @noRd
+#' @noRd
+#' @importFrom stats median
 #'
-#'  @return An univariate time series as a numeric vector
+#' @return An univariate time series as a numeric vector
 #'
-extract_ts = function(obj,par,lag=1,robust=FALSE){
-  if (is.varstan(obj)){
-    post = data.frame(extract_stan(obj,pars = par, permuted = TRUE))
-    n = ncol(post)
-    n1 =n-lag+1
-    post = post[,n1:n]
-    if(robust) pe = apply(as.data.frame(post),2,median)
-    else pe = apply(post,2,mean)
-    return(pe)
-  }
-  else print("The current object is not a varstan object")
+extract_ts = function(object,par,lag = 1,robust=FALSE){
+  if (!is.varstan(object))
+    stop("The current object is not a varstan object")
+
+  post = data.frame(extract_stan(object,pars = par, permuted = TRUE))
+  n = ncol(post)
+  n1 =n-lag+1
+  post = post[,n1:n]
+  if(robust) pe = apply(as.data.frame(post),2,stats::median)
+  else pe = apply(post,2,mean)
+
+  return(pe)
 }
 #' Extract estimate of multivariate time series parameters from a stanfit object
 #'
-#'  @param obj varstan object
-#'  @param par a string with the desired parameter
-#'  @param d the dimension of the time series
-#'  @param robust a boolean value for robust estimate
-#'  @param lag the max lags desired
+#' @param object varstan object
+#' @param par a string with the desired parameter
+#' @param d the dimension of the time series
+#' @param robust a boolean value for robust estimate
+#' @param lag the max lags desired
 #'
-#'  @author Asael Alonzo Matamoros
+#' @author Asael Alonzo Matamoros
 #'
-#'  @noRd
+#' @noRd
+#' @importFrom stats median
 #'
-#'  @return A multivariate time series as a numeric matrix
+#' @return A multivariate time series as a numeric matrix
 #'
-extract_mts = function(obj,par,d=1,lag=1,robust=FALSE){
+extract_mts = function(object,par,d=1,lag=1,robust=FALSE){
 
-  if (! is.varstan(obj))
+  if (!is.varstan(object))
     stop("The current object is not a varstan object")
 
-  post = data.frame(extract_stan(obj = obj,pars = par, permuted = TRUE))
-  pe = matrix(,nrow = d,ncol = lag)
-  n = obj$model$n
+  post = data.frame(extract_stan(object = object,pars = par, permuted = TRUE))
+  pe = matrix(0,nrow = d,ncol = lag)
+  n = object$model$n
   n1 = n-lag
 
   for(i in 1:d){
@@ -109,7 +112,7 @@ extract_mts = function(obj,par,d=1,lag=1,robust=FALSE){
     post1 = as.data.frame(post[,c(1:lag)])
 
     if(robust)
-      pe[i,] = apply(post1,2,median)
+      pe[i,] = apply(post1,2,stats::median)
     else
       pe[i,] = apply(post1,2,mean)
 
@@ -117,19 +120,21 @@ extract_mts = function(obj,par,d=1,lag=1,robust=FALSE){
   }
   return(pe)
 }
-#' Extract the initial values of a differenced time series
+#' Extract the initial values of a difference time series
 #'
-#'  @param ts An univariate time series
-#'  @param d the number of differences
-#'  @param D the number of seasonal differences
-#'  @param period the time series period
+#' @param ts An univariate time series
+#' @param d the number of differences
+#' @param D the number of seasonal differences
+#' @param period the time series period
 #'
-#'  @author Asael Alonzo Matamoros
+#' @author Asael Alonzo Matamoros
 #'
-#'  @return A list with the differenced time series, the initials values
-#'  for inverse differences
+#' @return A list with the differences time series, the initials values
+#' for inverse differences.
 #'
-#'  @noRd
+#' @importFrom utils tail
+#'
+#' @noRd
 #'
 dif = function(ts,d = 0,D = 0,period = 1){
 
@@ -137,13 +142,13 @@ dif = function(ts,d = 0,D = 0,period = 1){
 
   if(d > 0){
     for(i in 1:d){
-      init = c(tail(y_diff,n = 1),init)
+      init = c(utils::tail(y_diff,n = 1),init)
       y_diff = diff(y_diff)
     }
   }
   if(D > 0){
     for(i in 1:D){
-      inits = c(tail(y_diff,n = period),inits)
+      inits = c(utils::tail(y_diff,n = period),inits)
       y_diff = diff(y_diff,lag = period)
     }
   }
@@ -151,13 +156,16 @@ dif = function(ts,d = 0,D = 0,period = 1){
   m = list(y = y_diff,init = init,inits = inits)
   return(m)
 }
-#' Inverse difference time series to forecasted values
+#' Inverse difference time series to forecast values
 #'
 #' @param ts An univariate time series
 #' @param init the initial values for normal difference
 #' @param inits the initial values for seasonal difference
 #'
 #' @author Asael Alonzo Matamoros
+#'
+#' @importFrom utils tail
+#' @importFrom stats diffinv
 #'
 #' @return A vector with the inverse difference time series
 #'
@@ -179,11 +187,11 @@ inv_dif = function(ts,init,inits){
   }
 
   if(D > 0){
-    if(D == 1) for(i in 1:D) y = tail(diffinv(y,lag = period,xi = inits),n = n)
-    else for(i in 1:D) y = tail(diffinv(y,lag = period,xi = inits[i,]),n = n)
+    if(D == 1) for(i in 1:D) y = utils::tail(stats::diffinv(y,lag = period,xi = inits),n = n)
+    else for(i in 1:D) y = utils::tail(stats::diffinv(y,lag = period,xi = inits[i,]),n = n)
   }
   if(d > 0){
-    for(i in 1:d) y = tail(diffinv(y,xi = init[i]),n = n)
+    for(i in 1:d) y = utils::tail(stats::diffinv(y,xi = init[i]),n = n)
   }
   return(y)
 }
@@ -251,20 +259,20 @@ complete = function(x,d,x0){
 }
 #' Checks if is a model object
 #'
-#' @param obj a  model object
+#' @param object a  model object
 #'
 #' @noRd
 #'
-is.model = function(obj){
+is.model = function(object){
   y = FALSE
-  if(is(obj,"Sarima")) y = TRUE
-  if(is(obj,"arima"))  y = TRUE
-  if(is(obj,"garch"))  y = TRUE
-  if(is(obj,"varma"))  y = TRUE
-  if(is(obj,"Bekk"))   y = TRUE
-  if(is(obj,"DWR"))    y = TRUE
-  if(is(obj,"naive"))  y = TRUE
-  if(is(obj,"SVM"))    y = TRUE
+  if(is(object,"Sarima")) y = TRUE
+  if(is(object,"arima"))  y = TRUE
+  if(is(object,"garch"))  y = TRUE
+  if(is(object,"varma"))  y = TRUE
+  if(is(object,"Bekk"))   y = TRUE
+  if(is(object,"DWR"))    y = TRUE
+  if(is(object,"naive"))  y = TRUE
+  if(is(object,"SVM"))    y = TRUE
   return (y)
 }
 #' A function with all the desired indicators in summary function
@@ -273,24 +281,26 @@ is.model = function(obj){
 #' @param robust a boolean value for robust indicators
 #' @param conf the confidence level
 #'
+#' @importFrom stats quantile mad qnorm sd
+#'
 #' @noRd
 #'
 my_sum = function(x,robust = FALSE,conf){
   if(robust){
-    sum = c(quantile(x,0.5),
-            mad(x),
-            quantile(x,1-conf),
-            quantile(x,conf),
+    sum = c(stats::quantile(x,0.5),
+            stats::mad(x),
+            stats::quantile(x,1-conf),
+            stats::quantile(x,conf),
             rstan::ess_bulk(x),
             rstan::Rhat(x)
     )
   }
   else{
-    qq = qnorm(c(1-conf,conf))
+    qq = stats::qnorm(c(1-conf,conf))
     sum = c(mean(x),
-            sd(x)/sqrt(length(x)),
-            mean(x)+qq[1]*sd(x)/sqrt(length(x)),
-            mean(x)+qq[2]*sd(x)/sqrt(length(x)),
+            stats::sd(x)/sqrt(length(x)),
+            mean(x)+qq[1]*stats::sd(x)/sqrt(length(x)),
+            mean(x)+qq[2]*stats::sd(x)/sqrt(length(x)),
             rstan::ess_bulk(x),
             rstan::Rhat(x)
     )
@@ -303,20 +313,21 @@ my_sum = function(x,robust = FALSE,conf){
 #' @param robust a boolean value for robust indicators
 #' @param conf the confidence level
 #'
+#' @importFrom stats quantile mad qnorm sd
 #' @noRd
 #'
 my_sum1 = function(x,robust = FALSE,conf){
   if(robust){
-    sum = c(quantile(x,0.5),
-            quantile(x,1-conf),
-            quantile(x,conf)
+    sum = c(stats::quantile(x,0.5),
+            stats::quantile(x,1-conf),
+            stats::quantile(x,conf)
     )
   }
   else{
-    qq = qnorm(c(1-conf,conf))
+    qq = stats::qnorm(c(1-conf,conf))
     sum = c(mean(x),
-            mean(x)+qq[1]*sd(x)/sqrt(length(x)),
-            mean(x)+qq[2]*sd(x)/sqrt(length(x))
+            mean(x)+qq[1]*stats::sd(x)/sqrt(length(x)),
+            mean(x)+qq[2]*stats::sd(x)/sqrt(length(x))
     )
   }
   return( round(sum,4) )
@@ -542,5 +553,26 @@ check_type <- function(x) {
     if(identical(x,"breg"))   y = TRUE
     if(identical(x,"sigma0")) y = TRUE
     if(identical(x,"dfv"))    y = TRUE
+  return(y)
+}
+#' Check asymmetric in garch models
+#'
+#' @param x a character
+#' @noRd
+#'
+check_asym = function(x){
+  y = 0
+    if(identical(x,"exponential")) y = 2
+    if(identical(x,"EXPONENTIAL")) y = 2
+    if(identical(x,"Exponential")) y = 2
+    if(identical(x,"exp")) y = 2
+    if(identical(x,"Exp")) y = 2
+    if(identical(x,"EXP")) y = 2
+    if(identical(x,"logit")) y = 1
+    if(identical(x,"Logit")) y = 1
+    if(identical(x,"LOGIT")) y = 1
+    if(identical(x,"logistic")) y = 1
+    if(identical(x,"Logistic")) y = 1
+    if(identical(x,"LOGISTIC")) y = 1
   return(y)
 }
