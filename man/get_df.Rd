@@ -4,10 +4,10 @@
 \alias{get_df}
 \title{Get the degree freedom values of a varma model}
 \usage{
-get_df(fit,robust = FALSE,...)
+get_df(object,robust = FALSE)
 }
 \arguments{
-\item{obj}{a varstan object}
+\item{object}{a varstan object}
 
 \item{robust}{a boolean for obtain the robust estimation}
 }

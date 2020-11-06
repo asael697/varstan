@@ -2,12 +2,13 @@
 % Please edit documentation in R/garch.R
 \name{garch}
 \alias{garch}
-\title{A  constructor for a garch(s,k,h) model}
+\title{A  constructor for a GARCH(s,k,h) model.}
 \usage{
-garch(ts,order = (1,1,0),arma = c(0,0),genT = FALSE)
+garch(ts,order = c(1,1,0),arma = c(0,0),xreg = NULL,
+             genT = FALSE,asym = "none",series.name = NULL)
 }
 \arguments{
-\item{ts}{an univariate time series}
+\item{ts}{a numeric or ts object with the univariate time series.}
 
 \item{order}{A specification of the garch  model: the three components (s, k, h)
 are the arch order, the garch order, and the mgarch order.}
@@ -18,18 +19,29 @@ components (p, q) are the AR order,and the  MA order.}
 \item{xreg}{Optionally, a numerical matrix of external regressors,
 which must have the same number of rows as ts. It should not be a data frame.}
 
-\item{genT}{a boolean value to specify for a generalized t-student garch model}
+\item{genT}{a boolean value to specify for a generalized t-student garch model.}
 
-\item{series.name}{an optional string vector with the series names.}
+\item{asym}{a string value for the asymmetric function for an asymmetric GARCH process. By default
+the value \code{"none"} for standard GARCH process. If \code{"logit"} a logistic function
+is used for asymmetry, and if \code{"exp"} an exponential function is used.}
+
+\item{series.name}{an optional string vector with the time series names.}
 }
 \description{
-Constructor of the garch(s,k,h) object for Bayesian estimation in STAN
+Constructor of the \code{GARCH(s,k,h)} object for Bayesian estimation in \pkg{Stan}.
 }
 \details{
-The function returns a list with the data for running stan() function of
- rstan package
+The function returns a list with the data for running \code{stan()} function of
+ \pkg{rstan} package.
 
-The default priors used in Sarima are:
+
+By default the \code{garch()} function generates a GARCH(1,1) model, when
+\code{genT} option is \code{TRUE} a t-student innovations GARCH model
+(see Ardia (2010)) is generated, and for Asymmetric GARCH models use the
+option \code{asym} for specify the asymmetric function, see Fonseca,
+et. al (2019) for more details.
+
+The default priors used in a GARCH(s,k,h) model are:
 
 \itemize{
  \item{ar ~ normal(0,0.5)}
@@ -43,23 +55,42 @@ The default priors used in Sarima are:
  \item{breg ~ t-student(0,2.5,6)}
 }
 
-For changing the default prior use the function \code{set_prior}
+For changing the default prior use the function \code{set_prior()}.
 }
 \examples{
-\dontrun{
-dat = garch(ipc,order = c(1,1,0),arma = c(1,1),genT = TRUE)
+# Declaring a garch(1,1) model for the ipc data.
+dat = garch(ipc,order = c(1,1,0))
 dat
-}
+
+# Declaring a t-student M-GARCH(2,3,1)-ARMA(1,1) process for the ipc data.
+dat = garch(ipc,order = c(2,3,1),arma = c(1,1),genT = TRUE)
+dat
+
+# Declaring a logistic Asymmetric GARCH(1,1) process.
+dat = garch(ipc,order = c(1,1,0),asym = "logit")
+dat
 
 }
 \references{
-Engle, Robert F. (1982). ?Autoregressive Conditional Heteroscedasticity with
-  Estimates of the Variance of United Kingdom Inflation.
-  Econometrica 50 (4): 987-1007. JSTOR 1912773.
+Engle, R. (1982). Autoregressive Conditional Heteroscedasticity with Estimates of
+the Variance of United Kingdom Inflation. \emph{Econometrica}, 50(4), 987-1007.
+\code{url: http://www.jstor.org/stable/1912773}.
+
+Bollerslev, T. (1986). Generalized autoregressive conditional heteroskedasticity.
+\emph{Journal of Econometrics}. 31(3), 307-327.
+\code{doi: https://doi.org/10.1016/0304-4076(86)90063-1}.
+
+Fonseca, T. and Cequeira, V. and Migon, H. and Torres, C. (2019). The effects of
+degrees of freedom estimation in the Asymmetric GARCH model with Student-t
+Innovations. \emph{arXiv} \code{doi: arXiv: 1910.01398}.
+
+Ardia, D. and Hoogerheide, L. (2010). Bayesian Estimation of the GARCH(1,1) Model
+with Student-t Innovations. \emph{The R Journal}. 2(7), 41-47.
+\code{doi: 10.32614/RJ-2010-014}.
 }
 \seealso{
 \code{\link{Sarima}} \code{\link{auto.arima}} \code{\link{set_prior}}
 }
 \author{
-Asael Alonzo Matamoros
+Asael Alonzo Matamoros.
 }

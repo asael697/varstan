@@ -2,7 +2,7 @@
 % Please edit documentation in R/auto_sarima.R
 \name{fourier}
 \alias{fourier}
-\title{Fourier terms for modelling seasonality}
+\title{Fourier terms for modelling seasonality.}
 \usage{
 fourier(x, K, h = NULL)
 }
@@ -42,21 +42,12 @@ seasonal periods. Then the matrix returned will have \code{2*sum(K)}
 columns.
 }
 \examples{
-
-library(ggplot2)
 \dontrun{
-# Using Fourier series for a "ts" object
-# K is chosen to minimize the AICc
-deaths.model  <- auto.arima(USAccDeaths, xreg=fourier(USAccDeaths,K=5), seasonal=FALSE)
-deaths.fcast <- forecast(deaths.model, xreg=fourier(USAccDeaths, K=5, h=36))
-autoplot(deaths.fcast) + xlab("Year")
-
-# Using Fourier series for a "msts" object
-taylor.lm <- tslm(taylor ~ fourier(taylor, K = c(3, 3)))
-taylor.fcast <- forecast(taylor.lm,
-    data.frame(fourier(taylor, K = c(3, 3), h = 270)))
-autoplot(taylor.fcast)
+ library(astsa)
+ # Dynaimc Harmonic regression
+ auto.sarima(birth,xreg = fourier(birth,K= 6))
 }
+
 }
 \seealso{
 \code{\link{seasonaldummy}}

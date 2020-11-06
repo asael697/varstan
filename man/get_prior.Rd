@@ -19,17 +19,18 @@ is defined if lag = 0, then the prior distribution will be applied for all lags}
 The functions gets the defined distribution of a defined model parameter
 }
 \examples{
+library(astsa)
 # get all the ar parameters
 dat = Sarima(birth,order = c(2,1,2))
 get_prior(model = dat,par = "ar")
 
 # change the mean constant parameter
 dat = set_prior(model = dat,par = "mu0",dist = student(0,2.5,7))
-get_prior(dat,type = "mu0")
+get_prior(dat,par = "mu0")
 
 # change and print only the second ma parameter
 dat = set_prior(model = dat,par = "ma",dist = beta(2,2),lag = 2)
-get_prior(dat,type = "ma")
+get_prior(dat,par = "ma")
 
 }
 \author{
