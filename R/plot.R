@@ -1,10 +1,10 @@
-#' plot methods for varstan models
+#' plot methods for varstan models.
 #'
 #' Preliminar plot methods for varstan models only valid for univariate time series models.
 #' The function prints the fitted values time series, the trace and density plots for the
 #' sampled model parameters, or the residuals' posterior mean time series.
 #'
-#' @param object An object of class \code{varstan}.
+#' @param x An object of class \code{varstan}.
 #' @param par a character string with the desired plot. Valid values are \code{"fit"} for the
 #'  model's fitted values plot, \code{"residuals"} for the residuals posterior mean plot,
 #'  and \code{"parameters"} for density and trace plots for the sampled model parameter.
@@ -21,6 +21,7 @@
 #'
 #' @examples
 #' \dontrun{
+#'  library(astsa)
 #'  sf1 = auto.sarima(ts = birth)
 #'  # fitted model
 #'  plot(sf1)
@@ -35,29 +36,30 @@
 #' @method plot varstan
 #' @import ggplot2
 #' @importFrom bayesplot mcmc_combo
+#' @importFrom stats quantile
 #' @export
 #'
-plot.varstan = function(object,par = "fit",prob = 0.9,combo = c("dens","trace"),...){
+plot.varstan = function(x,par = "fit",prob = 0.9,combo = c("dens","trace"),...){
 
-  if( !is.varstan(object))
+  if( !is.varstan(x))
     stop("The current object is not a varstan class")
 
   if(par == "parameter"){
-    if(object$dimension > 1)
+    if(x$dimension > 1)
       stop("Only valid for univariate time series")
 
-    par_ret = mod_parameter(object$model)
-    stanfit2 = as.stan(object)
+    par_ret = mod_parameter(x$model)
+    stanfit2 = as.stan(x)
     p = bayesplot::mcmc_combo(stanfit2,pars = par_ret,combo =combo)
   }
   else if(par == "fit"){
-    p = plot_ts(obj = object,par = "fit",prob = prob,real = TRUE)
+    p = plot_ts(object = x,par = "fit",prob = prob,real = TRUE)
   }
   else if(par == "residuals"){
-    p = plot_ts(obj = object,par = "residuals",prob =  prob,real = FALSE)
+    p = plot_ts(object = x,par = "residuals",prob =  prob,real = FALSE)
   }
-  else if(par %in% get_params(object)$include){
-    md = data.frame(extract_stan(object,pars = par))
+  else if(par %in% get_params(x)$include){
+    md = data.frame(extract_stan(x,pars = par))
     p = bayesplot::mcmc_combo(x = md,combo =combo)
   }
   else{
@@ -65,7 +67,7 @@ plot.varstan = function(object,par = "fit",prob = 0.9,combo = c("dens","trace"),
   }
   return(p)
 }
-#' autoplot methods for varstan models
+#' autoplot methods for varstan models.
 #'
 #' Preliminar autoplot methods for varstan models only valid for univariate time series models.
 #' The function prints the fitted values time series, the trace and density plots for the
@@ -88,6 +90,7 @@ plot.varstan = function(object,par = "fit",prob = 0.9,combo = c("dens","trace"),
 #'
 #' @examples
 #' \dontrun{
+#'  library(astsa)
 #'  sf1 = auto.sarima(ts = birth)
 #'  # fitted model
 #'  autoplot(sf1)
@@ -102,6 +105,7 @@ plot.varstan = function(object,par = "fit",prob = 0.9,combo = c("dens","trace"),
 #' @method autoplot varstan
 #' @import ggplot2
 #' @importFrom bayesplot mcmc_combo
+#' @importFrom stats quantile
 #' @export
 #'
 autoplot.varstan = function(object,par = "fit",prob = 0.9,combo = c("dens","trace"),...){
@@ -118,10 +122,10 @@ autoplot.varstan = function(object,par = "fit",prob = 0.9,combo = c("dens","trac
     p = bayesplot::mcmc_combo(stanfit2,pars = par_ret,combo = combo)
   }
   else if(par == "fit"){
-    p = plot_ts(obj = object,par = "fit",prob = prob,real = TRUE)
+    p = plot_ts(object = object,par = "fit",prob = prob,real = TRUE)
   }
   else if(par == "residuals"){
-    p = plot_ts(obj = object,par = "residuals",prob =  prob,real = FALSE)
+    p = plot_ts(object = object,par = "residuals",prob =  prob,real = FALSE)
   }
   else if(par %in% get_params(object)$include){
     md = data.frame(extract_stan(object,pars = par))
@@ -132,7 +136,7 @@ autoplot.varstan = function(object,par = "fit",prob = 0.9,combo = c("dens","trac
   }
   return(p)
 }
-#'  Internal function for plot method
+#' Internal function for plot method
 #' @noRd
 #'
 mod_parameter = function(model){
@@ -158,19 +162,20 @@ mod_parameter = function(model){
 
 #'  Internal function for plot fit and residuals
 #' @import ggplot2
+#' @importFrom stats quantile
 #' @noRd
 #'
-plot_ts = function(obj,par = "fit",prob = 0.90,real = FALSE){
+plot_ts = function(object,par = "fit",prob = 0.90,real = FALSE){
 
-  p1 = (1-prob)/2;s1 = obj$series.name;s = NULL;
+  p1 = (1-prob)/2;s1 = object$series.name;s = NULL;
 
-  f2 = data.frame(extract_stan(obj = obj,pars = par))
+  f2 = data.frame(extract_stan(object = object,pars = par))
   f2mean = apply(f2,2,mean)
-  f21 = apply(f2,2,quantile, probs = p1)
-  f22 = apply(f2,2,quantile, probs =1 - p1)
-  for(i in s1)  s = c(s,rep(i,obj$model$n))
-  time1 = rep(obj$time,obj$dimension)
-  yreal = matrix(obj$ts,ncol = 1)
+  f21 = apply(f2,2,stats::quantile, probs = p1)
+  f22 = apply(f2,2,stats::quantile, probs =1 - p1)
+  for(i in s1)  s = c(s,rep(i,object$model$n))
+  time1 = rep(object$time,object$dimension)
+  yreal = matrix(object$ts,ncol = 1)
 
   dat_temp = data.frame(fit = f2mean,q1 = as.numeric(f21),q2 = as.numeric(f22),time = time1,type = s)
 
@@ -178,23 +183,20 @@ plot_ts = function(obj,par = "fit",prob = 0.90,real = FALSE){
     dat_temp$yreal = yreal
     colors <- c("fit" = "#0000CC", "yreal" = "#000000")
 
-    g = ggplot2::ggplot(aes(x = time1,y = fit),data = dat_temp)+
-      ggplot2::geom_line(aes(y = fit,color = "fit"))+
+    g = ggplot2::ggplot(aes(x = dat_temp$time1,y = dat_temp$fit),data = dat_temp)+
+      ggplot2::geom_line(aes(y = dat_temp$fit,color = "fit"))+
       ggplot2::geom_line(aes(y = yreal,color = "yreal"))+
-      ggplot2::geom_smooth(aes(ymin = q1, ymax = q2),fill="#333333", color="#0000CC",
+      ggplot2::geom_smooth(aes(ymin = dat_temp$q1, ymax = dat_temp$q2),fill="#333333", color="#0000CC",
                            stat = "identity",size = 0.5)+
       ggplot2::labs(x = "time",y = " ",color = "Legend") +
       ggplot2::scale_color_manual(values = colors)
   }
   else{
-    g = ggplot2::ggplot(aes(x = time1,y = fit),data = dat_temp)+
-      ggplot2::geom_smooth(aes(ymin = q1, ymax = q2,),fill="#333333", color="#0000CC",
+    g = ggplot2::ggplot(aes(x = dat_temp$time1,y = dat_temp$fit),data = dat_temp)+
+      ggplot2::geom_smooth(aes(ymin = dat_temp$q1, ymax = dat_temp$q2,),fill="#333333", color="#0000CC",
                            stat = "identity",size = 0.5) +ggplot2::labs(x = "time",y = " ")
   }
-  if(obj$dimension > 1) g = g + ggplot2::facet_grid(type~.)
-
+  if(object$dimension > 1) g = g + ggplot2::facet_grid(type~.)
 
   return(g)
 }
-
-
