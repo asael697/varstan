@@ -1,4 +1,4 @@
-#' Monthly inflation coefficients from 1980-2018
+#' Monthly inflation coefficients from 1980-2018.
 #'
 #' Monthly return coefficients for the inflation. An economic indicator of
 #' a country's economy.
