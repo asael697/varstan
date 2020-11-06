@@ -1,17 +1,15 @@
-#' Set a prior distribution to a model parameter
+#' Set a prior distribution to a model parameter.
 #'
-#' setting a prior distribution to an specify model parameter
+#' setting a prior distribution to an specify model parameter.
 #'
-#' @usage set_prior(model,par,dist,lag)
-#'
-#' @param model a time series model class specified in varstan.
+#' @param model a time series model class specified in \pkg{varstan}.
 #' @param par a string value with the  desired parameter which a prior is defined could be:
 #' "mu0", "sigma0", "ar", "ma", "arch", "garch", "mgarch", "dfv", "df", "LKJ" or "breg".
-#' @param dist the distribution of the prior parameter. The only accepted is a prior_dist object
+#' @param dist the distribution of the prior parameter. The only accepted is a prior_dist object.
 #' @param lag an optional integer value, indicates the desired lag of the parameter which the prior
-#' is defined if lag = 0, then the prior distribution will be applied for all lags
+#' is defined if lag = 0, then the prior distribution will be applied for all lags.
 #'
-#' @return  a time series model class specified in varstan with the changed prior
+#' @return a time series model class specified in \pkg{varstan} with the changed prior.
 #'
 #' @details
 #' varstan provides its own functions to manipulate the parameter prior, this functions return
@@ -30,7 +28,7 @@
 #' the inverse std desviations
 #'
 #' For changing the degree freedom in a LKJ distribution for omega use par = "LKJ" and dist = LKJ(df),
-#' where df are the desired degree freedom
+#' where df are the desired degree freedom.
 #'
 #' For changing the the priors in the diagonal D use par = "sigma0" and select one of the available prior
 #' distributions.
@@ -38,12 +36,10 @@
 #' For ar, ma garch, arch parameters in varma and Bekk models only normal distributions priors with different
 #' mu and sd are accepted. Even if \code{get_prior} accepts its change, Stan will change it to a normal(0,1) prior.
 #'
-#' @author  Asael Alonzo Matamoros
-#'
+#' @author Asael Alonzo Matamoros
 #' @export
-#'
 #' @examples
-#'
+#' library(astsa)
 #' dat = Sarima(birth,order = c(1,1,2))
 #' dat = set_prior(model = dat,par = "ar",dist = normal(0,2))
 #' dat
@@ -67,6 +63,11 @@ set_prior = function(model,par = "ar",dist = normal(),lag = 0){
   if(!inherits(dist,what = "prior_dist"))
     stop("dist is not a prior distribution object")
 
+  if(is.garch(model)){
+    if( identical(model$asym1,0) || identical(par,"gamma"))
+      stop("The model is not an asymmetric GARCH")
+  }
+
   if(lag < 0 )
     stop("lag values lower than zero are not accepted")
 
@@ -78,7 +79,8 @@ set_prior = function(model,par = "ar",dist = normal(),lag = 0){
     if(identical(par,"arch"))  model$prior_arch       = matrix(rep(dist$x,model$s),ncol = 4,byrow = TRUE)
     if(identical(par,"garch")) model$prior_garch      = matrix(rep(dist$x,model$k),ncol = 4,byrow = TRUE)
     if(identical(par,"mgarch"))model$prior_mgarch     = matrix(rep(dist$x,model$q),ncol = 4,byrow = TRUE)
-    if(identical(par,"breg"))  model$prior_prior_breg = matrix(rep(dist$x,model$d1),ncol = 4,byrow = TRUE)
+    if(identical(par,"breg"))  model$prior_breg       = matrix(rep(dist$x,model$d1),ncol = 4,byrow = TRUE)
+    if(identical(par,"gamma")) model$prior_gamma      = matrix(rep(dist$x,2),ncol = 4,byrow = TRUE)
     if(identical(par,"mu0"))   model$prior_mu0 = dist$x
     if(identical(par,"sigma0"))model$prior_sigma0 = dist$x
     if(identical(par,"dfv"))   model$prior_dfv = dist$x
@@ -96,6 +98,7 @@ set_prior = function(model,par = "ar",dist = normal(),lag = 0){
     if(identical(par,"garch")) if(lag <= model$k)  model$prior_garch[lag,]= dist$x
     if(identical(par,"mgarch"))if(lag <= model$h)  model$prior_mgarch[lag,]= dist$x
     if(identical(par,"breg"))  if(lag <= model$d1) model$prior_breg[lag,]= dist$x
+    if(identical(par,"gamma")) if(lag <= 2)        model$prior_gamma[lag,]= dist$x
     if(identical(par,"mu0"))   model$prior_mu0 = dist$x
     if(identical(par,"sigma0"))model$prior_sigma0 = dist$x
     if(identical(par,"dfv"))   model$prior_dfv = dist$x
@@ -123,17 +126,18 @@ set_prior = function(model,par = "ar",dist = normal(),lag = 0){
 #' @export
 #'
 #' @examples
+#' library(astsa)
 #' # get all the ar parameters
 #' dat = Sarima(birth,order = c(2,1,2))
 #' get_prior(model = dat,par = "ar")
 #'
 #' # change the mean constant parameter
 #' dat = set_prior(model = dat,par = "mu0",dist = student(0,2.5,7))
-#' get_prior(dat,type = "mu0")
+#' get_prior(dat,par = "mu0")
 #'
 #' # change and print only the second ma parameter
 #' dat = set_prior(model = dat,par = "ma",dist = beta(2,2),lag = 2)
-#' get_prior(dat,type = "ma")
+#' get_prior(dat,par = "ma")
 #'
 get_prior = function(model,par,lag = 0){
   if(!is.model(model))
@@ -142,20 +146,26 @@ get_prior = function(model,par,lag = 0){
   if(!check_par(par))
     stop("par is not a defined parameter")
 
+  if(is.garch(model)){
+    if( identical(model$asym1,0) && identical(par,"gamma"))
+      stop("The model is not an asymmetric GARCH")
+  }
+
   if(lag < 0 )
     stop("lag values lower than zero are not accepted")
 
   y = NULL
 
   if( identical(lag,0) ){
-    if( identical(par,"ar"))     if(lag <= model$p & model$p > 0) y = print_dist_matrix(model$prior_ar,par = "ar")
-    if( identical(par,"ma"))     if(lag <= model$q & model$q > 0) y = print_dist_matrix(model$prior_ma,par = "ma")
-    if( identical(par,"sar"))    if(lag <= model$P & model$P > 0) y = print_dist_matrix(model$prior_sar,par = "sar")
-    if( identical(par,"sma"))    if(lag <= model$Q & model$Q > 0) y = print_dist_numeric(model$prior_sma[lag,],par = "sma",lag = lag)
-    if( identical(par,"arch"))   if(lag <= model$s & model$s > 0) y = print_dist_numeric(model$prior_arch[lag,],par = "arch",lag = lag)
-    if( identical(par,"garch"))  if(lag <= model$k & model$k > 0) y = print_dist_numeric(model$prior_garch[lag,],par = "garch",lag = lag)
-    if( identical(par,"mgarch")) if(lag <= model$h & model$h > 0) y = print_dist_numeric(model$prior_mgarch[lag,],par = "mgarch",lag = lag)
-    if( identical(par,"breg"))   if(lag <= model$d1 & model$d1 > 0) y = print_dist_numeric(model$prior_breg[lag,],par = "breg",lag = lag)
+    if( identical(par,"ar"))     if(model$p > 0) y = print_dist_matrix(model$prior_ar,par = "ar")
+    if( identical(par,"ma"))     if(model$q > 0) y = print_dist_matrix(model$prior_ma,par = "ma")
+    if( identical(par,"sar"))    if(model$P > 0) y = print_dist_matrix(model$prior_sar,par = "sar")
+    if( identical(par,"sma"))    if(model$Q > 0) y = print_dist_matrix(model$prior_sma,par = "sma")
+    if( identical(par,"arch"))   if(model$s > 0) y = print_dist_matrix(model$prior_arch,par = "arch")
+    if( identical(par,"garch"))  if(model$k > 0) y = print_dist_matrix(model$prior_garch,par = "garch")
+    if( identical(par,"mgarch")) if(model$h > 0) y = print_dist_matrix(model$prior_mgarch,par = "mgarch")
+    if( identical(par,"breg"))   if(model$d1 > 0) y = print_dist_matrix(model$prior_breg,par = "breg")
+    if( identical(par,"gamma"))  if(model$asym1) y = print_dist_matrix(model$prior_gamma,par = "gamma")
     if( identical(par,"mu0"))    y = print_dist_numeric(model$prior_mu0,"mu0")
     if( identical(par,"sigma0")) y = print_dist_numeric(model$prior_sigma0,"sigma0")
     if( identical(par,"dfv"))    y = print_dist_numeric(model$prior_dfv,"df")
@@ -165,7 +175,7 @@ get_prior = function(model,par,lag = 0){
     if( identical(par,"beta"))   y = print_dist_numeric(model$prior_beta,"beta")
   }
   else{
-    if( identical(par,"ar") )          if(lag <= model$p & model$p > 0) y = print_dist_numeric(model$prior_ar[lag,],par = "ar",lag = lag)
+    if( identical(par,"ar") )    if(lag <= model$p & model$p > 0) y = print_dist_numeric(model$prior_ar[lag,],par = "ar",lag = lag)
     if(identical(par,"ma") )     if(lag <= model$q & model$q > 0) y = print_dist_numeric(model$prior_ma[lag,],par = "ma",lag = lag)
     if(identical(par,"sar") )    if(lag <= model$P & model$P > 0) y = print_dist_numeric(model$prior_sar[lag,],par = "sar",lag = lag)
     if(identical(par,"sma") )    if(lag <= model$Q & model$Q > 0) y = print_dist_numeric(model$prior_sma[lag,],par = "sma",lag = lag)
@@ -173,6 +183,7 @@ get_prior = function(model,par,lag = 0){
     if(identical(par,"garch") )  if(lag <= model$k & model$k > 0) y = print_dist_numeric(model$prior_garch[lag,],par = "garch",lag = lag)
     if(identical(par,"mgarch") ) if(lag <= model$h & model$h > 0) y = print_dist_numeric(model$prior_mgarch[lag,],par = "mgarch",lag = lag)
     if(identical(par,"breg") )   if(lag <= model$d1 & model$d1 > 0) y = print_dist_numeric(model$prior_breg[lag,],par = "breg",lag = lag)
+    if(identical(par,"gamma") )  if(lag <= 2 & model$asym1 > 0)     y = print_dist_numeric(model$prior_gamma[lag,],par = "gamma",lag = lag)
     if(identical(par,"mu0") )    y = print_dist_numeric(model$prior_mu0,"mu0")
     if(identical(par,"sigma0") ) y = print_dist_numeric(model$prior_sigma0,"sigma0")
     if(identical(par,"dfv") )    y = print_dist_numeric(model$prior_dfv,"df")
@@ -212,7 +223,7 @@ normal = function(mu = 0,sd = 1){
 #' @export
 #' @noRd
 #'
-print.normal = function(x){
+print.normal = function(x,...){
   if(!inherits(x,what = "normal"))
     stop("The current class is not a prior_dist object")
   cat(get.dist(x$x[4]),"( mu = ",x$x[1],",sd = ",x$x[2],")" )
@@ -243,7 +254,7 @@ beta= function(shape1 = 2,shape2 = 2){
 #' @export
 #' @noRd
 #'
-print.beta = function(x){
+print.beta = function(x,...){
   if(!inherits(x,what = "beta"))
     stop("The current class is not a prior_dist object")
   cat(get.dist(x$x[4]),"( shape1 = ",x$x[1],",shape2 = ",x$x[2],")" )
@@ -278,7 +289,7 @@ uniform= function(min = 0,max = 1){
 #' @export
 #' @noRd
 #'
-print.uniform = function(x){
+print.uniform = function(x,...){
   if(!inherits(x,what = "uniform"))
     stop("The current class is not a prior_dist object")
   cat(get.dist(x$x[4]),"( min = ",x$x[1],",max = ",x$x[2],")" )
@@ -310,7 +321,7 @@ student = function(mu= 0,sd = 1,df = 5){
 #' @export
 #' @noRd
 #'
-print.student = function(x){
+print.student = function(x,...){
   if(!inherits(x,what = "student"))
     stop("The current class is not a prior_dist object")
   cat(get.dist(x$x[4]),"( mu = ",x$x[1],",sd = ",x$x[2],",df = ",x$x[3],")" )
@@ -341,7 +352,7 @@ cauchy = function(mu= 0,sd = 1){
 #' @export
 #' @noRd
 #'
-print.cauchy = function(x){
+print.cauchy = function(x,...){
   if(!inherits(x,what = "cauchy"))
     stop("The current class is not a prior_dist object")
   cat(get.dist(x$x[4]),"( mu = ",x$x[1],",sd = ",x$x[2],")" )
@@ -375,7 +386,7 @@ inverse.gamma = function(shape= 2,rate = 1){
 #' @export
 #' @noRd
 #'
-print.inverse.gamma = function(x){
+print.inverse.gamma = function(x,...){
   if(!inherits(x,what = "inverse.gamma"))
     stop("The current class is not a prior_dist object")
   cat(get.dist(x$x[4]),"( shape = ",x$x[1],",rate = ",x$x[2],")" )
@@ -407,7 +418,7 @@ inverse.chisq = function(df = 7){
 #' @export
 #' @noRd
 #'
-print.inverse.chisq = function(x){
+print.inverse.chisq = function(x,...){
   if(!inherits(x,what = "inverse.chisq"))
     stop("The current class is not a prior_dist object")
   cat(get.dist(x$x[4]),"( df = ",x$x[3],")" )
@@ -438,7 +449,7 @@ jeffrey = function(){
 #' @export
 #' @noRd
 #'
-print.jeffrey = function(x){
+print.jeffrey = function(x,...){
   if(!inherits(x,what = "jeffrey"))
     stop("The current class is not a prior_dist object")
   cat(get.dist(x$x[4]),"( )" )
@@ -469,7 +480,7 @@ gamma = function(shape= 2,rate = 1){
 #' @export
 #' @noRd
 #'
-print.gamma = function(x){
+print.gamma = function(x,...){
   if(!inherits(x,what = "gamma"))
     stop("The current class is not a prior_dist object")
   cat(get.dist(x$x[4]),"( shape = ",x$x[1],",rate = ",x$x[2],")" )
@@ -498,7 +509,7 @@ exponential= function(rate = 1){
 #' @export
 #' @noRd
 #'
-print.exponential = function(x){
+print.exponential = function(x,...){
   if(!inherits(x,what = "exponential"))
     stop("The current class is not a prior_dist object")
   cat(get.dist(x$x[4]),"( rate = ",x$x[2],")" )
@@ -527,7 +538,7 @@ chisq = function(df = 7){
 #' @export
 #' @noRd
 #'
-print.chisq = function(x){
+print.chisq = function(x,...){
   if(!inherits(x,what = "chisq"))
     stop("The current class is not a prior_dist object")
   cat(get.dist(x$x[4]),"( df = ",x$x[3],")" )
@@ -560,7 +571,7 @@ laplace = function(mu = 0,sd = 1){
 #' @export
 #' @noRd
 #'
-print.laplace = function(x){
+print.laplace = function(x,...){
   if(!inherits(x,what = "laplace"))
     stop("The current class is not a prior_dist object")
   cat(get.dist(x$x[4]),"( mu = ",x$x[1],",sd = ",x$x[2],")" )
@@ -596,7 +607,7 @@ LKJ = function(df = 2){
 #' @export
 #' @noRd
 #'
-print.LKJ = function(x){
+print.LKJ = function(x,...){
   if(!inherits(x,what = "LKJ"))
     stop("The current class is not a prior_dist object")
   cat(get.dist(x$x[4]),"( df = ",x$x[1],")" )
@@ -691,7 +702,7 @@ check_dist1 = function(par,dist){
   if(!is.na(match(table = c("ma","ar","sma","sar","arch","garch","beta"),x=par))){
     if(dist[4] %in% c(1,2,3)) y = TRUE
   }
-  else if(!is.na(match(table = c("mu0","sigma0","mgarch","breg","dfv","df","alpha"),x =par))){
+  else if(!is.na(match(table = c("mu0","sigma0","mgarch","breg","dfv","df","alpha","gamma"),x =par))){
     if(dist[4] %in% 1:12) y = TRUE
   }
   else if(identical(par,"LKJ")) if(identical(dist[4],13)) y = 13
@@ -721,6 +732,7 @@ check_par <- function(x) {
   if(identical(x,"alpha"))  y = TRUE
   if(identical(x,"beta"))   y = TRUE
   if(identical(x,"LKJ"))    y = TRUE
+  if(identical(x,"gamma"))  y = TRUE
   return(y)
 }
 
