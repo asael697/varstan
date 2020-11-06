@@ -1,38 +1,36 @@
-#' Print the defined model of a varstan object
+#' Print the defined model of a varstan object.
 #'
-#' The function returns a string with the users defined model for the given time series data
+#' The function returns a string with the users defined model for the given time series data.
 #'
-#' @usage  model(obj)
+#' @usage  model(object,...)
 #'
-#' @param obj a varstan object or one of the defined current defined models in varstan package
+#' @param object a varstan object or one of the defined current defined models in varstan package.
 #' @param ... additional values need in print methods
 #'
-#' @details if \code{obj} is a varstan object the function will print the information of the
-#' defined model inside of the object. If \code{obj} is one of the model classes (like Sarima or garch)
-#' then it will print the model information as well.
+#' @details
+#' if \code{object} is a varstan object the function will print the information of the
+#' defined model inside of the object. If \code{object} is one of the model classes (like
+#' \code{Sarima}, \code{garch}, \code{SVM} or \code{varma}), then it will print the model
+#' information as well.
 #'
 #' For full information of the model with the used priors use the function report or just
-#' print the object
+#' print the object.
 #'
-#' @author  Asael Alonzo Matamoros
+#' @author Asael Alonzo Matamoros.
 #'
 #' @seealso \code{report} \code{print}
 #'
 #' @aliases model model.varstan model.Sarima model.garch model.varma model.Bekk model.SVM
 #'
-#'
 #' @export
-#'
-#' @return  a  string with the defined time series model
+#' @return  a  string with the defined time series model.
 #'
 #' @examples
-#'
-#'
+#' library(astsa)
 #' model1 = Sarima(birth,order = c(0,1,2),seasonal = c(1,1,1))
 #' model(model1)
 #'
-#'
-model <- function(obj,...) {
+model <- function(object,...) {
   UseMethod("model")
 }
 #'
@@ -40,133 +38,144 @@ model <- function(obj,...) {
 #' @export model
 #' @export
 #'
-model.varstan = function(obj,...){
-  if(!is.varstan(obj))
+model.varstan = function(object,...){
+  if(!is.varstan(object))
     stop("The current object is not a varstan class")
 
-  if( is.Sarima(obj$model)) model.Sarima(obj$model)
-  if( is.naive(obj$model))  model.naive(obj$model)
-  if( is.garch(obj$model))  model.garch(obj$model)
-  if( is.SVM(obj$model))    model.SVM(obj$model)
-  if( is.varma(obj$model))  model.varma(obj$model)
+  if( is.Sarima(object$model)) model.Sarima(object$model)
+  if( is.naive(object$model))  model.naive(object$model)
+  if( is.garch(object$model))  model.garch(object$model)
+  if( is.SVM(object$model))    model.SVM(object$model)
+  if( is.varma(object$model))  model.varma(object$model)
 }
 #'
 #' @method  model Sarima
 #' @export model
 #' @export
 #'
-model.Sarima = function(obj,...){
-  if( !is.Sarima(obj))
+model.Sarima = function(object,...){
+  if( !is.Sarima(object))
     stop("The object is not a Sarima model \n")
 
   cat("\n")
-  log = paste0("y ~ Sarima(",obj$p,",",obj$d,",",obj$q,")")
+  log = paste0("y ~ Sarima(",object$p,",",object$d,",",object$q,")")
 
-  if(obj$P != 0 || obj$Q != 0 || obj$D != 0)
-    log = paste0(log,"(",obj$P,",",obj$D,",",obj$Q,")[",obj$period,"]")
+  if(object$P != 0 || object$Q != 0 || object$D != 0)
+    log = paste0(log,"(",object$P,",",object$D,",",object$Q,")[",object$period,"]")
 
-  if(obj$d1 > 0) log = paste0(log,".reg[",obj$d1,"]")
+  if(object$d1 > 0) log = paste0(log,".reg[",object$d1,"]")
 
   cat(log,"\n")
-  cat(obj$n,"observations and 1 dimension \n")
-  cat("Differences:",obj$d,"seasonal Differences:",obj$D,"\n")
-  cat("Current observations:",obj$n1,"\n \n")
+  cat(object$n,"observations and 1 dimension \n")
+  cat("Differences:",object$d,"seasonal Differences:",object$D,"\n")
+  cat("Current observations:",object$n1,"\n \n")
 }
 #'
 #' @method  model naive
 #' @export model
 #' @export
 #'
-model.naive = function(obj,...){
-  if( !is.naive(obj))
+model.naive = function(object,...){
+  if( !is.naive(object))
     stop("The object is not a naive model \n")
 
   cat("\n")
-  log = paste0("y ~ Sarima(",obj$p,",",obj$d,",",obj$q,")")
+  log = paste0("y ~ Sarima(",object$p,",",object$d,",",object$q,")")
 
-  if(obj$d == 0)
+  if(object$d == 0)
     log = paste0("y ~ Random Walk()")
   else
-    log = paste0("y ~ Random Walk(",obj$period,")")
+    log = paste0("y ~ Random Walk(",object$period,")")
 
   cat(log,"\n")
-  cat(obj$n,"observations and 1 dimension \n")
-  cat("Differences:",obj$d,"seasonal Diferences:",obj$D,"\n")
-  cat("Current observations:",obj$n1,"\n \n")
+  cat(object$n,"observations and 1 dimension \n")
+  cat("Differences:",object$d,"seasonal Diferences:",object$D,"\n")
+  cat("Current observations:",object$n1,"\n \n")
 }
 #'
 #' @method  model garch
 #' @export model
 #' @export
 #'
-model.garch = function(obj,...){
-  if(!is.garch(obj))
+model.garch = function(object,...){
+  if(!is.garch(object))
     stop("The object is not a garch model \n")
 
   cat("\n")
-  if(obj$p != 0 || obj$q != 0){
-    log = paste0("y ~ arma(",obj$p,",",obj$q,")")
-    log = paste0(log,"+garch(",obj$s,",",obj$k,",",obj$h,")")
+  if(object$p != 0 || object$q != 0){
+    log = paste0("y ~ arma(",object$p,",",object$q,")")
+    if(object$asym1)
+      log = paste0(log,"+asymmetric garch(",object$s,",",object$k,",",object$h,")")
+    else
+      log = paste0(log,"+garch(",object$s,",",object$k,",",object$h,")")
   }
-  else log = paste0("y ~ garch(",obj$s,",",obj$k,",",obj$h,")")
-
-  if(obj$d1 > 0) log = paste0(log,".reg[",obj$d1,"]")
+  else{
+    if(object$asym1)
+      log = paste0("y ~ asymmetric garch(",object$s,",",object$k,",",object$h,")")
+    else
+      log = paste0("y ~ garch(",object$s,",",object$k,",",object$h,")")
+  }
+  if(object$d1 > 0) log = paste0(log,".reg[",object$d1,"]")
   cat(log,"\n")
-  if(obj$genT) cat("Generalized t-student model \n")
-  cat(obj$n,"observations and 1 dimension \n \n")
+  if(object$genT) cat("Generalized t-student model \n")
+  if(object$asym1){
+    if(identical(object$asym,1)) cat("asymmetric logistic model \n")
+    if(identical(object$asym,2)) cat("asymmetric exponential model \n")
+  }
+  cat(object$n,"observations and 1 dimension \n \n")
 }
 #' @method  model SVM
 #' @export model
 #' @export
 #'
-model.SVM = function(obj,...){
-  if(!is.SVM(obj))
+model.SVM = function(object,...){
+  if(!is.SVM(object))
     stop("The object is not a garch model \n")
 
   cat("\n")
-  if(obj$p != 0 || obj$q != 0){
-    log = paste0("y ~ arma(",obj$p,",",obj$q,")")
+  if(object$p != 0 || object$q != 0){
+    log = paste0("y ~ arma(",object$p,",",object$q,")")
     log = paste0(log,"+SVM")
   }
   else log = paste0("y ~ SVM")
 
-  if(obj$d1 > 0) log = paste0(log,".reg[",obj$d1,"]")
+  if(object$d1 > 0) log = paste0(log,".reg[",object$d1,"]")
   cat(log,"\n")
-  cat(obj$n,"observations and 1 dimension \n \n")
+  cat(object$n,"observations and 1 dimension \n \n")
 }
 #'
 #' @method  model varma
 #' @export model
 #' @export
 #'
-model.varma = function(obj,...){
-  if(!is.varma(obj))
+model.varma = function(object,...){
+  if(!is.varma(object))
     stop("The object is not a varma model \n")
 
   cat("\n")
-  log = paste0("y ~ varma(",obj$p,",",obj$q,")")
-  if(obj$s != 0 || obj$k != 0 || obj$h != 0){
-    log = paste0(log,"+mbekk(",obj$s,",",obj$k,",",obj$h,")")
+  log = paste0("y ~ varma(",object$p,",",object$q,")")
+  if(object$s != 0 || object$k != 0 || object$h != 0){
+    log = paste0(log,"+mbekk(",object$s,",",object$k,",",object$h,")")
   }
   cat(log,"\n")
-  if(obj$genT) cat("Generalized t-student model \n")
-  cat(obj$n,"observations and",obj$d ,"dimensions \n  \n")
+  if(object$genT) cat("Generalized t-student model \n")
+  cat(object$n,"observations and",object$d ,"dimensions \n  \n")
 }
 #'
 #' @method  model Bekk
 #' @export model
 #' @export
 #'
-model.Bekk = function(obj,...){
-  if(!is.Bekk(obj))
+model.Bekk = function(object,...){
+  if(!is.Bekk(object))
     stop("The object is not a Bekk model \n")
 
   cat("\n")
-  log = paste0("y ~ Bekk(",obj$s,",",obj$k,",",obj$h,")")
-  if(obj$p != 0 || obj$q != 0){
-    log = paste0(log,"+varma(",obj$p,",",obj$q,")")
+  log = paste0("y ~ Bekk(",object$s,",",object$k,",",object$h,")")
+  if(object$p != 0 || object$q != 0){
+    log = paste0(log,"+varma(",object$p,",",object$q,")")
   }
   cat(log,"\n")
-  if(obj$genT) cat("Generalized t-student model \n")
-  cat(obj$n,"observations and",obj$d ,"dimensions \n  \n")
+  if(object$genT) cat("Generalized t-student model \n")
+  cat(object$n,"observations and",object$d ,"dimensions \n  \n")
 }
